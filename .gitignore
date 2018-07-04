@@ -6,20 +6,20 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff:
-JFightB/.idea/**/workspace.xml
-JFightB/.idea/**/tasks.xml
-JFightB/.idea/dictionaries
-JFightB/.idea/workspace.xml
+JFight/.idea/**/workspace.xml
+JFight/.idea/**/tasks.xml
+JFight/.idea/dictionaries
+JFight/.idea/workspace.xml
 
 # Sensitive or high-churn files:
-JFightB/.idea/**/dataSources/
-JFightB/.idea/**/dataSources.ids
-JFightB/.idea/**/dataSources.xml
-JFightB/.idea/**/dataSources.local.xml
-JFightB/.idea/**/sqlDataSources.xml
-JFightB/.idea/**/dynamic.xml
-JFightB/.idea/**/uiDesigner.xml
-JFightB/target/
+JFight/.idea/**/dataSources/
+JFight/.idea/**/dataSources.ids
+JFight/.idea/**/dataSources.xml
+JFight/.idea/**/dataSources.local.xml
+JFight/.idea/**/sqlDataSources.xml
+JFight/.idea/**/dynamic.xml
+JFight/.idea/**/uiDesigner.xml
+JFight/target/
 
 # Gradle:
 .idea/**/gradle.xml
@@ -46,7 +46,7 @@ JFightB/.idea_modules/
 atlassian-ide-plugin.xml
 
 # Cursive Clojure plugin
-JFightB/.idea/replstate.xml
+JFight/.idea/replstate.xml
 
 # Ruby plugin and RubyMine
 /.rakeTasks
@@ -70,4 +70,4 @@ fabric.properties
 
 
 # End of https://www.gitignore.io/api/intellij
-JFightB/.idea/workspace.xml
+JFight/.idea/workspace.xml
