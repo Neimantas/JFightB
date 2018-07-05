@@ -2,23 +2,29 @@ package main.Services.Impl;
 
 import main.Services.IDataBase;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DataBase implements IDataBase {
-    private Connection connection;
 
+    // Create a variable for the connection string.
+    String connectionUrl = "jdbc:sqlserver://WIN-NA9LPC408MM\\SQLEXPRESS;" +
+            "databaseName=FightDBB;user=sa;password=Qwerty11";
+
+    // Declare the JDBC objects.
+    Connection connection = null;
+    Statement stmt = null;
+    ResultSet rs = null;
 
     @Override
     public Connection getConnection() throws SQLException {
         try {
-            connection = DriverManager.getConnection("jdbc:sqlserver://192.168.1.101/SQLEXPRESS/FightDBB", "sa", "Qwerty11");
+            Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+            connection = DriverManager.getConnection(connectionUrl);
             return connection;
-        } catch (SQLException e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
+            return null;
         }
-        return null;
     }
 
     @Override
@@ -27,6 +33,5 @@ public class DataBase implements IDataBase {
         if (connection != null) {
             connection.close();
         }
-
     }
 }
