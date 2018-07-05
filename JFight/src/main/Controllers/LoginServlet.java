@@ -1,5 +1,7 @@
 package main.Controllers;
 
+import javafx.scene.control.Pagination;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,10 +13,14 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        doGet(request,response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+        int paramSize = request.getParameterMap().size();
+        System.out.println(paramSize);
+        if (paramSize > 0) {
+        }
+        request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 }
