@@ -1,7 +1,5 @@
 package main.Controllers;
 
-import javafx.scene.control.Pagination;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,6 +11,23 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String username = request.getParameter("username");
+        String password = request.getParameter("password");
+        String regName = request.getParameter("regname");
+        String regPass = request.getParameter("regpass");
+        String confPass= request.getParameter("confpass");
+        String regEmail = request.getParameter("regemail");
+
+//        User user = userService.find(username, password);
+//
+//        if (user != null) {
+//            request.getSession().setAttribute("user", user);
+//            response.sendRedirect("home");
+//        }
+//        else {
+//            request.setAttribute("error", "Unknown user, please try again");
+//            request.getRequestDispatcher("/login.jsp").forward(request, response);
+//        }
         doGet(request,response);
     }
 

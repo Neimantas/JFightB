@@ -23,14 +23,14 @@
             <div class="form-group">
                 <label for="nameLogin">Name</label>
                 <input type="text" class="form-control" id="nameLogin" aria-describedby="emailHelp"
-                       placeholder="Enter name" name="account">
+                       placeholder="Enter name" name="username">
             </div>
             <div class="form-group">
                 <label for="passwordLogin">Password</label>
                 <input type="password" class="form-control" id="passwordLogin" placeholder="Enter password" name="password">
             </div>
             <div class="form-group">
-                <a id="goToReg"><small>Register</small></a>
+                <a href="#" id="goToReg"><small>Register</small></a>
             </div>
             <button type="submit" class="btn btn-primary">Login</button>
         </form>
@@ -42,23 +42,23 @@
             <div class="form-group">
                 <label for="nameRegister">Name</label>
                 <input type="text" class="form-control" id="nameRegister" aria-describedby="emailHelp"
-                       placeholder="Enter name" name="account">
+                       placeholder="Enter name" name="regname">
             </div>
             <div class="form-group">
                 <label for="passwordRegister">Password</label>
-                <input type="password" class="form-control" id="passwordRegister" placeholder="Enter password" name="password">
+                <input type="password" class="form-control" id="passwordRegister" placeholder="Enter password" name="regpass">
             </div>
             <div class="form-group">
                 <label for="passwordConfirmRegister">Confirm Password</label>
-                <input type="password" class="form-control" id="passwordConfirmRegister" placeholder="Confirm Password" name="password">
+                <input type="password" class="form-control" id="passwordConfirmRegister" placeholder="Confirm Password" name="confpass">
             </div>
             <div class="form-group">
                 <label for="emailRegister">Email address</label>
-                <input type="email" class="form-control" id="emailRegister" aria-describedby="emailHelp" placeholder="Enter email">
+                <input type="email" class="form-control" id="emailRegister" aria-describedby="emailHelp" placeholder="Enter email" name="regemail">
                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
             </div>
             <div class="form-group">
-                <a id="goToLog"><small>Go back to Login</small></a>
+                <a href="#" id="goToLog"><small>Go back to Login</small></a>
             </div>
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
