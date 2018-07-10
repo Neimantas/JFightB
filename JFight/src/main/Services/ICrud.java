@@ -1,17 +1,22 @@
-//package main.Services;
-//
-//import main.Models.DTO.DBqueryDTO;
-//
-//public interface ICrud {
-//
-//
-//    DBqueryDTO create(DBQueryModel create);
-//
-//    DBqueryDTO read(DBQueryModel dbQuery);
-//
-//    DBqueryDTO update(DBQueryModel update);
-//
-//    DBqueryDTO delete(DBQueryModel delete);
-//
-//
-//}
+package Services;
+
+
+
+import Models.DTO.DBqueryDTO;
+
+import java.sql.SQLException;
+
+
+public interface ICrud {
+
+
+    DBqueryDTO create(String create);
+
+    DBqueryDTO read(String read) throws SQLException;
+
+    DBqueryDTO update(String update);
+
+    DBqueryDTO delete(String delete);
+
+
+}
