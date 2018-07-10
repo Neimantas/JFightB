@@ -1,5 +1,7 @@
-import main.Services.IDataBase;
-import main.Services.Impl.DataBase;
+
+
+import Services.IDataBase;
+import Services.Impl.DataBase;
 
 import static org.junit.Assert.assertTrue;
 

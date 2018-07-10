@@ -1,13 +1,14 @@
-package main.Services.Impl;
+package Services.Impl;
 
-import main.Services.IDataBase;
+import Services.IDataBase;
+
 
 import java.sql.*;
 
 public class DataBase implements IDataBase {
 
     // Create a variable for the connection string.
-    String connectionUrl = "jdbc:sqlserver://WIN-NA9LPC408MM\\SQLEXPRESS;" +
+    String connectionUrl = "jdbc:sqlserver://192.168.1.101\\SQLEXPRESS;" +
             "databaseName=FightDBB;user=sa;password=Qwerty11";
 
     // Declare the JDBC objects.
