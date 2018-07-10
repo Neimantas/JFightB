@@ -9,6 +9,6 @@ public class Test {
     public void DbgetConnection() throws Exception {
         IDataBase dataBase = new DataBase();
         assertTrue(dataBase.getConnection()!=null);
-
     }
+
 }
