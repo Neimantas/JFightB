@@ -18,16 +18,16 @@
 </head>
 <body>
     <div class="container top5" id="loginContainer">
-        <form action="http://localhost:8080/login" method="post">
+        <form action="/login" method="post">
             <h3 class="text-center">Login</h3>
             <div class="form-group">
                 <label for="nameLogin">Name</label>
                 <input type="text" class="form-control" id="nameLogin" aria-describedby="emailHelp"
-                       placeholder="Enter name" name="username">
+                       placeholder="Enter name" name="username" pattern="[A-Za-z\d]{3,50}" required title="Enter at least 3 characters">
             </div>
             <div class="form-group">
                 <label for="passwordLogin">Password</label>
-                <input type="password" class="form-control" id="passwordLogin" placeholder="Enter password" name="password">
+                <input type="password" class="form-control" id="passwordLogin" placeholder="Enter password" name="password" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,50}$" required title="Enter at least 8 characters, one uppercase and one number">
             </div>
             <div class="form-group">
                 <a href="#" id="goToReg"><small>Register</small></a>
@@ -37,20 +37,20 @@
     </div>
 
     <div class="container hide" id="registerContainer">
-        <form action="http://localhost:8080/login" method="post">
+        <form action="/login" method="post">
             <h3 class="text-center top5">Register</h3>
             <div class="form-group">
-                <label for="nameRegister">Name</label>
-                <input type="text" class="form-control" id="nameRegister" aria-describedby="emailHelp"
+                <label for="nameRegister">Account Name</label>
+                <input type="text" class="form-control" id="nameRegister" aria-describedby="emailHelp" pattern="[A-Za-z\d]{3,50}" required title="Enter at least 3 characters"
                        placeholder="Enter name" name="regName">
             </div>
             <div class="form-group">
                 <label for="passwordRegister">Password</label>
-                <input type="password" class="form-control" id="passwordRegister" placeholder="Enter password" name="regPass">
+                <input type="password" class="form-control" id="passwordRegister" placeholder="Enter password" name="regPass" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,50}$" required title="Enter at least 8 characters, one uppercase and one number">
             </div>
             <div class="form-group">
                 <label for="passwordConfirmRegister">Confirm Password</label>
-                <input type="password" class="form-control" id="passwordConfirmRegister" placeholder="Confirm Password" name="confPass">
+                <input type="password" class="form-control" id="passwordConfirmRegister" placeholder="Confirm Password" name="confPass" pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,50}$" required title="Enter at least 8 characters, one uppercase and one number">
             </div>
             <div class="form-group">
                 <label for="emailRegister">Email address</label>

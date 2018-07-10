@@ -18,7 +18,7 @@ public class LoginServlet extends HttpServlet {
         String confPass= request.getParameter("confPass");
         String regEmail = request.getParameter("regEmail");
 
-        if (username.equals("test")) {
+        if (username != null && password != null) {
             request.getRequestDispatcher("/news.jsp").forward(request, response);
         }
 //        User user = userService.find(username, password);

@@ -11,7 +11,13 @@
 var loginCon = document.getElementById("loginContainer"),
     registerCon = document.getElementById("registerContainer"),
     goToReg = document.getElementById("goToReg"),
-    goToLog = document.getElementById("goToLog");
+    goToLog = document.getElementById("goToLog"),
+    nameLogin = document.getElementById("nameLogin"),
+    passLogin = document.getElementById("passwordLogin"),
+    nameReg = document.getElementById("nameRegister"),
+    passReg = document.getElementById("passwordRegister"),
+    passConReg = document.getElementById("passwordConfirmRegister"),
+    emailReg = document.getElementById("emailRegister");
 
 goToReg.onclick = function() {
     loginCon.classList.add('fadeout');
@@ -30,3 +36,39 @@ goToLog.onclick = function() {
         loginCon.classList.remove('hide');
     }, 300);
 };
+
+function validatePassword(){
+    if(passReg.value != passConReg.value) {
+        passConReg.setCustomValidity("Passwords Don't Match");
+        passConReg.classList.add("border");
+        passConReg.classList.add("border-danger");
+        passConReg.classList.remove("border-success");
+    } else {
+        passConReg.setCustomValidity('');
+        passConReg.classList.add("border");
+        passConReg.classList.remove("border-danger");
+        passConReg.classList.add("border-success");
+    }
+}
+
+passReg.onchange = validatePassword;
+passConReg.onkeyup = validatePassword;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
