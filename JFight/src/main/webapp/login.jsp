@@ -42,19 +42,19 @@
             <div class="form-group">
                 <label for="nameRegister">Name</label>
                 <input type="text" class="form-control" id="nameRegister" aria-describedby="emailHelp"
-                       placeholder="Enter name" name="regname">
+                       placeholder="Enter name" name="regName">
             </div>
             <div class="form-group">
                 <label for="passwordRegister">Password</label>
-                <input type="password" class="form-control" id="passwordRegister" placeholder="Enter password" name="regpass">
+                <input type="password" class="form-control" id="passwordRegister" placeholder="Enter password" name="regPass">
             </div>
             <div class="form-group">
                 <label for="passwordConfirmRegister">Confirm Password</label>
-                <input type="password" class="form-control" id="passwordConfirmRegister" placeholder="Confirm Password" name="confpass">
+                <input type="password" class="form-control" id="passwordConfirmRegister" placeholder="Confirm Password" name="confPass">
             </div>
             <div class="form-group">
                 <label for="emailRegister">Email address</label>
-                <input type="email" class="form-control" id="emailRegister" aria-describedby="emailHelp" placeholder="Enter email" name="regemail">
+                <input type="email" class="form-control" id="emailRegister" aria-describedby="emailHelp" placeholder="Enter email" name="regEmail">
                 <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
             </div>
             <div class="form-group">

@@ -13,13 +13,13 @@ public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
-        String regName = request.getParameter("regname");
-        String regPass = request.getParameter("regpass");
-        String confPass= request.getParameter("confpass");
-        String regEmail = request.getParameter("regemail");
+        String regName = request.getParameter("regName");
+        String regPass = request.getParameter("regPass");
+        String confPass= request.getParameter("confPass");
+        String regEmail = request.getParameter("regEmail");
 
         if (username.equals("test")) {
-            request.getRequestDispatcher("/user.jsp").forward(request, response);
+            request.getRequestDispatcher("/news.jsp").forward(request, response);
         }
 //        User user = userService.find(username, password);
 //
@@ -31,7 +31,7 @@ public class LoginServlet extends HttpServlet {
 //            request.setAttribute("error", "Unknown user, please try again");
 //            request.getRequestDispatcher("/login.jsp").forward(request, response);
 //        }
-        doGet(request,response);
+//        doGet(request,response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
