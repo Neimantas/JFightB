@@ -1,4 +1,4 @@
-package main.Models.CONS;
+package Models.CONS;
 
 public class TestCONS {
 }

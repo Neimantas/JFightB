@@ -1,5 +1,5 @@
 package Models.DTO;
-
+import Models.DAL.FightDAL;
 import java.util.List;
 
 public class FightDTO {
@@ -7,7 +7,7 @@ public class FightDTO {
     private String Message;
     private List<FightDAL> List;
 
-    public FightDTO(boolean success, String message, java.util.List<FightDAL> list) {
+    public FightDTO(boolean success, String message, List<FightDAL> list) {
         Success = success;
         Message = message;
         List = list;
@@ -29,11 +29,11 @@ public class FightDTO {
         Message = message;
     }
 
-    public java.util.List<FightDAL> getList() {
+    public List<FightDAL> getList() {
         return List;
     }
 
-    public void setList(java.util.List<FightDAL> list) {
+    public void setList(List<FightDAL> list) {
         List = list;
     }
 }

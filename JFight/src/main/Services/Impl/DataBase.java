@@ -2,7 +2,6 @@ package Services.Impl;
 
 import Services.IDataBase;
 
-
 import java.sql.*;
 
 public class DataBase implements IDataBase {
@@ -34,10 +33,14 @@ public class DataBase implements IDataBase {
     }
 
     @Override
-    public void closeConnection() throws SQLException {
-
-        if (connection != null) {
-            connection.close();
+    public void closeConnection() {
+        try {
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
+
     }
 }

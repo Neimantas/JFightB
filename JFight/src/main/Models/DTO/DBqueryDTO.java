@@ -7,6 +7,12 @@ public class DBqueryDTO {
     private String Message;
     private List<List<Object>> List;
 
+    public DBqueryDTO(boolean success, String message, List<List<Object>> list) {
+        Success = success;
+        Message = message;
+        List = list;
+    }
+
     public boolean isSuccess() {
         return Success;
     }
@@ -23,11 +29,11 @@ public class DBqueryDTO {
         Message = message;
     }
 
-    public java.util.List<java.util.List<Object>> getList() {
+    public List<List<Object>> getList() {
         return List;
     }
 
-    public void setList(java.util.List<java.util.List<Object>> list) {
+    public void setList(List<List<Object>> list) {
         List = list;
     }
 }

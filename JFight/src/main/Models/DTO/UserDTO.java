@@ -1,5 +1,5 @@
 package Models.DTO;
-
+import Models.DAL.UserDAL;
 import java.util.List;
 
 public class UserDTO {
@@ -7,7 +7,7 @@ public class UserDTO {
     private String Message;
     private List<UserDAL> List;
 
-    public UserDTO(boolean success, String message, java.util.List<UserDAL> list) {
+    public UserDTO(boolean success, String message, List<UserDAL> list) {
         Success = success;
         Message = message;
         List = list;
@@ -29,11 +29,11 @@ public class UserDTO {
         Message = message;
     }
 
-    public java.util.List<UserDAL> getList() {
+    public List<UserDAL> getList() {
         return List;
     }
 
-    public void setList(java.util.List<UserDAL> list) {
+    public void setList(List<UserDAL> list) {
         List = list;
     }
 }

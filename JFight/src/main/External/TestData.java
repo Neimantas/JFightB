@@ -1,4 +1,4 @@
-package main.External;
+package External;
 
 public class TestData {
 }

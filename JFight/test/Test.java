@@ -9,7 +9,7 @@ public class Test {
     public void DbgetConnectionTest() throws Exception {
         IDataBase dataBase = new DataBase();
         assertTrue(dataBase.getConnection()!=null);
-        dataBase.closeConnection();
+
     }
 //    @org.junit.Test
 //    public void create() {
@@ -30,5 +30,7 @@ public class Test {
 //    @org.junit.Test
 //    public void delete() {
 //    }
+
+
 
 }
