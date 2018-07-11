@@ -15,26 +15,26 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark justify-content-center">
-    <a class="navbar-brand" href="#">
-        <img src="/Images/images.png" width="50" height="50" alt="user picture"> Username
+<nav class="navbar navbar-light bg-light navbar-expand-md bg-faded justify-content-center">
+    <a class="navbar-brand d-flex w-50 mr-auto" href="#">
+        <img src="/Images/images%20(3).png" width="50" height="50" alt="user picture"> Username
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse w-100" id="navbarSupportedContent">
+    <div class="navbar-collapse collapse w-100" id="collapsingNavbar3">
         <ul class="navbar-nav w-100 justify-content-center">
             <li class="nav-item active">
-                <a class="nav-link" href="#">News <span class="sr-only">(current)</span></a>
+                <a class="nav-link" href="/news">News <span class="sr-only">(current)</span></a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link active" href="#">Fight</a>
+            <li class="nav-item active">
+                <a class="nav-link" href="/news?fight">Fight</a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link active" href="#">Account</a>
+            <li class="nav-item active">
+                <a class="nav-link" href="/user">Account</a>
             </li>
         </ul>
-        <ul class="navbar-nav ml-auto w-100 justify-content-end">
+        <ul class="nav navbar-nav ml-auto w-100 justify-content-end">
             <li class="nav-item">
                 <a class="nav-link" href="#">Logout</a>
             </li>

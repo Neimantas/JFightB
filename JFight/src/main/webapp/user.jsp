@@ -22,7 +22,7 @@
 
         <div class="row">
             <div class="col-3">
-                <img src="/Images/images.jpg" class="img-fluid border" alt="Responsive image">
+                <img src="/Images/images%20(2).png" class="img-fluid border" alt="Responsive image">
             </div>
             <div class="col-6">
                 <ul class="list-group">
