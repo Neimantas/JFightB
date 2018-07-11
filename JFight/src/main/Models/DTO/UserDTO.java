@@ -1,5 +1,7 @@
 package Models.DTO;
 
+import Models.DAL.UserDAL;
+
 import java.util.List;
 
 public class UserDTO {

@@ -1,5 +1,7 @@
 package Models.DTO;
 
+import Models.DAL.FightDAL;
+
 import java.util.List;
 
 public class FightDTO {
