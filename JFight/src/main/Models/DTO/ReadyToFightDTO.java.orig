@@ -1,15 +1,19 @@
 package Models.DTO;
-import Models.DAL.UserDAL;
-import Models.DAL.UserDAL;
+<<<<<<< HEAD
+import Models.DAL.ReadyToFightDAL;
+=======
 
+import Models.DAL.ReadyToFightDAL;
+
+>>>>>>> F2
 import java.util.List;
 
-public class UserDTO {
+public class ReadyToFightDTO {
     private boolean Success;
     private String Message;
-    private List<UserDAL> List;
+    private List<ReadyToFightDAL> List;
 
-    public UserDTO(boolean success, String message, List<UserDAL> list) {
+    public ReadyToFightDTO(boolean success, String message, List<ReadyToFightDAL> list) {
         Success = success;
         Message = message;
         List = list;
@@ -31,11 +35,11 @@ public class UserDTO {
         Message = message;
     }
 
-    public List<UserDAL> getList() {
+    public List<ReadyToFightDAL> getList() {
         return List;
     }
 
-    public void setList(List<UserDAL> list) {
+    public void setList(List<ReadyToFightDAL> list) {
         List = list;
     }
 }
