@@ -1,11 +1,10 @@
-package Services.Impl;
+package main.Services.Impl;
 
-import Models.DAL.ReadyToFightDAL;
-import Models.DTO.DBqueryDTO;
-import Models.DTO.ReadyToFightDTO;
-import Services.ICrud;
-import Services.IHigherService;
-
+import main.Models.DAL.ReadyToFightDAL;
+import main.Models.DTO.DBqueryDTO;
+import main.Models.DTO.ReadyToFightDTO;
+import main.Services.ICrud;
+import main.Services.IHigherService;
 import java.util.ArrayList;
 import java.util.List;
 

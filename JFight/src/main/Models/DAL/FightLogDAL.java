@@ -1,4 +1,4 @@
-package Models.DAL;
+package main.Models.DAL;
 
 public class FightLogDAL {
 

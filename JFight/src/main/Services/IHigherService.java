@@ -1,10 +1,8 @@
-package Services;
+package main.Services;
 
-import Models.DTO.ReadyToFightDTO;
+import main.Models.DTO.ReadyToFightDTO;
 
 public interface IHigherService {
-
     ReadyToFightDTO getAllReadyToFightUsersId();
-
     ReadyToFightDTO getReadyToFightUserById(String query);
 }

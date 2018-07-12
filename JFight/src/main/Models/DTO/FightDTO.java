@@ -1,7 +1,6 @@
-package Models.DTO;
+package main.Models.DTO;
 
-import Models.DAL.FightDAL;
-
+import main.Models.DAL.FightDAL;
 import java.util.List;
 
 public class FightDTO {

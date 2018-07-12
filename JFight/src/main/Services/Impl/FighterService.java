@@ -1,7 +1,7 @@
-package Services.Impl;
+package main.Services.Impl;
 
-import Models.DTO.ReadyToFightDTO;
-import Services.IFighterService;
+import main.Models.DTO.ReadyToFightDTO;
+import main.Services.IFighterService;
 
 public class FighterService implements IFighterService {
 

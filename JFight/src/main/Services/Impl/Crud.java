@@ -1,9 +1,8 @@
-package Services.Impl;
+package main.Services.Impl;
 
-import Models.DTO.DBqueryDTO;
-import Services.ICrud;
-import Services.IDataBase;
-
+import main.Models.DTO.DBqueryDTO;
+import main.Services.ICrud;
+import main.Services.IDataBase;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;

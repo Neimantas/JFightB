@@ -1,4 +1,4 @@
-package Models.DTO;
+package main.Models.DTO;
 
 import java.util.List;
 

@@ -1,9 +1,7 @@
-package Services;
+package main.Services;
 
-import Models.DTO.ReadyToFightDTO;
+import main.Models.DTO.ReadyToFightDTO;
 
 public interface IFighterService {
-
     ReadyToFightDTO getAllReadyToFightUsersId();
-
 }
