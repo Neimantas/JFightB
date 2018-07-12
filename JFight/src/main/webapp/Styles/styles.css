@@ -13,6 +13,6 @@
     pointer-events: none;
 }
 
-div {
-    margin: 0;
+.form-check {
+    padding-right: 1.25rem;
 }

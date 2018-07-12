@@ -35,10 +35,10 @@ public class LoginServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        int paramSize = request.getParameterMap().size();
-        System.out.println(paramSize);
-        if (paramSize > 0) {
-        }
+//        int paramSize = request.getParameterMap().size();
+//        System.out.println(paramSize);
+//        if (paramSize > 0) {
+//        }
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 }
