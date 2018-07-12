@@ -1,4 +1,4 @@
-package main.Models.BL;
+package Models.BL;
 
 public class TestBL {
 }
