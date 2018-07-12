@@ -1,5 +1,5 @@
 package Models.DTO;
-import Models.DAL.FightLogDAL;
+
 import Models.DAL.FightLogDAL;
 
 import java.util.List;

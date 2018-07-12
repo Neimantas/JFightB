@@ -2,7 +2,10 @@ package Services.Impl;
 
 import Services.IDataBase;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 
 public class DataBase implements IDataBase {
 
@@ -16,7 +19,7 @@ public class DataBase implements IDataBase {
     ResultSet rs = null;
 
     @Override
-    public Connection getConnection() throws SQLException {
+    public Connection getConnection() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             connection = DriverManager.getConnection(connectionUrl);
@@ -25,11 +28,6 @@ public class DataBase implements IDataBase {
             System.out.println(e.getMessage());
             return null;
         }
-//        finally {
-//            if (rs != null) try { rs.close(); } catch(Exception e) {}
-//            if (stmt != null) try { stmt.close(); } catch(Exception e) {}
-//            if (connection != null) try { connection.close(); } catch(Exception e) {}
-//        }
     }
 
     @Override
@@ -41,6 +39,5 @@ public class DataBase implements IDataBase {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
     }
 }

@@ -1,5 +1,5 @@
 package Models.DTO;
-import Models.DAL.ReadyToFightDAL;
+
 import Models.DAL.ReadyToFightDAL;
 
 import java.util.List;

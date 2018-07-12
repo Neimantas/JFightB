@@ -26,12 +26,14 @@ public class Crud implements ICrud {
             statement.executeQuery(query);
             dBqueryDTO = new DBqueryDTO(true, null, null);
             statement.close();
-            dataBase.closeConnection();
+            return dBqueryDTO;
         } catch (Exception e) {
             e.printStackTrace();
             dBqueryDTO = new DBqueryDTO(false, e.getMessage(), null);
+            return dBqueryDTO;
+        } finally {
+            dataBase.closeConnection();
         }
-        return dBqueryDTO;
     }
 
     @Override
@@ -52,13 +54,15 @@ public class Crud implements ICrud {
                 rows.add(columns);
             }
             statement.close();
-            dataBase.closeConnection();
             dBqueryDTO = new DBqueryDTO(true, null, rows);
+            return dBqueryDTO;
         } catch (Exception e) {
             e.printStackTrace();
             dBqueryDTO = new DBqueryDTO(false, e.getMessage(), null);
+            return dBqueryDTO;
+        } finally {
+            dataBase.closeConnection();
         }
-        return dBqueryDTO;
     }
 
 
@@ -72,13 +76,15 @@ public class Crud implements ICrud {
             statement.executeUpdate(query);
             connection.commit();
             statement.close();
-            connection.close();
             dBqueryDTO = new DBqueryDTO(true, null, null);
+            return dBqueryDTO;
         } catch (Exception e) {
             e.printStackTrace();
             dBqueryDTO = new DBqueryDTO(false, e.getMessage(), null);
+            return dBqueryDTO;
+        } finally {
+            dataBase.closeConnection();
         }
-        return dBqueryDTO;
     }
 
     @Override
@@ -91,15 +97,17 @@ public class Crud implements ICrud {
             statement.executeUpdate(query);
             connection.commit();
             statement.close();
-            connection.close();
             dBqueryDTO = new DBqueryDTO(true, null, null);
-
+            return dBqueryDTO;
         } catch (Exception e) {
             e.printStackTrace();
             dBqueryDTO = new DBqueryDTO(false, null, null);
+            return dBqueryDTO;
+        } finally {
+            dataBase.closeConnection();
         }
-        return dBqueryDTO;
     }
+
 }
 
 
