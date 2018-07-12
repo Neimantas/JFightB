@@ -25,7 +25,7 @@ public class LoginServlet extends HttpServlet {
 //
 //        if (user != null) {
 //            request.getSession().setAttribute("user", user);
-//            response.sendRedirect("home");
+//            response.sendRedirect("news");
 //        }
 //        else {
 //            request.setAttribute("error", "Unknown user, please try again");
@@ -39,6 +39,6 @@ public class LoginServlet extends HttpServlet {
 //        System.out.println(paramSize);
 //        if (paramSize > 0) {
 //        }
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+        request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 }
