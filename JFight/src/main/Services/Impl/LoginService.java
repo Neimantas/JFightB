@@ -12,7 +12,7 @@ public class LoginService implements ILoginService {
     @Override
     public LoginDTO find(String email, String password) {
         IHigherService hs = new HigherService();
-        UserDTO userDTO = hs.getUserByEmail(email, password);
+        UserDTO userDTO = hs.getUserByEmailAndPass(email, password);
         if (!userDTO.isSuccess()) {
             return new LoginDTO(false, userDTO.getMessage(), null);
         }
