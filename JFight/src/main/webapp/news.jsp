@@ -17,7 +17,7 @@
 
 <nav class="navbar navbar-light bg-light navbar-expand-md bg-faded justify-content-center">
     <a class="navbar-brand d-flex w-50 mr-auto" href="#">
-        <img src="/Images/images%20(3).png" width="50" height="50" alt="user picture"> Username
+        <img src="/Images/images%20(3).png" width="50" height="50" alt="user picture"> ${name}
     </a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
