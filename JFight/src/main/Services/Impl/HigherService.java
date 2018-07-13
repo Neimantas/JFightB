@@ -1,5 +1,6 @@
 package main.Services.Impl;
 
+import main.Models.BL.TurnStatsModel;
 import main.Models.DAL.ReadyToFightDAL;
 import main.Models.DAL.UserDAL;
 import main.Models.DTO.DBqueryDTO;
@@ -56,5 +57,36 @@ public class HigherService implements IHigherService {
             userDAL.setAccessLevel(Integer.parseInt(list.get(2).toString()));
         }
         return new UserDTO(true, null, userDAL);
+    }
+
+    @Override
+    public DBqueryDTO insertTurnStats(TurnStatsModel model) {
+        StringBuilder query = new StringBuilder();
+        query.append("INSERT INTO FightLog VALUES(")
+                .append(model.fightId).append(", ")
+                .append(model.userId).append(", ")
+                .append("'").append(model.att1).append("'").append(", ")
+                .append("'").append(model.att2).append("'").append(", ")
+                .append("'").append(model.def1).append("'").append(", ")
+                .append("'").append(model.def2).append("'").append(", ")
+                .append(model.hp).append(", ")
+                .append(model.round).append(")");
+        return crud.create(query.toString());
+    }
+
+    @Override
+    public DBqueryDTO checkForFightRecordByIdAndRound(TurnStatsModel model) {
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT * FROM FightLog WHERE FightId = ")
+                .append(model.fightId).append(" AND Round = ")
+                .append(model.round);
+        DBqueryDTO dto = crud.read(query.toString());
+        if (!dto.isSuccess()) {
+            return dto;
+        }
+        if (dto.getList().size() != 2) {
+            return new DBqueryDTO(false, "Only one record found.", null);
+        }
+        return dto;
     }
 }
