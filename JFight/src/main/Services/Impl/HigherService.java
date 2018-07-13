@@ -39,5 +39,15 @@ public class HigherService implements IHigherService {
         return createDals(query);
     }
 
+    @Override
+    public DBqueryDTO moveUserToReadyTable(String id) {
+        String query2 = "INSERT INTO ReadyToFight select UserId from [User] where userId = " + id;
+        DBqueryDTO dto = crud.create(query2);
+
+        if(dto.isSuccess()){
+
+        }
+        return crud.create(query2);
+    }
 
 }

@@ -1,13 +1,28 @@
 package main.Services.Impl;
 
+import main.Models.DTO.DBqueryDTO;
 import main.Models.DTO.ReadyToFightDTO;
 import main.Services.IFighterService;
 
 public class FighterService implements IFighterService {
-
     @Override
     public ReadyToFightDTO getAllReadyToFightUsersId() {
-        ReadyToFightDTO readyToFightDTO = new HigherService().getAllReadyToFightUsersId();
-        return readyToFightDTO;
+
+        return new HigherService().getAllReadyToFightUsersId();
+    }
+
+    @Override
+    public ReadyToFightDTO getReadyToFightUserById(String id) {
+        return new HigherService().getReadyToFightUserById(id);
+    }
+
+    @Override
+    public DBqueryDTO moveUserToReadyTable(String id) {
+        return null;
+    }
+
+    @Override
+    public ReadyToFightDTO userToChallenge(String id) {
+        return null;
     }
 }
