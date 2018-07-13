@@ -1,7 +1,7 @@
 package main.Services;
 
-import main.Models.DTO.UserDTO;
+import main.Models.DTO.LoginDTO;
 
 public interface ILoginService {
-    UserDTO find(String username, String password);
+    LoginDTO find(String email, String password);
 }
