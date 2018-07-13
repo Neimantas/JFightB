@@ -1,5 +1,6 @@
 package main.Services.Impl;
 
+import main.Models.CONS.FighterStatus;
 import main.Models.DAL.ReadyToFightDAL;
 import main.Models.DTO.DBqueryDTO;
 import main.Models.DTO.ReadyToFightDTO;
@@ -14,16 +15,19 @@ public class HigherService implements IHigherService {
 
     private ReadyToFightDTO createDals(String query) {
         DBqueryDTO dBqueryDTO = crud.read(query);
-        List<List<Object>> lists = dBqueryDTO.getList();
-        List<ReadyToFightDAL> listReadyToFightDal = new ArrayList<>();
-        for (int i = 0; i < lists.size(); i++) {
-            ReadyToFightDAL dal = new ReadyToFightDAL();
-            for (int j = 0; j < lists.get(i).size(); j++) {
-                dal.setUserId((long) lists.get(i).get(i));
+        if (dBqueryDTO.isSuccess()){
+            List<List<Object>> lists = dBqueryDTO.getList();
+            List<ReadyToFightDAL> listReadyToFightDal = new ArrayList<>();
+            for (int i = 0; i < lists.size(); i++) {
+                ReadyToFightDAL dal = new ReadyToFightDAL();
+                for (int j = 0; j < lists.get(i).size(); j++) {
+                    dal.setUserId(Long.parseLong(lists.get(i).get(j).toString()));
+                }
+                listReadyToFightDal.add(dal);
             }
-            listReadyToFightDal.add(dal);
-        }
-        return new ReadyToFightDTO(true, null, listReadyToFightDal);
+            return new ReadyToFightDTO(true, null, listReadyToFightDal);
+        }else return new ReadyToFightDTO(false,null,null);
+
     }
 
     @Override
@@ -41,13 +45,20 @@ public class HigherService implements IHigherService {
 
     @Override
     public DBqueryDTO moveUserToReadyTable(String id) {
-        String query2 = "INSERT INTO ReadyToFight select UserId from [User] where userId = " + id;
-        DBqueryDTO dto = crud.create(query2);
-
-        if(dto.isSuccess()){
-
+        String query = "INSERT INTO ReadyToFight select UserId from [User] where userId = " + id;
+        DBqueryDTO dto = crud.create(query);
+        if (dto.isSuccess()){
+            dto.setMessage(FighterStatus.SUCCESS.Status());
+            return dto;
+        }else {
+            dto.setMessage(FighterStatus.FAILURE.Status());
+            return dto;
         }
-        return crud.create(query2);
+    }
+
+    @Override
+    public DBqueryDTO moveUserToChallenge(String id) {
+        return null;
     }
 
 }

@@ -18,11 +18,11 @@ public class FighterService implements IFighterService {
 
     @Override
     public DBqueryDTO moveUserToReadyTable(String id) {
-        return null;
+        return new HigherService().moveUserToReadyTable(id);
     }
 
     @Override
-    public ReadyToFightDTO userToChallenge(String id) {
+    public DBqueryDTO moveUserToChallenge(String id) {
         return null;
     }
 }

@@ -7,5 +7,6 @@ public interface IFighterService {
     ReadyToFightDTO getAllReadyToFightUsersId();
     ReadyToFightDTO getReadyToFightUserById(String id);
     DBqueryDTO moveUserToReadyTable(String id);
-    ReadyToFightDTO userToChallenge(String id);
+    DBqueryDTO moveUserToChallenge(String id);
+
 }

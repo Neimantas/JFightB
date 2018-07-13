@@ -7,4 +7,5 @@ public interface IHigherService {
     ReadyToFightDTO getAllReadyToFightUsersId();
     ReadyToFightDTO getReadyToFightUserById(String query);
     DBqueryDTO moveUserToReadyTable(String id);
+    DBqueryDTO moveUserToChallenge(String id);
 }
