@@ -51,8 +51,7 @@ public class FightService implements IFightService {
                 break;
             }
         }
-        TurnOutcomeModel outcomeModel = calculateOutcome(user, opponent);
-        return null;
+        return calculateOutcome(user, opponent);
     }
 
     private TurnOutcomeModel calculateOutcome(TurnStatsModel user, TurnStatsModel opponent) {
