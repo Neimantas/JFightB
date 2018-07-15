@@ -7,17 +7,18 @@
     <link rel="stylesheet" href="Styles/styles.css">
 </head>
 <body>
+<%--<img src="Images/cirith_toronath__gondolin__by_dracarysdrekkar7-dc44ctg.jpg">--%>
 <div class="container">
     <div class="row">
-        <div class="col-3"><h3>Username1</h3></div>
+        <div class="col-3"><h2>${userName}</h2></div>
         <div class="col-6"><h3 align="center">${round} <span id="roundTime"></span></h3></div>
-        <div class="col-3"><h3 class="float-right">Username2</h3></div>
+        <div class="col-3"><h2 class="float-right">${oppName}</h2></div>
     </div>
     <div class="row">
-        <div class="col-3">
-            <img src="Images/imageLeft.png" class="img-fluid border" alt="Responsive image">
+        <div class="col-4">
+            <img src="Images/knight_left.jpg" class="img-fluid border" alt="Responsive image">
         </div>
-        <div class="col-3">
+        <div class="col-2">
             <div class="float-right text-right">
                 <br>
                 <h3 class="form-check">Attack</h3>
@@ -47,7 +48,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-3">
+        <div class="col-2">
             <br>
             <h3 class="form-check">Defence</h3>
             <div class="form-check">
@@ -75,20 +76,20 @@
                 </label>
             </div>
         </div>
-        <div class="col-3">
-            <img src="Images/imageRight.png" class="img-fluid border float-right" alt="Responsive image">
+        <div class="col-4">
+            <img src="Images/knight_right.jpg" class="img-fluid border float-right" alt="Responsive image">
         </div>
     </div>
     <div class="row">
         <div class="col-3">
-            <h5>HP: <span id="userHp">${userHp}</span></h5>
+            <h4>HP: <span id="userHp">${userHp}</span></h4>
 
         </div>
         <div class="col-6" align="center">
             <button type="button" class="btn btn-lg btn-danger" id="endTurn">End Turn</button>
         </div>
         <div class="col-3">
-            <h5 class="float-right">HP: <span id="oppHp">${oppHp}</span></h5>
+            <h4 class="float-right">HP: <span id="oppHp">${oppHp}</span></h4>
         </div>
     </div>
     <div class="row">
