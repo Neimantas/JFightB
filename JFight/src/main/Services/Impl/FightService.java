@@ -4,6 +4,7 @@ import main.Models.BL.TurnOutcomeModel;
 import main.Models.BL.TurnStatsModel;
 import main.Models.CONS.BodyParts;
 import main.Models.DTO.DBqueryDTO;
+import main.Models.DTO.FightDTO;
 import main.Services.IFightService;
 import main.Services.IHigherService;
 
@@ -26,32 +27,37 @@ public class FightService implements IFightService {
         return dto;
     }
 
-    public TurnOutcomeModel calculateTurnOutcome(TurnStatsModel model) {
-        DBqueryDTO dto = sendFightStats(model);
+    public TurnOutcomeModel calculateTurnOutcome(TurnStatsModel userModel) {
+        FightDTO fightDTO = hs.getFightByUserId(userModel.userId);
+        // TODO fix the null part once we can
+        if (!fightDTO.isSuccess()) {
+            return  null;
+        }
+        userModel.fightId = fightDTO.getList().get(0).getFightId();
+        DBqueryDTO dto = sendFightStats(userModel);
         // TODO fix the null part once we can
         if (!dto.isSuccess()) {
             return null;
         }
         // TODO handle timeout
-        dto = checkForOpponent(model);
-        TurnStatsModel user = model;
+        dto = checkForOpponent(userModel);
         TurnStatsModel opponent = new TurnStatsModel();
         List<List<Object>> list = dto.getList();
         for (int i = 0; i < list.size(); i++) {
             List<Object> columns = list.get(i);
-            if (Integer.parseInt(columns.get(1).toString()) != model.userId) {
+            if (Integer.parseInt(columns.get(1).toString()) != userModel.userId) {
                 opponent.fightId = Integer.parseInt(columns.get(0).toString());
                 opponent.userId = Integer.parseInt(columns.get(1).toString());
-                opponent.att1 = BodyParts.valueOf(columns.get(0).toString().toUpperCase());
-                opponent.att2 = BodyParts.valueOf(columns.get(0).toString().toUpperCase());
-                opponent.def1 = BodyParts.valueOf(columns.get(0).toString().toUpperCase());
-                opponent.def2 = BodyParts.valueOf(columns.get(0).toString().toUpperCase());
-                opponent.hp = Integer.parseInt(columns.get(0).toString());
-                opponent.round = Integer.parseInt(columns.get(0).toString());
+                opponent.att1 = BodyParts.valueOf(columns.get(2).toString());
+                opponent.att2 = BodyParts.valueOf(columns.get(3).toString());
+                opponent.def1 = BodyParts.valueOf(columns.get(4).toString());
+                opponent.def2 = BodyParts.valueOf(columns.get(5).toString());
+                opponent.hp = Integer.parseInt(columns.get(6).toString());
+                opponent.round = Integer.parseInt(columns.get(7).toString());
                 break;
             }
         }
-        return calculateOutcome(user, opponent);
+        return calculateOutcome(userModel, opponent);
     }
 
     private TurnOutcomeModel calculateOutcome(TurnStatsModel user, TurnStatsModel opponent) {
@@ -73,6 +79,7 @@ public class FightService implements IFightService {
             attacksReceivedOpp++;
         model.oppHp = opponent.hp - (attacksReceivedOpp * damage);
         model.round = user.round + 1;
+        // TODO create FIGHT LOG
         return model;
     }
 }

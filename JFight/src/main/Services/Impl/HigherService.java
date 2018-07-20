@@ -1,19 +1,23 @@
 package main.Services.Impl;
 
 import main.Models.BL.TurnStatsModel;
+import main.Models.BL.User;
+import main.Models.DAL.FightDAL;
 import main.Models.DAL.ReadyToFightDAL;
 import main.Models.DAL.UserDAL;
 import main.Models.DTO.DBqueryDTO;
+import main.Models.DTO.FightDTO;
 import main.Models.DTO.ReadyToFightDTO;
 import main.Models.DTO.UserDTO;
 import main.Services.ICrud;
 import main.Services.IHigherService;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class HigherService implements IHigherService {
 
-    ICrud crud = new Crud();
+    private ICrud crud = new Crud();
 
     private ReadyToFightDTO createDals(String query) {
         DBqueryDTO dBqueryDTO = crud.read(query);
@@ -61,17 +65,12 @@ public class HigherService implements IHigherService {
 
     @Override
     public DBqueryDTO insertTurnStats(TurnStatsModel model) {
-        StringBuilder query = new StringBuilder();
-        query.append("INSERT INTO FightLog VALUES(")
-                .append(model.fightId).append(", ")
-                .append(model.userId).append(", ")
-                .append("'").append(model.att1).append("'").append(", ")
-                .append("'").append(model.att2).append("'").append(", ")
-                .append("'").append(model.def1).append("'").append(", ")
-                .append("'").append(model.def2).append("'").append(", ")
-                .append(model.hp).append(", ")
-                .append(model.round).append(")");
-        return crud.create(query.toString());
+        String query = "INSERT INTO FightLog VALUES(" +
+                    model.fightId + ", " + model.userId + ", '" +
+                    model.att1 + "', '" + model.att2 + "', '" +
+                    model.def1 + "', '" + model.def2 + "', " +
+                    model.hp + ", " + model.round + ")";
+        return crud.create(query);
     }
 
     @Override
@@ -88,5 +87,22 @@ public class HigherService implements IHigherService {
             return new DBqueryDTO(false, "Only one record found.", null);
         }
         return dto;
+    }
+
+    @Override
+    public FightDTO getFightByUserId(long userId) {
+        String query = "SELECT * FROM Fight WHERE UserId1 = " +
+                userId + " or UserId2 = " + userId;
+        DBqueryDTO dto = crud.read(query);
+        if (dto.isSuccess()) {
+            FightDAL fightDAL = new FightDAL();
+            List<Object> list = dto.getList().get(0);
+            fightDAL.setFightId(Long.parseLong(list.get(0).toString()));
+            fightDAL.setUserId1(Long.parseLong(list.get(1).toString()));
+            fightDAL.setUserId2(Long.parseLong(list.get(2).toString()));
+            fightDAL.setWinnerId(Long.parseLong(list.get(3).toString()));
+            return new FightDTO(true, "", Arrays.asList(fightDAL));
+        }
+        return new FightDTO(false, dto.getMessage(), null);
     }
 }

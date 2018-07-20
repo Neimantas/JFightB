@@ -2,6 +2,7 @@ package main.Controllers;
 
 import main.Models.BL.TurnOutcomeModel;
 import main.Models.BL.TurnStatsModel;
+import main.Models.CONS.BodyParts;
 import main.Services.Impl.FightService;
 
 import javax.servlet.ServletException;
@@ -26,11 +27,20 @@ public class FightServlet extends HttpServlet {
         String def2 = request.getParameter("def2");
         String hp = request.getParameter("userHp");
         String round = request.getParameter("round");
-
         String endTurn = request.getParameter("endTurn");
         if (endTurn != null) {
             FightService fs = new FightService();
-            TurnOutcomeModel model = fs.calculateTurnOutcome(new TurnStatsModel());
+
+            TurnStatsModel turnStatsModel = new TurnStatsModel();
+            turnStatsModel.att1 = BodyParts.valueOf(att1);
+            turnStatsModel.att2 = BodyParts.valueOf(att2);
+            turnStatsModel.def1 = BodyParts.valueOf(def1);
+            turnStatsModel.def2 = BodyParts.valueOf(def2);
+            turnStatsModel.hp = Integer.parseInt(hp);
+            turnStatsModel.userId = Integer.parseInt(userId);
+            turnStatsModel.round = Integer.parseInt(round);
+            TurnOutcomeModel model = fs.calculateTurnOutcome(turnStatsModel);
+
             request.setAttribute("round", model.round);
             request.setAttribute("userHp", model.userHp);
             request.setAttribute("oppHp", model.oppHp);
