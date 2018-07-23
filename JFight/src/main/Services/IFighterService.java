@@ -5,8 +5,13 @@ import main.Models.DTO.ReadyToFightDTO;
 
 public interface IFighterService {
     ReadyToFightDTO getAllReadyToFightUsersId();
-    ReadyToFightDTO getReadyToFightUserById(String id);
-    DBqueryDTO moveUserToReadyTable(String id);
-    DBqueryDTO moveUserToChallenge(String id);
+
+    DBqueryDTO addUserToReadyTable(long id);
+
+    DBqueryDTO addUserSToChallenge(long id, long id2);
+
+    DBqueryDTO moveUsersToFight(long id, long id2);
+
+    DBqueryDTO checkIfCalanged(long id);
 
 }

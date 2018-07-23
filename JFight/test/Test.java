@@ -23,10 +23,10 @@ public class Test {
     }
 
     @org.junit.Test
-    public void EnumReadyStatus() {
-        assertTrue(FighterStatus.SUCCESS.Status()!=null);
-        System.out.println(FighterStatus.SUCCESS.Status());
-        System.out.println(FighterStatus.FAILURE.Status());
+    public void ReadyStatus() {
+        assertTrue(FighterStatus.SUCCESS!=null);
+        System.out.println(FighterStatus.SUCCESS);
+        System.out.println(FighterStatus.FAILURE);
     }
 
     @org.junit.Test

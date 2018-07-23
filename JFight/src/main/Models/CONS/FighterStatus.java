@@ -1,16 +1,11 @@
 package main.Models.CONS;
 
-public enum FighterStatus {
-    SUCCESS("You are ready to fight!"),
-    FAILURE("Unexpected error, please try again");
+public final class FighterStatus {
+    public static String SUCCESSREADYTOFIGHT = "You are ready to fight!";
+    public static String FAILURETOINSERTREADYTOFIGHT = "Failure to insert into readyToFight table";
+    public static String SUCCESSFULLYADDTOCHALANGE = "Successfully added challenge";
+    public static String FAILURETOINSERTCHALLENGE = "Failure to insert into challenge table";
+    public static String SUCCESS = "Success";
+    public static String FAILURE = "Failure";
 
-    private String _message;
-
-    FighterStatus(String message) {
-        _message = message;
-    }
-
-    public String Status() {
-        return _message;
-    }
 }
