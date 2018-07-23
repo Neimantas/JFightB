@@ -4,6 +4,8 @@ public class ReadyToFightDAL {
 
     private long UserId;
 
+    private String UserName;
+
     public long getUserId() {
         return UserId;
     }
@@ -12,5 +14,11 @@ public class ReadyToFightDAL {
         UserId = userId;
     }
 
+    public String getUserName() {
+        return UserName;
+    }
 
+    public void setUserName(String userName) {
+        UserName = userName;
+    }
 }
