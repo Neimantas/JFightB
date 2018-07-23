@@ -1,7 +1,7 @@
 package main.Services.Impl;
 
 import main.Models.BL.TurnStatsModel;
-import main.Models.BL.User;
+import main.Models.DAL.ChallengeDAL;
 import main.Models.DAL.FightDAL;
 import main.Models.DAL.ReadyToFightDAL;
 import main.Models.DAL.UserDAL;
@@ -11,6 +11,7 @@ import main.Models.DTO.ReadyToFightDTO;
 import main.Models.DTO.UserDTO;
 import main.Services.ICrud;
 import main.Services.IHigherService;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -104,5 +105,24 @@ public class HigherService implements IHigherService {
             return new FightDTO(true, "", Arrays.asList(fightDAL));
         }
         return new FightDTO(false, dto.getMessage(), null);
+    }
+
+    public DBqueryDTO insertIntoChallenge(ChallengeDAL dal) {
+        String query = "INSERT INTO Challenge ('UserId', 'OpponentId') Values("
+                    + dal.userId + ", " + dal.OpponentId + ")";
+        return crud.create(query);
+    }
+
+    public DBqueryDTO checkIfTwoUsersChallengedEachOther(long userId) {
+        String query = "DECLARE @tempTable table(id int, userId int, oppId int) " +
+                        "INSERT INTO @tempTable SELECT * FROM Challenge WHERE OpponentId = " + userId +
+                        " SELECT ch.userId, ch.oppId " + "FROM Challenge ch " +
+                        "INNER JOIN @tempTable tt on tt.userId = ch.oppId WHERE ch.userId = " + userId;
+        return crud.read(query);
+    }
+
+    public DBqueryDTO getAllIssuedChallengesByUserId(long userId) {
+        String query = "SELECT * FROM Challenge WHERE userId = " + userId + " OR opponentId = " + userId;
+        return crud.read(query);
     }
 }

@@ -1,25 +1,9 @@
 var userName = document.getElementById("userName");
-
-// function sendChallenge(opp) {
-//     location.href = "/challenge?userName=" + userName.value() + "&oppName=" + opp.value();
-// }
-
 var challengedPlayers = document.getElementsByName("player"),
     challengeBtn = document.getElementById("challengeBtn");
 
-// function checkMarked(cb) {
-//     var cBoxes = document.getElementsByName(cb.name);
-//     var limit = 2;
-//     var count = 0;
-//     for (var i = 0; i < cBoxes.length; i++) {
-//         if (cBoxes.item(i).checked === true) {
-//             count++;
-//         }
-//     }
-//     if (count > limit) {
-//         cb.checked = false;
-//         alert("Please check only two boxes for Attack/Defence");
-//     }
+// function sendChallenge(opp) {
+//     location.href = "/challenge?userName=" + userName.value() + "&oppName=" + opp.value();
 // }
 
 challengeBtn.onclick = function() {
@@ -31,16 +15,11 @@ challengeBtn.onclick = function() {
         }
     }
     if (url !== "") {
-        location.href = "?challengedPlayers=" + url;
+        location.href = "/challenge?challengedPlayers=" + url;
     } else {
         alert("Please select at least one player to challenge!");
     }
 };
-
-
-
-
-
 
 
 // window.setInterval(function(){

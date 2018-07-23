@@ -1,7 +1,7 @@
 package main.Services;
 
 import main.Models.BL.TurnStatsModel;
-import main.Models.BL.User;
+import main.Models.DAL.ChallengeDAL;
 import main.Models.DTO.DBqueryDTO;
 import main.Models.DTO.FightDTO;
 import main.Models.DTO.ReadyToFightDTO;
@@ -14,4 +14,7 @@ public interface IHigherService {
     DBqueryDTO insertTurnStats(TurnStatsModel model);
     DBqueryDTO checkForFightRecordByIdAndRound(TurnStatsModel model);
     FightDTO getFightByUserId(long userId);
+    DBqueryDTO insertIntoChallenge(ChallengeDAL dal);
+    DBqueryDTO checkIfTwoUsersChallengedEachOther(long userId);
+    DBqueryDTO getAllIssuedChallengesByUserId(long userId);
 }
