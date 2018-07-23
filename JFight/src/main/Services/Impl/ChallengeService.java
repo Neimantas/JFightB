@@ -4,6 +4,7 @@ import main.Models.BL.IssuedChallenges;
 import main.Models.DAL.ChallengeDAL;
 import main.Models.DTO.ChallengeDTO;
 import main.Models.DTO.DBqueryDTO;
+import main.Models.DTO.FightDTO;
 import main.Models.DTO.IssuedChallengesDTO;
 import main.Services.IChallenge;
 import main.Services.IHigherService;
@@ -15,9 +16,10 @@ import java.util.List;
 public class ChallengeService implements IChallenge {
 
     private IHigherService hs = new HigherService();
+    private DBqueryDTO dto;
 
     public DBqueryDTO submitChallenges(List<ChallengeDAL> dalList) {
-        DBqueryDTO dto = new DBqueryDTO(false, null, null);
+        dto = new DBqueryDTO(false, null, null);
         for (ChallengeDAL dal : dalList) {
             dto = hs.insertIntoChallenge(dal);
         }
@@ -25,7 +27,7 @@ public class ChallengeService implements IChallenge {
     }
 
     public ChallengeDTO checkForMatches(long userId){
-        DBqueryDTO dto = hs.checkIfTwoUsersChallengedEachOther(userId);
+        dto = hs.checkIfTwoUsersChallengedEachOther(userId);
         if (!dto.isSuccess()) {
             return new ChallengeDTO(false, "No matches found", null);
         }
@@ -36,8 +38,20 @@ public class ChallengeService implements IChallenge {
         return new ChallengeDTO(true, "", dalList);
     }
 
+    public FightDTO createFightForMatchedPlayers(ChallengeDAL dal) {
+        dto = hs.moveUsersToFight(dal);
+        FightDTO fightDTO;
+        if (dto.isSuccess()) {
+            fightDTO = hs.getFightByUserId(dal.userId);
+            if (fightDTO.isSuccess()) {
+                return fightDTO;
+            }
+        }
+        return new FightDTO(false, "", null);
+    }
+
     public IssuedChallengesDTO getIssuedChallenges(long userId) {
-        DBqueryDTO dto = hs.getAllIssuedChallengesByUserId(userId);
+        dto = hs.getAllIssuedChallengesByUserId(userId);
         if (!dto.isSuccess()) {
             return null;
         }

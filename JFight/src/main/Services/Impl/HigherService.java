@@ -1,7 +1,7 @@
 package main.Services.Impl;
 
-import main.Models.CONS.FighterStatus;
 import main.Models.BL.TurnStatsModel;
+import main.Models.CONS.FighterStatus;
 import main.Models.DAL.ChallengeDAL;
 import main.Models.DAL.FightDAL;
 import main.Models.DAL.ReadyToFightDAL;
@@ -14,7 +14,6 @@ import main.Services.ICrud;
 import main.Services.IHigherService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class HigherService implements IHigherService {
@@ -69,23 +68,23 @@ public class HigherService implements IHigherService {
         }
     }
 
-    @Override
-    public DBqueryDTO addUsersToChallenge(long UserId, long OpponentId) {
-        String query = "insert into Challenge\n" +
-                "select " + UserId + " , " + OpponentId;
-        DBqueryDTO dto = crud.create(query);
-        if (dto.isSuccess()) {
-            dto.setMessage(FighterStatus.SUCCESSFULLYADDTOCHALANGE);
-            return dto;
-        } else dto.setMessage(FighterStatus.FAILURETOINSERTCHALLENGE);
-        return dto;
-    }
+//    @Override
+//    public DBqueryDTO addUsersToChallenge(long UserId, long OpponentId) {
+//        String query = "insert into Challenge\n" +
+//                "select " + UserId + " , " + OpponentId;
+//        DBqueryDTO dto = crud.create(query);
+//        if (dto.isSuccess()) {
+//            dto.setMessage(FighterStatus.SUCCESSFULLYADDTOCHALANGE);
+//            return dto;
+//        } else dto.setMessage(FighterStatus.FAILURETOINSERTCHALLENGE);
+//        return dto;
+//    }
 
     @Override
-    public DBqueryDTO moveUsersToFight(long Fighter1, long Fighter2) {
-        String query = "insert into Fight (UserId1, UserId2) select" + Fighter1 + " , " + Fighter2;
-        String queryDeleteFromChallenge = "delete from Challenge where (UserId=" + Fighter1 + " or UserId=" + Fighter2 + ")";
-        String QueryDeleteFromReadyToFigth = "delete from ReadyToFight where UserId = " + Fighter1 + " and UserId = " + Fighter2 + ";";
+    public DBqueryDTO moveUsersToFight(ChallengeDAL dal) {
+        String query = "INSERT INTO Fight (UserId1, UserId2) VALUES(" + dal.userId + " , " + dal.OpponentId + ")";
+        String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + dal.userId + " OR UserId = " + dal.OpponentId + ")";
+        String QueryDeleteFromReadyToFigth = "DELETE FROM ReadyToFight WHERE UserId = " + dal.userId + " OR UserId = " + dal.OpponentId;
         DBqueryDTO dto = crud.delete(queryDeleteFromChallenge);
         if (dto.isSuccess()) {
             dto = crud.delete(QueryDeleteFromReadyToFigth);
@@ -159,12 +158,13 @@ public class HigherService implements IHigherService {
         DBqueryDTO dto = crud.read(query);
         if (dto.isSuccess()) {
             FightDAL fightDAL = new FightDAL();
-            List<Object> list = dto.getList().get(0);
-            fightDAL.setFightId(Long.parseLong(list.get(0).toString()));
-            fightDAL.setUserId1(Long.parseLong(list.get(1).toString()));
-            fightDAL.setUserId2(Long.parseLong(list.get(2).toString()));
-            fightDAL.setWinnerId(Long.parseLong(list.get(3).toString()));
-            return new FightDTO(true, "", Arrays.asList(fightDAL));
+            fightDAL.setFightId(Long.parseLong(dto.getList().get(0).get(0).toString()));
+            fightDAL.setUserId1(Long.parseLong(dto.getList().get(0).get(1).toString()));
+            fightDAL.setUserId2(Long.parseLong(dto.getList().get(0).get(2).toString()));
+            // commented out since it might cause issues or we need to check if the WinnerId is actually not null
+            // it might be null if this method is used before a winner is set (and it is used in such a case)
+//            fightDAL.setWinnerId(Long.parseLong(dto.getList().get(0).get(3).toString()));
+            return new FightDTO(true, "", fightDAL);
         }
         return new FightDTO(false, dto.getMessage(), null);
     }

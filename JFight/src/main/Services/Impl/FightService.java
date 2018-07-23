@@ -33,7 +33,7 @@ public class FightService implements IFightService {
         if (!fightDTO.isSuccess()) {
             return  null;
         }
-        userModel.fightId = fightDTO.getList().get(0).getFightId();
+        userModel.fightId = fightDTO.getDal().getFightId();
         DBqueryDTO dto = sendFightStats(userModel);
         // TODO fix the null part once we can
         if (!dto.isSuccess()) {
