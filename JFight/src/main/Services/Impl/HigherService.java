@@ -24,9 +24,8 @@ public class HigherService implements IHigherService {
             List<ReadyToFightDAL> listReadyToFightDal = new ArrayList<>();
             for (int i = 0; i < lists.size(); i++) {
                 ReadyToFightDAL dal = new ReadyToFightDAL();
-                for (int j = 0; j < lists.get(i).size(); j++) {
-                    dal.setUserId(Long.parseLong(lists.get(i).get(j).toString()));
-                }
+                dal.setUserId(Long.parseLong(lists.get(i).get(0).toString()));
+                dal.setUserName(lists.get(i).get(1).toString());
                 listReadyToFightDal.add(dal);
             }
             return new ReadyToFightDTO(true, null, listReadyToFightDal);
@@ -35,16 +34,9 @@ public class HigherService implements IHigherService {
 
     @Override
     public ReadyToFightDTO getAllReadyToFightUsersId(long UserId) {
-
         String query = "select * from ReadyToFight WHERE UserId <> " + UserId;
         return createDals(query);
     }
-
-//    @Override
-//    public ReadyToFightDTO checkIfChallenged(long UserId) {
-//        String query = "SELECT * from Challenge where Challenger1 = " + UserId;
-//        return createDals(query);
-//    }
 
     @Override
     public ReadyToFightDTO addWinner(long WinnerId) {
@@ -181,13 +173,7 @@ public class HigherService implements IHigherService {
         String query = "SELECT * FROM Challenge WHERE userId = " + userId + " OR opponentId = " + userId;
         return crud.read(query);
     }
-// TODO implement this method so that first time stats would be used from this LOG instead of HTML which can be edited.
-//    public DBqueryDTO insertZeroRoundFightLog(FightLogDAL dal) {
-//        String query = "INSERT INTO FightLog VALUES(" + dal.getHp();
-//        return crud.create();
-//    }
     public DBqueryDTO checkIfFightIsAlreadyCreated(long userId) {
-        // we check if there is a Fight whose creation time is no greater than 10 seconds from current time
         String query = "SELECT * FROM Fight WHERE UserId1 = " + userId + " OR UserId2 = " + userId;
         return crud.read(query);
     }

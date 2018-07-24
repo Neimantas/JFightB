@@ -1,10 +1,7 @@
 package main.Controllers;
 
 import main.Models.DAL.ChallengeDAL;
-import main.Models.DTO.ChallengeDTO;
-import main.Models.DTO.DBqueryDTO;
-import main.Models.DTO.FightDTO;
-import main.Models.DTO.IssuedChallengesDTO;
+import main.Models.DTO.*;
 import main.Services.Impl.ChallengeService;
 
 import javax.servlet.ServletException;
@@ -61,8 +58,11 @@ public class ChallengeServlet extends HttpServlet {
                     }
                 }
             }
-            // User has entered the challenge page for the first time, return him all players Ready to Fight
-
+            // User has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
+            ReadyToFightDTO readyDTO = cs.getAllReadyToFightUsersId(userId);
+            request.setAttribute("readyToFightList", readyDTO.getList());
+        } else {
+            response.sendRedirect("/login");
         }
 
         request.getRequestDispatcher("/challenge.jsp").forward(request, response);

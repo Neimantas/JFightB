@@ -3,10 +3,7 @@ package main.Services.Impl;
 import main.Models.BL.IssuedChallenges;
 import main.Models.DAL.ChallengeDAL;
 import main.Models.DAL.FightDAL;
-import main.Models.DTO.ChallengeDTO;
-import main.Models.DTO.DBqueryDTO;
-import main.Models.DTO.FightDTO;
-import main.Models.DTO.IssuedChallengesDTO;
+import main.Models.DTO.*;
 import main.Services.IChallenge;
 import main.Services.IHigherService;
 
@@ -96,5 +93,9 @@ public class ChallengeService implements IChallenge {
             }
         }
         return new IssuedChallengesDTO(true, "", new IssuedChallenges(userId, null, userChallenges, oppChallenges));
+    }
+
+    public ReadyToFightDTO getAllReadyToFightUsersId(long userId) {
+        return hs.getAllReadyToFightUsersId(userId);
     }
 }

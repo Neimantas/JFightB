@@ -37,11 +37,11 @@
                 </tr>
                 <tr>
                     <th scope="row">1</th>
-                    <td>Bob</td>
+                    <td>USERNAME + USER ID</td>
                     <td><span id="fightStatus2"></span></td>
                     <td>
                         <div class="form-check">
-                            <input type="checkbox" value="Bob" name="player">
+                            <input type="checkbox" value="UserID" name="player">
                         </div>
                     </td>
                 </tr>
