@@ -1,6 +1,7 @@
 package main.Services.Impl;
 
 import main.Models.BL.IssuedChallenges;
+import main.Models.BL.TurnStatsModel;
 import main.Models.DAL.ChallengeDAL;
 import main.Models.DAL.FightDAL;
 import main.Models.DTO.*;
@@ -44,7 +45,7 @@ public class ChallengeService implements IChallenge {
         if (dto.isSuccess()) {
             if (dto.getList().size() > 0) {
                 FightDAL dal = new FightDAL();
-                dal.setFightId(Long.parseLong(dto.getList().get(0).toString()));
+                dal.setFightId(dto.getList().get(0).toString());
                 dal.setUserId1(Long.parseLong(dto.getList().get(1).toString()));
                 dal.setUserId2(Long.parseLong(dto.getList().get(2).toString()));
                 return new FightDTO(true, "Fight has been already created.", dal);
@@ -58,22 +59,48 @@ public class ChallengeService implements IChallenge {
 
     public FightDTO createFightForMatchedPlayers(ChallengeDAL dal) {
         FightDTO fightDTO = wasNewFightAlreadyCreated(dal.userId);
+
         if (fightDTO.isSuccess()) {
+
             if (fightDTO.getMessage().equals("No fight found")) {
                 dto = hs.moveUsersToFight(dal);
+
                 if (dto.isSuccess()) {
                     fightDTO = hs.getFightByUserId(dal.userId);
+                    insertZeroRoundStatsBeforeFight(fightDTO);
                     if (fightDTO.isSuccess()) {
                         return fightDTO;
                     }
+
                 }
+
             } else {
-                // There is already a Fight created for this user, since there already is a record that is not older than 10s
                 return fightDTO;
             }
         }
         // DB crash
         return new FightDTO(false, dto.getMessage(), null);
+    }
+
+    private void insertZeroRoundStatsBeforeFight(FightDTO fightDTO) {
+        // TODO we need to get stats from user Character table (not implemented)
+        int hp = 10;
+        int round = 0; //stats before fight
+        TurnStatsModel turnStatsModel1 = new TurnStatsModel();
+        turnStatsModel1.userId = hs.getUserNameByUserId(fightDTO.getDal().getUserId1()).getUser().getUserId();
+        turnStatsModel1.fightId = fightDTO.getDal().getFightId();
+        turnStatsModel1.round = round;
+        turnStatsModel1.hp = hp;
+
+        TurnStatsModel turnStatsModel2 = new TurnStatsModel();
+        turnStatsModel2.userId = hs.getUserNameByUserId(fightDTO.getDal().getUserId2()).getUser().getUserId();
+        turnStatsModel2.fightId = fightDTO.getDal().getFightId();
+        turnStatsModel1.round = round;
+        turnStatsModel1.hp = hp;
+
+        // TODO must be check for success
+        hs.insertTurnStats(turnStatsModel1);
+        hs.insertTurnStats(turnStatsModel2);
     }
 
     public IssuedChallengesDTO getIssuedChallenges(long userId) {

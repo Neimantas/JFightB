@@ -3,6 +3,7 @@ package main.Services.Impl;
 import main.Models.BL.TurnOutcomeModel;
 import main.Models.BL.TurnStatsModel;
 import main.Models.CONS.BodyParts;
+import main.Models.CONS.FightStatus;
 import main.Models.DTO.DBqueryDTO;
 import main.Models.DTO.FightDTO;
 import main.Services.IFightService;
@@ -46,8 +47,9 @@ public class FightService implements IFightService {
         for (int i = 0; i < list.size(); i++) {
             List<Object> columns = list.get(i);
             if (Integer.parseInt(columns.get(1).toString()) != userModel.userId) {
-                opponent.fightId = Integer.parseInt(columns.get(0).toString());
+                opponent.fightId = columns.get(0).toString();
                 opponent.userId = Integer.parseInt(columns.get(1).toString());
+                opponent.userName = userModel.oppName;
                 opponent.att1 = BodyParts.valueOf(columns.get(2).toString());
                 opponent.att2 = BodyParts.valueOf(columns.get(3).toString());
                 opponent.def1 = BodyParts.valueOf(columns.get(4).toString());
@@ -57,7 +59,11 @@ public class FightService implements IFightService {
                 break;
             }
         }
-        return calculateOutcome(userModel, opponent);
+        TurnOutcomeModel model = calculateOutcome(userModel, opponent);
+        model.userName = userModel.userName;
+        model.oppName = userModel.oppName;
+        // TODO if model.fightStatus != FIGHTING -> hs.insertWinner()...
+        return model;
     }
 
     private TurnOutcomeModel calculateOutcome(TurnStatsModel user, TurnStatsModel opponent) {
@@ -66,7 +72,7 @@ public class FightService implements IFightService {
         int damage = 1;
         // User outcome
         int attacksReceivedUser = 0;
-        if (user.def1 != opponent.att1 && user.def2 != opponent.att1 )
+        if (user.def1 != opponent.att1 && user.def2 != opponent.att1)
             attacksReceivedUser++;
         else if (user.def1 != opponent.att2 && user.def2 != opponent.att2)
             attacksReceivedUser++;
@@ -80,6 +86,41 @@ public class FightService implements IFightService {
         model.oppHp = opponent.hp - (attacksReceivedOpp * damage);
         model.round = user.round + 1;
         // TODO create FIGHT LOG
+        if (model.userHp <= 0 && model.oppHp <= 0){
+            model.fightStatus = FightStatus.DRAW;
+        } else if (model.userHp <= 0) {
+            model.fightStatus = FightStatus.LOSER;
+        } else if (model.oppHp <= 0) {
+            model.fightStatus = FightStatus.WINNER;
+        } else {
+            model.fightStatus = FightStatus.FIGHTING;
+        }
         return model;
+    }
+
+    public TurnOutcomeModel getStatsForRound(TurnStatsModel userModel) {
+        DBqueryDTO dto = hs.checkForFightRecordByIdAndRound(userModel);
+        if (dto.isSuccess()) {
+            TurnOutcomeModel outcome = new TurnOutcomeModel();
+            List<Object> columns;
+            for (int i = 0; i < dto.getList().size(); i++) {
+                columns = dto.getList().get(i);
+                if (Integer.parseInt(columns.get(1).toString()) == userModel.userId) {
+                    outcome.fightId = columns.get(0).toString();
+                    outcome.userHp = Integer.parseInt(columns.get(6).toString());
+                    outcome.round = 0;
+                    outcome.userId = userModel.userId;
+                } else {
+                    outcome.oppId = Integer.parseInt(columns.get(1).toString());
+                    outcome.oppHp = Integer.parseInt(columns.get(6).toString());
+                }
+            }
+            // TODO you know the drill....
+            outcome.userName = hs.getUserNameByUserId(outcome.userId).getUser().getUserName();
+            outcome.oppName = hs.getUserNameByUserId(outcome.oppId).getUser().getUserName();
+            return outcome;
+        }
+        // TODO return not null...
+        return null;
     }
 }
