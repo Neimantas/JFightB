@@ -61,10 +61,11 @@ public class ChallengeServlet extends HttpServlet {
             // User has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
             ReadyToFightDTO readyDTO = cs.getAllReadyToFightUsersId(userId);
             request.setAttribute("readyToFightList", readyDTO.getList());
+            readyDTO.getList().forEach(el -> System.out.println(el.getUserName()));
         } else {
             response.sendRedirect("/login");
         }
-
+        System.out.println("GOT HERE");
         request.getRequestDispatcher("/challenge.jsp").forward(request, response);
     }
 }

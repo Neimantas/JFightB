@@ -80,10 +80,9 @@ public class HigherService implements IHigherService {
 
         UUID uuid = UUID.randomUUID();
         String randomUUIDString = uuid.toString();
-        String query = "INSERT INTO Fight (UserId1, UserId2) VALUES(" + dal.userId + " , " + dal.opponentId + ")";
         String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + dal.userId + " OR UserId = " + dal.opponentId + ")";
         String QueryDeleteFromReadyToFigth = "DELETE FROM ReadyToFight WHERE UserId = " + dal.userId + " OR UserId = " + dal.opponentId;
-        String query = "insert into Fight (FightId, UserId1, UserId2) select" + randomUUIDString + " , " + Fighter1 + " , " + Fighter2;
+        String query = "insert into Fight (FightId, UserId1, UserId2) select" + randomUUIDString + " , " + dal.userId + " , " + dal.opponentId;
         DBqueryDTO dto = crud.delete(queryDeleteFromChallenge);
         if (dto.isSuccess()) {
             dto = crud.delete(QueryDeleteFromReadyToFigth);
@@ -99,7 +98,6 @@ public class HigherService implements IHigherService {
             return dto;
         }
     }
-
 
     @Override
     public UserDTO getUserByEmailAndPass(String email, String password) {

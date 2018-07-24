@@ -20,50 +20,55 @@
                 <tr>
                     <th scope="col">#</th>
                     <th scope="col">Player</th>
-                    <th scope="col">Status</th>
+                    <th scope="col">ID</th>
                     <th scope="col">Challenge him</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>Mark</td>
-                    <td><span id="fightStatus1"></span></td>
-                    <td>
-                        <div class="form-check">
-                            <input type="checkbox" value="Mark" name="player">
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>USERNAME + USER ID</td>
-                    <td><span id="fightStatus2"></span></td>
-                    <td>
-                        <div class="form-check">
-                            <input type="checkbox" value="UserID" name="player">
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th scope="row">1</th>
-                    <td>UberFighter</td>
-                    <td><span id="fightStatus3"></span></td>
-                    <td>
-                        <div class="form-check">
-                            <input type="checkbox" value="UberFighter" name="player">
-                        </div>
-                    </td>
-                </tr><tr>
-                    <th scope="row">1</th>
-                    <td>MotherLover69</td>
-                    <td><span id="fightStatus4"></span></td>
-                    <td>
-                        <div class="form-check">
-                            <input type="checkbox" value="MotherLover69" name="player">
-                        </div>
-                    </td>
-                </tr>
+                <h1>${readyToFightList.get(0).getUserName()}</h1>
+                <h2>${1+5}</h2>
+                <h3><%=18+22%></h3>
+                <java:forEach var="user" items="${readyToFightList}">
+                    <tr>
+                        <th scope="row">1</th>
+                        <td>${user.getUserName()}</td>
+                        <td>${user.getUserId()}</td>
+                        <td>
+                            <div class="form-check">
+                                <input type="checkbox" value="${user.getUserId()}" name="player">
+                            </div>
+                        </td>
+                    </tr>
+                </java:forEach>
+                <!--<tr>-->
+                    <!--<th scope="row">1</th>-->
+                    <!--<td>USERNAME + USER ID</td>-->
+                    <!--<td><span id="fightStatus2"></span></td>-->
+                    <!--<td>-->
+                        <!--<div class="form-check">-->
+                            <!--<input type="checkbox" value="UserID" name="player">-->
+                        <!--</div>-->
+                    <!--</td>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                    <!--<th scope="row">1</th>-->
+                    <!--<td>UberFighter</td>-->
+                    <!--<td><span id="fightStatus3"></span></td>-->
+                    <!--<td>-->
+                    <!--<div class="form-check">-->
+                    <!--<input type="checkbox" value="UberFighter" name="player">-->
+                    <!--</div>-->
+                    <!--</td>-->
+                    <!--</tr><tr>-->
+                    <!--<th scope="row">1</th>-->
+                    <!--<td>MotherLover69</td>-->
+                    <!--<td><span id="fightStatus4"></span></td>-->
+                    <!--<td>-->
+                    <!--<div class="form-check">-->
+                    <!--<input type="checkbox" value="MotherLover69" name="player">-->
+                    <!--</div>-->
+                    <!--</td>-->
+                    <!--</tr>-->
                 </tbody>
             </table>
             <button type="button" class="btn btn-lg btn-danger float-right" id="challengeBtn">Challenge</button>
