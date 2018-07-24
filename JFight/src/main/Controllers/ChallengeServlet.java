@@ -42,9 +42,8 @@ public class ChallengeServlet extends HttpServlet {
                         FightDTO fightDTO = cs.createFightForMatchedPlayers(challengeDTO.getList().get(0));
 
                         if (fightDTO.isSuccess()) {
-                            long oppId = fightDTO.getDal().getUserId1() != userId ? fightDTO.getDal().getUserId1() : fightDTO.getDal().getUserId2();
                             response.sendRedirect("/fight?fightId=" + fightDTO.getDal().getFightId() +
-                                                    "&userId=" + userId + "&oppId=" + oppId);
+                                                    "&userId=" + userId + "&round=0");
                         }
 
                     } else {

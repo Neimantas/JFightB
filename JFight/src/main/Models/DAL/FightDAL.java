@@ -2,15 +2,15 @@ package main.Models.DAL;
 
 public class FightDAL {
 
-    private long FightId;
+    private String FightId;
     private long UserId1;
     private long UserId2;
 
-    public long getFightId() {
+    public String getFightId() {
         return FightId;
     }
 
-    public void setFightId(long fightId) {
+    public void setFightId(String fightId) {
         FightId = fightId;
     }
 

@@ -3,8 +3,11 @@ package main.Models.BL;
 import main.Models.CONS.BodyParts;
 
 public class TurnStatsModel {
-    public long fightId;
+    public String fightId;
+    public String userName;
     public long userId;
+    public String oppName;
+    public long oppId;
     public BodyParts att1;
     public BodyParts att2;
     public BodyParts def1;
