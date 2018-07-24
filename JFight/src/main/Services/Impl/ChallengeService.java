@@ -28,26 +28,51 @@ public class ChallengeService implements IChallenge {
 
     public ChallengeDTO checkForMatches(long userId){
         dto = hs.checkIfTwoUsersChallengedEachOther(userId);
-        if (!dto.isSuccess()) {
-            return new ChallengeDTO(false, "No matches found", null);
+        if (dto.isSuccess()) {
+            if (dto.getList().size() > 0) {
+                List<Object> list = dto.getList().get(0);
+                List<ChallengeDAL> dalList = Arrays.asList(new ChallengeDAL(Long.parseLong(list.get(0).toString()),
+                        Long.parseLong(list.get(1).toString()),
+                        Long.parseLong(list.get(2).toString())));
+                return new ChallengeDTO(true, "", dalList);
+            }
+            return new ChallengeDTO(false, "No matches found.", null);
         }
-        List<Object> list = dto.getList().get(0);
-        List<ChallengeDAL> dalList = Arrays.asList(new ChallengeDAL(Long.parseLong(list.get(0).toString()),
-                                Long.parseLong(list.get(1).toString()),
-                                Long.parseLong(list.get(2).toString())));
-        return new ChallengeDTO(true, "", dalList);
+        return new ChallengeDTO(false, dto.getMessage(), null);
+    }
+
+    private DBqueryDTO wasNewFightAlreadyCreated(long userId) {
+        dto = hs.checkIfFightIsAlreadyCreated(userId);
+        if (dto.isSuccess()) {
+            if (dto.getList().size() > 0) {
+                dto.setMessage("Fight record newer than 10s was found.");
+                return dto;
+            } else {
+                dto.setMessage("There is no Fight record that is no older than 10s.");
+                return dto;
+            }
+        }
+        return dto;
     }
 
     public FightDTO createFightForMatchedPlayers(ChallengeDAL dal) {
-        dto = hs.moveUsersToFight(dal);
-        FightDTO fightDTO;
+        dto = wasNewFightAlreadyCreated(dal.userId);
         if (dto.isSuccess()) {
-            fightDTO = hs.getFightByUserId(dal.userId);
-            if (fightDTO.isSuccess()) {
-                return fightDTO;
+            if (dto.getMessage().equals("There is no Fight record that is no older than 10s.")) {
+                dto = hs.moveUsersToFight(dal);
+                FightDTO fightDTO;
+                if (dto.isSuccess()) {
+                    fightDTO = hs.getFightByUserId(dal.userId);
+                    if (fightDTO.isSuccess()) {
+                        return fightDTO;
+                    }
+                }
+            } else {
+                // There is already a Fight created for this user, since there already is a record that is not older than 10s
+                return hs.getFightByUserId(dal.userId);
             }
         }
-        return new FightDTO(false, "", null);
+        return new FightDTO(false, dto.getMessage(), null);
     }
 
     public IssuedChallengesDTO getIssuedChallenges(long userId) {

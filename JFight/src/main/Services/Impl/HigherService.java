@@ -2,10 +2,7 @@ package main.Services.Impl;
 
 import main.Models.BL.TurnStatsModel;
 import main.Models.CONS.FighterStatus;
-import main.Models.DAL.ChallengeDAL;
-import main.Models.DAL.FightDAL;
-import main.Models.DAL.ReadyToFightDAL;
-import main.Models.DAL.UserDAL;
+import main.Models.DAL.*;
 import main.Models.DTO.DBqueryDTO;
 import main.Models.DTO.FightDTO;
 import main.Models.DTO.ReadyToFightDTO;
@@ -69,9 +66,9 @@ public class HigherService implements IHigherService {
     }
 
 //    @Override
-//    public DBqueryDTO addUsersToChallenge(long UserId, long OpponentId) {
+//    public DBqueryDTO addUsersToChallenge(long UserId, long opponentId) {
 //        String query = "insert into Challenge\n" +
-//                "select " + UserId + " , " + OpponentId;
+//                "select " + UserId + " , " + opponentId;
 //        DBqueryDTO dto = crud.create(query);
 //        if (dto.isSuccess()) {
 //            dto.setMessage(FighterStatus.SUCCESSFULLYADDTOCHALANGE);
@@ -82,9 +79,9 @@ public class HigherService implements IHigherService {
 
     @Override
     public DBqueryDTO moveUsersToFight(ChallengeDAL dal) {
-        String query = "INSERT INTO Fight (UserId1, UserId2) VALUES(" + dal.userId + " , " + dal.OpponentId + ")";
-        String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + dal.userId + " OR UserId = " + dal.OpponentId + ")";
-        String QueryDeleteFromReadyToFigth = "DELETE FROM ReadyToFight WHERE UserId = " + dal.userId + " OR UserId = " + dal.OpponentId;
+        String query = "INSERT INTO Fight (UserId1, UserId2) VALUES(" + dal.userId + " , " + dal.opponentId + ")";
+        String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + dal.userId + " OR UserId = " + dal.opponentId + ")";
+        String QueryDeleteFromReadyToFigth = "DELETE FROM ReadyToFight WHERE UserId = " + dal.userId + " OR UserId = " + dal.opponentId;
         DBqueryDTO dto = crud.delete(queryDeleteFromChallenge);
         if (dto.isSuccess()) {
             dto = crud.delete(QueryDeleteFromReadyToFigth);
@@ -170,14 +167,14 @@ public class HigherService implements IHigherService {
     }
 
     public DBqueryDTO insertIntoChallenge(ChallengeDAL dal) {
-        String query = "INSERT INTO Challenge ('UserId', 'OpponentId') Values("
-                    + dal.userId + ", " + dal.OpponentId + ")";
+        String query = "INSERT INTO Challenge ('UserId', 'opponentId') Values("
+                    + dal.userId + ", " + dal.opponentId + ")";
         return crud.create(query);
     }
 
     public DBqueryDTO checkIfTwoUsersChallengedEachOther(long userId) {
         String query = "DECLARE @tempTable table(id int, userId int, oppId int) " +
-                        "INSERT INTO @tempTable SELECT * FROM Challenge WHERE OpponentId = " + userId +
+                        "INSERT INTO @tempTable SELECT * FROM Challenge WHERE opponentId = " + userId +
                         " SELECT ch.userId, ch.oppId " + "FROM Challenge ch " +
                         "INNER JOIN @tempTable tt on tt.userId = ch.oppId WHERE ch.userId = " + userId;
         return crud.read(query);
@@ -185,6 +182,17 @@ public class HigherService implements IHigherService {
 
     public DBqueryDTO getAllIssuedChallengesByUserId(long userId) {
         String query = "SELECT * FROM Challenge WHERE userId = " + userId + " OR opponentId = " + userId;
+        return crud.read(query);
+    }
+// TODO implement this method so that first time stats would be used from this LOG instead of HTML which can be edited.
+//    public DBqueryDTO insertZeroRoundFightLog(FightLogDAL dal) {
+//        String query = "INSERT INTO FightLog VALUES(" + dal.getHp();
+//        return crud.create();
+//    }
+    public DBqueryDTO checkIfFightIsAlreadyCreated(long userId) {
+        // we check if there is a Fight whose creation time is no greater than 10 seconds from current time
+        String query = "SELECT * FROM Fight WHERE DATEDIFF(second, laikas, GETDATE()) < 10 AND (UserId1 = " + userId +
+                        " OR UserId2 = " + userId + ")";
         return crud.read(query);
     }
 }
