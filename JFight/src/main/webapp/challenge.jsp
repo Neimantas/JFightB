@@ -25,12 +25,9 @@
                 </tr>
                 </thead>
                 <tbody>
-                <h1>${readyToFightList.get(0).getUserName()}</h1>
-                <h2>${1+5}</h2>
-                <h3><%=18+22%></h3>
-                <java:forEach var="user" items="${readyToFightList}">
+                <java:forEach begin="1" varStatus="count" var="user" items="${readyToFightList}">
                     <tr>
-                        <th scope="row">1</th>
+                        <th scope="row"><java:out value="${count.count}"/></th>
                         <td>${user.getUserName()}</td>
                         <td>${user.getUserId()}</td>
                         <td>
@@ -40,42 +37,12 @@
                         </td>
                     </tr>
                 </java:forEach>
-                <!--<tr>-->
-                    <!--<th scope="row">1</th>-->
-                    <!--<td>USERNAME + USER ID</td>-->
-                    <!--<td><span id="fightStatus2"></span></td>-->
-                    <!--<td>-->
-                        <!--<div class="form-check">-->
-                            <!--<input type="checkbox" value="UserID" name="player">-->
-                        <!--</div>-->
-                    <!--</td>-->
-                <!--</tr>-->
-                <!--<tr>-->
-                    <!--<th scope="row">1</th>-->
-                    <!--<td>UberFighter</td>-->
-                    <!--<td><span id="fightStatus3"></span></td>-->
-                    <!--<td>-->
-                    <!--<div class="form-check">-->
-                    <!--<input type="checkbox" value="UberFighter" name="player">-->
-                    <!--</div>-->
-                    <!--</td>-->
-                    <!--</tr><tr>-->
-                    <!--<th scope="row">1</th>-->
-                    <!--<td>MotherLover69</td>-->
-                    <!--<td><span id="fightStatus4"></span></td>-->
-                    <!--<td>-->
-                    <!--<div class="form-check">-->
-                    <!--<input type="checkbox" value="MotherLover69" name="player">-->
-                    <!--</div>-->
-                    <!--</td>-->
-                    <!--</tr>-->
                 </tbody>
             </table>
             <button type="button" class="btn btn-lg btn-danger float-right" id="challengeBtn">Challenge</button>
         </div>
     </div>
 </div>
-
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
