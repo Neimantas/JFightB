@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: lalalala
-  Date: 7/4/2018
-  Time: 14:19
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -18,9 +11,9 @@
         <form action="/login" method="post">
             <h3 class="text-center">Login</h3>
             <div class="form-group">
-                <label for="nameLogin">Name</label>
-                <input type="text" class="form-control" id="nameLogin" aria-describedby="emailHelp"
-                       placeholder="Enter name" name="username" pattern="[A-Za-z\d]{3,50}" required title="Enter at least 3 characters">
+                <label for="emailLogin">Email</label>
+                <input type="Email" class="form-control" id="emailLogin" aria-describedby="emailHelp"
+                       placeholder="Enter Email" name="email">
             </div>
             <div class="form-group">
                 <label for="passwordLogin">Password</label>

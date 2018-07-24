@@ -19,9 +19,19 @@ public interface IHigherService {
     DBqueryDTO getAllIssuedChallengesByUserId(long userId);
     //    ReadyToFightDTO getReadyToFightUserById(String query);
     DBqueryDTO addUserToReadyToFightTable(long id);
+<<<<<<< HEAD
+
+    DBqueryDTO addUsersToChallenge(long UserName, long  UserName2); // prisides i chalanga 2
+
+    DBqueryDTO moveUsersToFight(long UserName, long  UserName2);  // user 1 ir use 2 i fight ir trinam is ready to fight ir trinam is chalange
+
+//    ReadyToFightDTO checkIfChallenged(long id); //chalange 1 if exist
+
+=======
 //    DBqueryDTO addUsersToChallenge(long UserName, long  UserName2); // prisides i chalanga 2
     DBqueryDTO moveUsersToFight(ChallengeDAL dal);  // user 1 ir use 2 i fight ir trinam is ready to fight ir trinam is chalange
 //    ReadyToFightDTO checkIfChallenged(long id); //chalange 1 if exist
+>>>>>>> DEV
     ReadyToFightDTO addWinner (long id);
     DBqueryDTO checkIfFightIsAlreadyCreated(long userId);
 }

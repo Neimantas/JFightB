@@ -1,13 +1,13 @@
 package main.Models.DTO;
 
-import main.Models.BL.User;
+import main.Models.DAL.UserDAL;
 
 public class UserDTO {
     private boolean Success;
     private String Message;
-    private User User;
+    private UserDAL User;
 
-    public UserDTO(boolean success, String message, User user) {
+    public UserDTO(boolean success, String message, UserDAL user) {
         Success = success;
         Message = message;
         User = user;
@@ -29,11 +29,11 @@ public class UserDTO {
         Message = message;
     }
 
-    public User getUser() {
+    public UserDAL getUser() {
         return User;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserDAL user) {
         User = user;
     }
 }

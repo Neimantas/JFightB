@@ -1,16 +1,16 @@
 package main.Models.DTO;
 
-import main.Models.DAL.FightDAL;
+import main.Models.BL.User;
 
-public class FightDTO {
+public class LoginDTO {
     private boolean Success;
     private String Message;
-    private FightDAL dal;
+    private User User;
 
-    public FightDTO(boolean success, String message, FightDAL dal) {
+    public LoginDTO(boolean success, String message, User user) {
         Success = success;
         Message = message;
-        this.dal = dal;
+        User = user;
     }
 
     public boolean isSuccess() {
@@ -29,11 +29,11 @@ public class FightDTO {
         Message = message;
     }
 
-    public FightDAL getDal() {
-        return dal;
+    public User getUser() {
+        return User;
     }
 
-    public void setDal(FightDAL dal) {
-        this.dal = dal;
+    public void setUser(User user) {
+        User = user;
     }
 }

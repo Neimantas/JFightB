@@ -2,7 +2,6 @@ import main.Models.CONS.FighterStatus;
 import main.Services.IDataBase;
 import main.Services.Impl.Crud;
 import main.Services.Impl.DataBase;
-import main.Services.Impl.FighterService;
 
 import static org.junit.Assert.assertTrue;
 
@@ -29,11 +28,11 @@ public class Test {
         System.out.println(FighterStatus.FAILURE);
     }
 
-    @org.junit.Test
-    public void getAllReadyToFightUsersId() {
-        FighterService fighterService = new FighterService();
-        assertTrue(fighterService.getAllReadyToFightUsersId()!=null);
-    }
+//    @org.junit.Test
+//    public void getAllReadyToFightUsersId() {
+//        FighterService fighterService = new FighterService();
+//        assertTrue(fighterService.getAllReadyToFightUsersId()!=null);
+//    }
 
 //    @org.junit.Test
 //    public void getReadyToFightUserById() {

@@ -1,16 +1,18 @@
 package main.Models.DTO;
 
-import main.Models.DAL.FightDAL;
+import main.Models.DAL.ChallengeDAL;
 
-public class FightDTO {
+import java.util.List;
+
+public class ChallengeDTO {
     private boolean Success;
     private String Message;
-    private FightDAL dal;
+    private List<ChallengeDAL> List;
 
-    public FightDTO(boolean success, String message, FightDAL dal) {
+    public ChallengeDTO(boolean success, String message, java.util.List<ChallengeDAL> list) {
         Success = success;
         Message = message;
-        this.dal = dal;
+        List = list;
     }
 
     public boolean isSuccess() {
@@ -29,11 +31,11 @@ public class FightDTO {
         Message = message;
     }
 
-    public FightDAL getDal() {
-        return dal;
+    public java.util.List<ChallengeDAL> getList() {
+        return List;
     }
 
-    public void setDal(FightDAL dal) {
-        this.dal = dal;
+    public void setList(java.util.List<ChallengeDAL> list) {
+        List = list;
     }
 }

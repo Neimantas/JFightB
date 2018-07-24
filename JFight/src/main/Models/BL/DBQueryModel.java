@@ -1,4 +1,4 @@
-package main.Models;
+package main.Models.BL;
 
 public class DBQueryModel {
 

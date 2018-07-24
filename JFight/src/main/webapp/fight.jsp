@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: lalalala
-  Date: 7/11/2018
-  Time: 12:27
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -14,25 +7,26 @@
     <link rel="stylesheet" href="Styles/styles.css">
 </head>
 <body>
+<%--<img src="Images/cirith_toronath__gondolin__by_dracarysdrekkar7-dc44ctg.jpg">--%>
 <div class="container">
     <div class="row">
-        <div class="col-3"><h3>Username1</h3></div>
-        <div class="col-6"></div>
-        <div class="col-3"><h3 class="float-right">Username2</h3></div>
+        <div class="col-3"><h2>${userName}</h2></div>
+        <div class="col-6"><h3 align="center">${round} <span id="roundTime"></span></h3></div>
+        <div class="col-3"><h2 class="float-right">${oppName}</h2></div>
     </div>
     <div class="row">
-        <div class="col-3">
-            <img src="Images/imageLeft.png" class="img-fluid border" alt="Responsive image">
+        <div class="col-4">
+            <img src="Images/knight_left.jpg" class="img-fluid border" alt="Responsive image">
         </div>
-        <div class="col-3">
-            <h3 align="center">Attack</h3>
-            <br>
+        <div class="col-2">
             <div class="float-right text-right">
+                <br>
+                <h3 class="form-check">Attack</h3>
                 <div class="form-check">
                     <label class="form-check-label text-right" for="attHead">
                         Head
                     </label>
-                    <input type="checkbox" value="" name="attackBox" onclick="checkMarked(this)" id="attHead">
+                    <input type="checkbox" value="" id="attHead" name="attackBox" onclick="checkMarked(this)">
                 </div>
                 <div class="form-check">
                     <label class="form-check-label" for="attHands">
@@ -54,9 +48,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-3">
-            <h3 align="center">Defence</h3>
+        <div class="col-2">
             <br>
+            <h3 class="form-check">Defence</h3>
             <div class="form-check">
                 <input type="checkbox" value="" id="defHead" name="defBox" onclick="checkMarked(this)">
                 <label class="form-check-label" for="defHead">
@@ -82,20 +76,26 @@
                 </label>
             </div>
         </div>
-        <div class="col-3">
-            <img src="Images/imageRight.png" class="img-fluid border float-right" alt="Responsive image">
+        <div class="col-4">
+            <img src="Images/knight_right.jpg" class="img-fluid border float-right" alt="Responsive image">
         </div>
     </div>
     <div class="row">
         <div class="col-3">
-            <h5>HP: <span id="user1Hp">10</span></h5>
+            <h4>HP: <span id="userHp">${userHp}</span></h4>
 
         </div>
         <div class="col-6" align="center">
             <button type="button" class="btn btn-lg btn-danger" id="endTurn">End Turn</button>
         </div>
         <div class="col-3">
-            <h5 class="float-right">HP: <span id="user2Hp">10</span></h5>
+            <h4 class="float-right">HP: <span id="oppHp">${oppHp}</span></h4>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col" align="center">
+            <br>
+            <p>${log}</p>
         </div>
     </div>
 </div>

@@ -1,5 +1,9 @@
 package main.Controllers;
 
+import main.Models.DTO.LoginDTO;
+import main.Services.ILoginService;
+import main.Services.Impl.LoginService;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,18 +15,28 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String username = request.getParameter("username");
+
+        ILoginService loginService = new LoginService();
+        String emailLogin = request.getParameter("emailLogin");
         String password = request.getParameter("password");
         String regName = request.getParameter("regName");
         String regPass = request.getParameter("regPass");
         String confPass= request.getParameter("confPass");
         String regEmail = request.getParameter("regEmail");
 
-        if (username != null && password != null) {
+//        if (username != null && password != null) {
+//            request.getRequestDispatcher("/news.jsp").forward(request, response);
+//        }
+        LoginDTO login = loginService.find(emailLogin, password);
+        if(login.isSuccess()) {
+            String name = login.getUser().getName();
+            request.setAttribute("username", name);
             request.getRequestDispatcher("/news.jsp").forward(request, response);
         }
-//        User user = userService.find(username, password);
-//
+        // TODO if the email || pass is invalid send an error to Front end
+
+
+
 //        if (user != null) {
 //            request.getSession().setAttribute("user", user);
 //            response.sendRedirect("news");
