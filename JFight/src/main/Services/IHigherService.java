@@ -13,7 +13,7 @@ public interface IHigherService {
 
     DBqueryDTO moveUsersToFight(long UserName, long  UserName2);  // user 1 ir use 2 i fight ir trinam is ready to fight ir trinam is chalange
 
-    ReadyToFightDTO checkIfChallenged(long id); //chalange 1 if exist
+//    ReadyToFightDTO checkIfChallenged(long id); //chalange 1 if exist
 
     ReadyToFightDTO addWinner (long id);
 

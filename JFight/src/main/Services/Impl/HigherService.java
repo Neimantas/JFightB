@@ -9,6 +9,7 @@ import main.Services.IHigherService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class HigherService implements IHigherService {
 
@@ -77,7 +78,10 @@ public class HigherService implements IHigherService {
 
     @Override
     public DBqueryDTO moveUsersToFight(long Fighter1, long Fighter2) {
-        String query = "insert into Fight (UserId1, UserId2) select" + Fighter1 + " , " + Fighter2;
+
+        UUID uuid = UUID.randomUUID();
+        String randomUUIDString = uuid.toString();
+        String query = "insert into Fight (FightId, UserId1, UserId2) select" + randomUUIDString + " , " + Fighter1 + " , " + Fighter2;
         String queryDeleteFromChallenge = "delete from Challenge where (UserId=" + Fighter1 + " or UserId=" + Fighter2 + ")";
         String QueryDeleteFromReadyToFigth = "delete from ReadyToFight where UserId = " + Fighter1 + " and UserId = " + Fighter2 + ";";
         DBqueryDTO dto = crud.delete(queryDeleteFromChallenge);
