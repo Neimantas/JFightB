@@ -41,10 +41,13 @@ public class ChallengeServlet extends HttpServlet {
                     ChallengeDTO challengeDTO = cs.checkForMatches(userId);
 
                     if (challengeDTO.isSuccess()) {
+
                         FightDTO fightDTO = cs.createFightForMatchedPlayers(challengeDTO.getList().get(0));
 
                         if (fightDTO.isSuccess()) {
-                            response.sendRedirect("/fight?fightId=" + fightDTO.getDal().getFightId());
+                            long oppId = fightDTO.getDal().getUserId1() != userId ? fightDTO.getDal().getUserId1() : fightDTO.getDal().getUserId2();
+                            response.sendRedirect("/fight?fightId=" + fightDTO.getDal().getFightId() +
+                                                    "&userId=" + userId + "&oppId=" + oppId);
                         }
 
                     } else {
@@ -59,9 +62,8 @@ public class ChallengeServlet extends HttpServlet {
                 }
             }
             // User has entered the challenge page for the first time, return him all players Ready to Fight
+
         }
-
-
 
         request.getRequestDispatcher("/challenge.jsp").forward(request, response);
     }

@@ -77,6 +77,11 @@ public class HigherService implements IHigherService {
 //        return dto;
 //    }
 
+    //    public ReadyToFightDTO getReadyToFightUserById(String id) {
+//        String query = "select *\n" + "from ReadyToFight WHERE id = " + id;
+//        return createDals(query);
+//    }
+
     @Override
     public DBqueryDTO moveUsersToFight(ChallengeDAL dal) {
         String query = "INSERT INTO Fight (UserId1, UserId2) VALUES(" + dal.userId + " , " + dal.opponentId + ")";
@@ -98,11 +103,6 @@ public class HigherService implements IHigherService {
         }
     }
 
-
-//    public ReadyToFightDTO getReadyToFightUserById(String id) {
-//        String query = "select *\n" + "from ReadyToFight WHERE id = " + id;
-//        return createDals(query);
-//    }
 
     @Override
     public UserDTO getUserByEmailAndPass(String email, String password) {
@@ -158,9 +158,6 @@ public class HigherService implements IHigherService {
             fightDAL.setFightId(Long.parseLong(dto.getList().get(0).get(0).toString()));
             fightDAL.setUserId1(Long.parseLong(dto.getList().get(0).get(1).toString()));
             fightDAL.setUserId2(Long.parseLong(dto.getList().get(0).get(2).toString()));
-            // commented out since it might cause issues or we need to check if the WinnerId is actually not null
-            // it might be null if this method is used before a winner is set (and it is used in such a case)
-//            fightDAL.setWinnerId(Long.parseLong(dto.getList().get(0).get(3).toString()));
             return new FightDTO(true, "", fightDAL);
         }
         return new FightDTO(false, dto.getMessage(), null);
@@ -191,8 +188,7 @@ public class HigherService implements IHigherService {
 //    }
     public DBqueryDTO checkIfFightIsAlreadyCreated(long userId) {
         // we check if there is a Fight whose creation time is no greater than 10 seconds from current time
-        String query = "SELECT * FROM Fight WHERE DATEDIFF(second, laikas, GETDATE()) < 10 AND (UserId1 = " + userId +
-                        " OR UserId2 = " + userId + ")";
+        String query = "SELECT * FROM Fight WHERE UserId1 = " + userId + " OR UserId2 = " + userId;
         return crud.read(query);
     }
 }

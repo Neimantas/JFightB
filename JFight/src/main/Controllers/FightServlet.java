@@ -20,6 +20,8 @@ public class FightServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        // fightId -> GetPlayerStats (Hp and so on).
+        // in the future we need to get stats from USER EXTENDED
         String userId = request.getParameter("userId");
         String att1 = request.getParameter("att1");
         String att2 = request.getParameter("att2");

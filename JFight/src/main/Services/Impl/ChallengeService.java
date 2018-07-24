@@ -2,6 +2,7 @@ package main.Services.Impl;
 
 import main.Models.BL.IssuedChallenges;
 import main.Models.DAL.ChallengeDAL;
+import main.Models.DAL.FightDAL;
 import main.Models.DTO.ChallengeDTO;
 import main.Models.DTO.DBqueryDTO;
 import main.Models.DTO.FightDTO;
@@ -41,26 +42,28 @@ public class ChallengeService implements IChallenge {
         return new ChallengeDTO(false, dto.getMessage(), null);
     }
 
-    private DBqueryDTO wasNewFightAlreadyCreated(long userId) {
+    private FightDTO wasNewFightAlreadyCreated(long userId) {
         dto = hs.checkIfFightIsAlreadyCreated(userId);
         if (dto.isSuccess()) {
             if (dto.getList().size() > 0) {
-                dto.setMessage("Fight record newer than 10s was found.");
-                return dto;
+                FightDAL dal = new FightDAL();
+                dal.setFightId(Long.parseLong(dto.getList().get(0).toString()));
+                dal.setUserId1(Long.parseLong(dto.getList().get(1).toString()));
+                dal.setUserId2(Long.parseLong(dto.getList().get(2).toString()));
+                return new FightDTO(true, "Fight has been already created.", dal);
             } else {
-                dto.setMessage("There is no Fight record that is no older than 10s.");
-                return dto;
+                return new FightDTO(true, "No fight found", null);
             }
         }
-        return dto;
+        // DB has crashed
+        return new FightDTO(false, dto.getMessage(), null);
     }
 
     public FightDTO createFightForMatchedPlayers(ChallengeDAL dal) {
-        dto = wasNewFightAlreadyCreated(dal.userId);
-        if (dto.isSuccess()) {
-            if (dto.getMessage().equals("There is no Fight record that is no older than 10s.")) {
+        FightDTO fightDTO = wasNewFightAlreadyCreated(dal.userId);
+        if (fightDTO.isSuccess()) {
+            if (fightDTO.getMessage().equals("No fight found")) {
                 dto = hs.moveUsersToFight(dal);
-                FightDTO fightDTO;
                 if (dto.isSuccess()) {
                     fightDTO = hs.getFightByUserId(dal.userId);
                     if (fightDTO.isSuccess()) {
@@ -69,9 +72,10 @@ public class ChallengeService implements IChallenge {
                 }
             } else {
                 // There is already a Fight created for this user, since there already is a record that is not older than 10s
-                return hs.getFightByUserId(dal.userId);
+                return fightDTO;
             }
         }
+        // DB crash
         return new FightDTO(false, dto.getMessage(), null);
     }
 
