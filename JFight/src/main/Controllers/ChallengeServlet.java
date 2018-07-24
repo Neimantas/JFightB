@@ -23,13 +23,15 @@ public class ChallengeServlet extends HttpServlet {
 
         if (request.getParameterMap().size() > 0 && request.getParameter("userId") != null) {
             long userId = Long.parseLong(request.getParameter("userId"));
+            request.setAttribute("userId", userId);
             List<ChallengeDAL> dalList = new ArrayList<>();
             ChallengeService cs = new ChallengeService();
+            cs.addPlayerToReadyToFight(userId);
 
             if (request.getParameter("challengedPlayers") != null) {
                 String[] split = request.getParameter("challengedPlayers").split("#");
                 for (String s : split) {
-                    dalList.add(new ChallengeDAL(0, userId, Long.parseLong(s)));
+                    dalList.add(new ChallengeDAL(userId, Long.parseLong(s)));
                 }
 
                 DBqueryDTO dbDTO = cs.submitChallenges(dalList);
@@ -59,10 +61,14 @@ public class ChallengeServlet extends HttpServlet {
             }
             // User has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
             ReadyToFightDTO readyDTO = cs.getAllReadyToFightUsersId(userId);
-            request.setAttribute("readyToFightList", readyDTO.getList());
-            readyDTO.getList().forEach(el -> System.out.println(el.getUserName()));
+            if (readyDTO.getList().size() > 0) {
+                request.setAttribute("readyToFightList", readyDTO.getList());
+                readyDTO.getList().forEach(el -> System.out.println(el.getUserName()));
+            }
         } else {
+            System.out.println("SHOULD REDIRECT HERE!");
             response.sendRedirect("/login");
+            return;
         }
         System.out.println("GOT HERE");
         request.getRequestDispatcher("/challenge.jsp").forward(request, response);

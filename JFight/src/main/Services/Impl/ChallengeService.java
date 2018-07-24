@@ -30,9 +30,9 @@ public class ChallengeService implements IChallenge {
         if (dto.isSuccess()) {
             if (dto.getList().size() > 0) {
                 List<Object> list = dto.getList().get(0);
-                List<ChallengeDAL> dalList = Arrays.asList(new ChallengeDAL(Long.parseLong(list.get(0).toString()),
-                        Long.parseLong(list.get(1).toString()),
-                        Long.parseLong(list.get(2).toString())));
+                List<ChallengeDAL> dalList = Arrays.asList(new ChallengeDAL(
+                        Long.parseLong(list.get(0).toString()),
+                        Long.parseLong(list.get(1).toString())));
                 return new ChallengeDTO(true, "", dalList);
             }
             return new ChallengeDTO(false, "No matches found.", null);
@@ -124,5 +124,15 @@ public class ChallengeService implements IChallenge {
 
     public ReadyToFightDTO getAllReadyToFightUsersId(long userId) {
         return hs.getAllReadyToFightUsersId(userId);
+    }
+
+    public DBqueryDTO addPlayerToReadyToFight(long userId) {
+        // Check if user is already in ReadyToFight table
+        dto = hs.checkIfUserIsAlreadyInReadyToFightTable(userId);
+        if (dto.isSuccess() && dto.getList().size() > 0) {
+            return dto;
+        }
+        // TODO as usual....
+        return hs.addUserToReadyToFightTable(userId);
     }
 }

@@ -59,7 +59,7 @@ public class HigherService implements IHigherService {
         String randomUUIDString = uuid.toString();
         String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + dal.userId + " OR UserId = " + dal.opponentId + ")";
         String QueryDeleteFromReadyToFigth = "DELETE FROM ReadyToFight WHERE UserId = " + dal.userId + " OR UserId = " + dal.opponentId;
-        String query = "insert into Fight (FightId, UserId1, UserId2) select" + randomUUIDString + " , " + dal.userId + " , " + dal.opponentId;
+        String query = "insert into Fight (FightId, UserId1, UserId2) select '" + randomUUIDString + "', " + dal.userId + ", " + dal.opponentId;
         DBqueryDTO dto = crud.delete(queryDeleteFromChallenge);
         if (dto.isSuccess()) {
             dto = crud.delete(QueryDeleteFromReadyToFigth);
@@ -136,16 +136,16 @@ public class HigherService implements IHigherService {
     }
 
     public DBqueryDTO insertIntoChallenge(ChallengeDAL dal) {
-        String query = "INSERT INTO Challenge ('UserId', 'opponentId') Values("
+        String query = "INSERT INTO Challenge Values("
                     + dal.userId + ", " + dal.opponentId + ")";
         return crud.create(query);
     }
 
     public DBqueryDTO checkIfTwoUsersChallengedEachOther(long userId) {
-        String query = "DECLARE @tempTable table(id int, userId int, oppId int) " +
-                        "INSERT INTO @tempTable SELECT * FROM Challenge WHERE opponentId = " + userId +
-                        " SELECT ch.userId, ch.oppId " + "FROM Challenge ch " +
-                        "INNER JOIN @tempTable tt on tt.userId = ch.oppId WHERE ch.userId = " + userId;
+        String query = "DECLARE @tempTable table(userId int, oppId int) " +
+                        "INSERT INTO @tempTable SELECT * FROM Challenge WHERE OpponentId = " + userId +
+                        " SELECT ch.UserId, ch.OpponentId " + "FROM Challenge ch " +
+                        "INNER JOIN @tempTable tt on tt.userId = ch.OpponentId WHERE ch.UserId = " + userId;
         return crud.read(query);
     }
 
@@ -171,5 +171,10 @@ public class HigherService implements IHigherService {
             return new UserDTO(true, "", dal);
         }
         return new UserDTO(false, "User not found.", null);
+    }
+
+    public DBqueryDTO checkIfUserIsAlreadyInReadyToFightTable(long userId) {
+        String query = "SELECT * FROM ReadyToFight WHERE UserId = " + userId;
+        return crud.read(query);
     }
 }
