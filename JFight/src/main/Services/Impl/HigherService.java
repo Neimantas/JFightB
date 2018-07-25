@@ -57,19 +57,14 @@ public class HigherService implements IHigherService {
 
         UUID uuid = UUID.randomUUID();
         String randomUUIDString = uuid.toString();
-        String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + dal.userId + " OR UserId = " + dal.opponentId + ")";
-        String QueryDeleteFromReadyToFigth = "DELETE FROM ReadyToFight WHERE UserId = " + dal.userId + " OR UserId = " + dal.opponentId;
-        String query = "insert into Fight (FightId, UserId1, UserId2) select '" + randomUUIDString + "', " + dal.userId + ", " + dal.opponentId;
-        DBqueryDTO dto = crud.delete(queryDeleteFromChallenge);
+//        String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + dal.userId + " OR UserId = " + dal.opponentId + ")";
+        String queryDeleteFromReadyToFight = "DELETE FROM ReadyToFight WHERE UserId = " + dal.userId + " OR UserId = " + dal.opponentId;
+        String queryInsertToFight = "insert into Fight (FightId, UserId1, UserId2) select '" + randomUUIDString + "', " + dal.userId + ", " + dal.opponentId;
+//        DBqueryDTO dto = crud.delete(queryDeleteFromChallenge);
+        DBqueryDTO dto = crud.delete(queryDeleteFromReadyToFight);
         if (dto.isSuccess()) {
-            dto = crud.delete(QueryDeleteFromReadyToFigth);
-            if (dto.isSuccess()) {
-                dto = crud.create(query);
-                return dto;
-            } else {
-                dto.setMessage(FighterStatus.FAILURE);
-                return dto;
-            }
+            dto = crud.create(queryInsertToFight);
+            return dto;
         } else {
             dto.setMessage(FighterStatus.FAILURE);
             return dto;
@@ -176,5 +171,10 @@ public class HigherService implements IHigherService {
     public DBqueryDTO checkIfUserIsAlreadyInReadyToFightTable(long userId) {
         String query = "SELECT * FROM ReadyToFight WHERE UserId = " + userId;
         return crud.read(query);
+    }
+
+    public DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId) {
+        String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + userId + " OR UserId = " + opponentId + ")";
+        return crud.delete(queryDeleteFromChallenge);
     }
 }

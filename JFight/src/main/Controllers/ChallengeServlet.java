@@ -29,13 +29,6 @@ public class ChallengeServlet extends HttpServlet {
             cs.addPlayerToReadyToFight(userId);
 
             if (request.getParameter("challengedPlayers") != null) {
-                FightDTO userGotMatched = cs.checkIfUserGotMatched(userId);
-
-                if (userGotMatched.isSuccess()) {
-                    response.sendRedirect("/fight?fightId=" + userGotMatched.getDal().getFightId() +
-                            "&userId=" + userId + "&round=0");
-                    return;
-                }
 
                 String[] split = request.getParameter("challengedPlayers").split("#");
                 for (String s : split) {
@@ -45,11 +38,32 @@ public class ChallengeServlet extends HttpServlet {
                 DBqueryDTO dbDTO = cs.submitChallenges(dalList);
 
                 if (dbDTO.isSuccess()) {
+
+                    // WHILE Should be here - loop for 30s or until challenged player accepts the challenge
                     ChallengeDTO challengeDTO = cs.checkForMatches(userId);
+                    int count = 0;
+                    while(!challengeDTO.isSuccess() && count < 30) {
+                        challengeDTO = cs.checkForMatches(userId);
+                        System.out.println("USER - " + userId + " dto message -> " + challengeDTO.getMessage());
+                        try {
+                            Thread.sleep(1000);
+                            count++;
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                     if (challengeDTO.isSuccess()) {
 
-                        FightDTO fightDTO = cs.createFightForMatchedPlayers(challengeDTO.getList().get(0));
+                        FightDTO fightDTO = cs.checkIfUserGotMatched(userId);
+
+                        if (fightDTO.isSuccess()) {
+                            response.sendRedirect("/fight?fightId=" + fightDTO.getDal().getFightId() +
+                                    "&userId=" + userId + "&round=0");
+                            return;
+                        }
+
+                        fightDTO = cs.createFightForMatchedPlayers(challengeDTO.getList().get(0));
 
                         if (fightDTO.isSuccess()) {
                             response.sendRedirect("/fight?fightId=" + fightDTO.getDal().getFightId() +

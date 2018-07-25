@@ -21,4 +21,5 @@ public interface IHigherService {
     DBqueryDTO checkIfFightIsAlreadyCreated(long userId);
     UserDTO getUserNameByUserId(long userId);
     DBqueryDTO checkIfUserIsAlreadyInReadyToFightTable(long userId);
+    DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId);
 }

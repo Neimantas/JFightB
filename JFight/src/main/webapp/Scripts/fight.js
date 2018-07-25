@@ -4,7 +4,15 @@ var attBoxes = document.getElementsByName("attackBox"),
     userHp = document.getElementById("userHp").innerText,
     oppName = document.getElementById("oppName").innerText,
     oppHp = document.getElementById("oppHp").innerText,
-    endBtn = document.getElementById("endTurn");
+    endBtn = document.getElementById("endTurn"),
+    fightStatus = document.getElementById("fightStatus").value;
+
+window.onload = function () {
+    if (fightStatus !== "FIGHTING") {
+        console.log(fightStatus);
+        alert("YOU are the -->>> " + fightStatus);
+    }
+};
 
 function checkMarked(cb) {
     var cBoxes = document.getElementsByName(cb.name);
@@ -66,7 +74,7 @@ var x = setInterval(function() {
     }
 }, 1000);
 
-function getParam(parameter) {
+ function getParam(parameter) {
     var urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has(parameter)) {
         return urlParams.get(parameter);

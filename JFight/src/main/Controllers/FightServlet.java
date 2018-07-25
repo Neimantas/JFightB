@@ -27,6 +27,7 @@ public class FightServlet extends HttpServlet {
             String fightId = request.getParameter("fightId");
             TurnOutcomeModel turnOutcomeModel = new TurnOutcomeModel();
             String roundTest = request.getParameter("round");
+
             if (request.getParameter("round") != null && request.getParameter("round").equals("0")) {
                 // THIS IS 0 ROUND we need to get the stats for the first time
                 TurnStatsModel turnStatsModel = new TurnStatsModel();
