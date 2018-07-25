@@ -29,6 +29,14 @@ public class ChallengeServlet extends HttpServlet {
             cs.addPlayerToReadyToFight(userId);
 
             if (request.getParameter("challengedPlayers") != null) {
+                FightDTO userGotMatched = cs.checkIfUserGotMatched(userId);
+
+                if (userGotMatched.isSuccess()) {
+                    response.sendRedirect("/fight?fightId=" + userGotMatched.getDal().getFightId() +
+                            "&userId=" + userId + "&round=0");
+                    return;
+                }
+
                 String[] split = request.getParameter("challengedPlayers").split("#");
                 for (String s : split) {
                     dalList.add(new ChallengeDAL(userId, Long.parseLong(s)));

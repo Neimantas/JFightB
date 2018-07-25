@@ -11,7 +11,10 @@
 <div class="container">
     <div class="row">
         <div class="col-3"><h2 id="userName">${userName}</h2></div>
-        <div class="col-6"><h3 align="center" id="round">${round} <span id="roundTime"></span></h3></div>
+        <div class="col-6">
+            <h3 align="center" id="round">Round: ${round}</h3>
+            <h2 align="center">Turn ends in: <span id="roundTime">30s</span></h2>
+        </div>
         <div class="col-3"><h2 class="float-right" id="oppName">${oppName}</h2></div>
     </div>
     <div class="row">

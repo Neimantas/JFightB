@@ -13,7 +13,7 @@ import java.util.List;
 
 public class FightService implements IFightService {
 
-    IHigherService hs = new HigherService();
+    private IHigherService hs = new HigherService();
 
     private DBqueryDTO sendFightStats(TurnStatsModel model) {
         return hs.insertTurnStats(model);
@@ -24,6 +24,14 @@ public class FightService implements IFightService {
         // TODO we will need a timeout counter if we cannot get result or opponent leaves
         while (!dto.isSuccess()) {
             dto = hs.checkForFightRecordByIdAndRound(model);
+            if (!dto.isSuccess()) {
+                try {
+                    Thread.sleep(1000);
+                    System.out.println("Woke up after 1s sleep.");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return dto;
     }
@@ -68,24 +76,27 @@ public class FightService implements IFightService {
 
     private TurnOutcomeModel calculateOutcome(TurnStatsModel user, TurnStatsModel opponent) {
         TurnOutcomeModel model = new TurnOutcomeModel();
-        // TODO in the future damage variable will probably change
+        // TODO in the future damage variable will change depending on items/skills
         int damage = 1;
+
         // User outcome
         int attacksReceivedUser = 0;
-        if (user.def1 != opponent.att1 && user.def2 != opponent.att1)
-            attacksReceivedUser++;
-        else if (user.def1 != opponent.att2 && user.def2 != opponent.att2)
-            attacksReceivedUser++;
+        // Check if user defends against first Opponent attack
+        if (user.def1 != opponent.att1 && user.def2 != opponent.att1) attacksReceivedUser++;
+        // Check if user defends against second Opponent attack
+        if (user.def1 != opponent.att2 && user.def2 != opponent.att2) attacksReceivedUser++;
         model.userHp = user.hp - (attacksReceivedUser * damage);
+
         // Opponent outcome
         int attacksReceivedOpp = 0;
-        if (opponent.def1 != user.att1 && opponent.def2 != user.att1)
-            attacksReceivedOpp++;
-        else if (opponent.def1 != user.att2 && opponent.def2 != user.att2)
-            attacksReceivedOpp++;
+        if (opponent.def1 != user.att1 && opponent.def2 != user.att1) attacksReceivedOpp++;
+        if (opponent.def1 != user.att2 && opponent.def2 != user.att2) attacksReceivedOpp++;
+
         model.oppHp = opponent.hp - (attacksReceivedOpp * damage);
         model.round = user.round + 1;
+
         // TODO create FIGHT LOG
+
         if (model.userHp <= 0 && model.oppHp <= 0){
             model.fightStatus = FightStatus.DRAW;
         } else if (model.userHp <= 0) {

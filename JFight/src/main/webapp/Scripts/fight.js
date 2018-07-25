@@ -43,6 +43,7 @@ endBtn.onclick = function() {
     var round = parseInt(getParam("round")) + 1;
     url += "&fightId=" + fightId + "&userId=" + userId + "&round=" + round + "&userHp="
             + userHp + "&oppHp=" + oppHp + "&userName=" + userName + "&oppName=" + oppName;
+    endBtn.innerText = "Waiting for other player";
     location.href = "/fight?" + url;
 };
 
@@ -56,12 +57,12 @@ var x = setInterval(function() {
     var seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
     // Display the result in the element with id="demo"
-    document.getElementById("roundTime").innerHTML = seconds + "s";
+    document.getElementById("roundTime").innerText = seconds + "s";
 
     // If the count down is finished, write some text
     if (distance < 0) {
         clearInterval(x);
-        document.getElementById("roundTime").innerHTML = "Ends";
+        document.getElementById("roundTime").innerText = "Time has ran out.";
     }
 }, 1000);
 

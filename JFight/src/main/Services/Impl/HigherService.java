@@ -125,7 +125,7 @@ public class HigherService implements IHigherService {
         String query = "SELECT * FROM Fight WHERE UserId1 = " +
                 userId + " or UserId2 = " + userId;
         DBqueryDTO dto = crud.read(query);
-        if (dto.isSuccess()) {
+        if (dto.isSuccess() && dto.getList().size() > 0) {
             FightDAL fightDAL = new FightDAL();
             fightDAL.setFightId(dto.getList().get(0).get(0).toString());
             fightDAL.setUserId1(Long.parseLong(dto.getList().get(0).get(1).toString()));

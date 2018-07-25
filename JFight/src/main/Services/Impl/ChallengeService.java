@@ -137,4 +137,12 @@ public class ChallengeService implements IChallenge {
         // TODO as usual....
         return hs.addUserToReadyToFightTable(userId);
     }
+
+    public FightDTO checkIfUserGotMatched(long userId) {
+        FightDTO fightDTO = hs.getFightByUserId(userId);
+        if (fightDTO.isSuccess()) {
+            return fightDTO;
+        }
+        return new FightDTO(false, "No fight found for userId - " + userId, null);
+    }
 }
