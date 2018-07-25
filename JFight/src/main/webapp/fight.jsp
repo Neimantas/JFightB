@@ -10,9 +10,9 @@
 <%--<img src="Images/cirith_toronath__gondolin__by_dracarysdrekkar7-dc44ctg.jpg">--%>
 <div class="container">
     <div class="row">
-        <div class="col-3"><h2>${userName}</h2></div>
-        <div class="col-6"><h3 align="center">${round} <span id="roundTime"></span></h3></div>
-        <div class="col-3"><h2 class="float-right">${oppName}</h2></div>
+        <div class="col-3"><h2 id="userName">${userName}</h2></div>
+        <div class="col-6"><h3 align="center" id="round">${round} <span id="roundTime"></span></h3></div>
+        <div class="col-3"><h2 class="float-right" id="oppName">${oppName}</h2></div>
     </div>
     <div class="row">
         <div class="col-4">
@@ -23,28 +23,28 @@
                 <br>
                 <h3 class="form-check">Attack</h3>
                 <div class="form-check">
-                    <label class="form-check-label text-right" for="attHead">
+                    <label class="form-check-label text-right" for="attHEAD">
                         Head
                     </label>
-                    <input type="checkbox" value="" id="attHead" name="attackBox" onclick="checkMarked(this)">
+                    <input type="checkbox" value="" id="attHEAD" name="attackBox" onclick="checkMarked(this)">
                 </div>
                 <div class="form-check">
-                    <label class="form-check-label" for="attHands">
+                    <label class="form-check-label" for="attHANDS">
                         Hands
                     </label>
-                    <input type="checkbox" value="" id="attHands" name="attackBox" onclick="checkMarked(this)">
+                    <input type="checkbox" value="" id="attHANDS" name="attackBox" onclick="checkMarked(this)">
                 </div>
                 <div class="form-check">
-                    <label class="form-check-label" for="attBody">
+                    <label class="form-check-label" for="attBODY">
                         Body
                     </label>
-                    <input type="checkbox" value="" id="attBody" name="attackBox" onclick="checkMarked(this)">
+                    <input type="checkbox" value="" id="attBODY" name="attackBox" onclick="checkMarked(this)">
                 </div>
                 <div class="form-check">
-                    <label class="form-check-label" for="attLegs">
+                    <label class="form-check-label" for="attLEGS">
                         Legs
                     </label>
-                    <input type="checkbox" value="" id="attLegs" name="attackBox" onclick="checkMarked(this)">
+                    <input type="checkbox" value="" id="attLEGS" name="attackBox" onclick="checkMarked(this)">
                 </div>
             </div>
         </div>
@@ -52,26 +52,26 @@
             <br>
             <h3 class="form-check">Defence</h3>
             <div class="form-check">
-                <input type="checkbox" value="" id="defHead" name="defBox" onclick="checkMarked(this)">
-                <label class="form-check-label" for="defHead">
+                <input type="checkbox" value="" id="defHEAD" name="defBox" onclick="checkMarked(this)">
+                <label class="form-check-label" for="defHEAD">
                     Head
                 </label>
             </div>
             <div class="form-check">
-                <input type="checkbox" value="" id="defHands" name="defBox" onclick="checkMarked(this)">
-                <label class="form-check-label" for="defHands">
+                <input type="checkbox" value="" id="defHANDS" name="defBox" onclick="checkMarked(this)">
+                <label class="form-check-label" for="defHANDS">
                     Hands
                 </label>
             </div>
             <div class="form-check">
-                <input type="checkbox" value="" id="defBody" name="defBox" onclick="checkMarked(this)">
-                <label class="form-check-label" for="defBody">
+                <input type="checkbox" value="" id="defBODY" name="defBox" onclick="checkMarked(this)">
+                <label class="form-check-label" for="defBODY">
                     Body
                 </label>
             </div>
             <div class="form-check">
-                <input type="checkbox" value="" id="defLegs" name="defBox" onclick="checkMarked(this)">
-                <label class="form-check-label" for="defLegs">
+                <input type="checkbox" value="" id="defLEGS" name="defBox" onclick="checkMarked(this)">
+                <label class="form-check-label" for="defLEGS">
                     Legs
                 </label>
             </div>

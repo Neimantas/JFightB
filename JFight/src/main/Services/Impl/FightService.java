@@ -118,6 +118,7 @@ public class FightService implements IFightService {
             // TODO you know the drill....
             outcome.userName = hs.getUserNameByUserId(outcome.userId).getUser().getUserName();
             outcome.oppName = hs.getUserNameByUserId(outcome.oppId).getUser().getUserName();
+            outcome.fightStatus = FightStatus.FIGHTING;
             return outcome;
         }
         // TODO return not null...

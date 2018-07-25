@@ -11,6 +11,9 @@ public class ListenerServlet implements ServletContextListener {
     public void contextInitialized(ServletContextEvent sce) {
         ICrud crud = new Crud();
         crud.delete("DELETE FROM ReadyToFight");
+        crud.delete("DELETE FROM Challenge");
+        crud.delete("DELETE FROM Fight");
+        crud.delete("DELETE FROM FightLog");
         System.out.println("================================================================");
     }
 }

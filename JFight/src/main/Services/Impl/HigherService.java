@@ -96,8 +96,8 @@ public class HigherService implements IHigherService {
 
     @Override
     public DBqueryDTO insertTurnStats(TurnStatsModel model) {
-        String query = "INSERT INTO FightLog VALUES(" +
-                    model.fightId + ", " + model.userId + ", '" +
+        String query = "INSERT INTO FightLog VALUES('" +
+                    model.fightId + "', " + model.userId + ", '" +
                     model.att1 + "', '" + model.att2 + "', '" +
                     model.def1 + "', '" + model.def2 + "', " +
                     model.hp + ", " + model.round + ")";
@@ -107,8 +107,8 @@ public class HigherService implements IHigherService {
     @Override
     public DBqueryDTO checkForFightRecordByIdAndRound(TurnStatsModel model) {
         StringBuilder query = new StringBuilder();
-        query.append("SELECT * FROM FightLog WHERE FightId = ")
-                .append(model.fightId).append(" AND Round = ")
+        query.append("SELECT * FROM FightLog WHERE FightId = '")
+                .append(model.fightId).append("' AND Round = ")
                 .append(model.round);
         DBqueryDTO dto = crud.read(query.toString());
         if (!dto.isSuccess()) {
@@ -160,7 +160,7 @@ public class HigherService implements IHigherService {
     }
 
     public UserDTO getUserNameByUserId(long userId) {
-        String query = "SELECT UserName From User WHERE UserId = " + userId;
+        String query = "SELECT UserName From [User] WHERE UserId = " + userId;
         DBqueryDTO dto = crud.read(query);
         if (!dto.isSuccess()) {
             return new UserDTO(false, dto.getMessage(), null);

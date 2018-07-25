@@ -1,5 +1,9 @@
 var attBoxes = document.getElementsByName("attackBox"),
     defBoxes = document.getElementsByName("defBox"),
+    userName = document.getElementById("userName").innerText,
+    userHp = document.getElementById("userHp").innerText,
+    oppName = document.getElementById("oppName").innerText,
+    oppHp = document.getElementById("oppHp").innerText,
     endBtn = document.getElementById("endTurn");
 
 function checkMarked(cb) {
@@ -33,7 +37,13 @@ endBtn.onclick = function() {
             defCounter++;
         }
     }
-    location.href = "?" + url;
+
+    var fightId = getParam("fightId");
+    var userId = getParam("userId");
+    var round = parseInt(getParam("round")) + 1;
+    url += "&fightId=" + fightId + "&userId=" + userId + "&round=" + round + "&userHp="
+            + userHp + "&oppHp=" + oppHp + "&userName=" + userName + "&oppName=" + oppName;
+    location.href = "/fight?" + url;
 };
 
 var countDownDate = 31000 + new Date().getTime();
@@ -54,3 +64,12 @@ var x = setInterval(function() {
         document.getElementById("roundTime").innerHTML = "Ends";
     }
 }, 1000);
+
+function getParam(parameter) {
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has(parameter)) {
+        return urlParams.get(parameter);
+    } else {
+        return -1;
+    }
+}

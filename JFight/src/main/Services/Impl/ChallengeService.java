@@ -45,9 +45,9 @@ public class ChallengeService implements IChallenge {
         if (dto.isSuccess()) {
             if (dto.getList().size() > 0) {
                 FightDAL dal = new FightDAL();
-                dal.setFightId(dto.getList().get(0).toString());
-                dal.setUserId1(Long.parseLong(dto.getList().get(1).toString()));
-                dal.setUserId2(Long.parseLong(dto.getList().get(2).toString()));
+                dal.setFightId(dto.getList().get(0).get(0).toString());
+                dal.setUserId1(Long.parseLong(dto.getList().get(0).get(1).toString()));
+                dal.setUserId2(Long.parseLong(dto.getList().get(0).get(2).toString()));
                 return new FightDTO(true, "Fight has been already created.", dal);
             } else {
                 return new FightDTO(true, "No fight found", null);
@@ -87,16 +87,18 @@ public class ChallengeService implements IChallenge {
         int hp = 10;
         int round = 0; //stats before fight
         TurnStatsModel turnStatsModel1 = new TurnStatsModel();
-        turnStatsModel1.userId = hs.getUserNameByUserId(fightDTO.getDal().getUserId1()).getUser().getUserId();
+        turnStatsModel1.userName = hs.getUserNameByUserId(fightDTO.getDal().getUserId1()).getUser().getUserName();
+        turnStatsModel1.userId = fightDTO.getDal().getUserId1();
         turnStatsModel1.fightId = fightDTO.getDal().getFightId();
         turnStatsModel1.round = round;
         turnStatsModel1.hp = hp;
 
         TurnStatsModel turnStatsModel2 = new TurnStatsModel();
-        turnStatsModel2.userId = hs.getUserNameByUserId(fightDTO.getDal().getUserId2()).getUser().getUserId();
+        turnStatsModel2.userName = hs.getUserNameByUserId(fightDTO.getDal().getUserId2()).getUser().getUserName();
+        turnStatsModel2.userId = fightDTO.getDal().getUserId2();
         turnStatsModel2.fightId = fightDTO.getDal().getFightId();
-        turnStatsModel1.round = round;
-        turnStatsModel1.hp = hp;
+        turnStatsModel2.round = round;
+        turnStatsModel2.hp = hp;
 
         // TODO must be check for success
         hs.insertTurnStats(turnStatsModel1);

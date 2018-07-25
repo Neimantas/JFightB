@@ -46,6 +46,7 @@ public class ChallengeServlet extends HttpServlet {
                         if (fightDTO.isSuccess()) {
                             response.sendRedirect("/fight?fightId=" + fightDTO.getDal().getFightId() +
                                                     "&userId=" + userId + "&round=0");
+                            return;
                         }
 
                     } else {
@@ -66,11 +67,9 @@ public class ChallengeServlet extends HttpServlet {
                 readyDTO.getList().forEach(el -> System.out.println(el.getUserName()));
             }
         } else {
-            System.out.println("SHOULD REDIRECT HERE!");
             response.sendRedirect("/login");
             return;
         }
-        System.out.println("GOT HERE");
         request.getRequestDispatcher("/challenge.jsp").forward(request, response);
     }
 }
