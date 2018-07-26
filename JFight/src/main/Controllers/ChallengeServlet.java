@@ -38,14 +38,14 @@ public class ChallengeServlet extends HttpServlet {
 
                 DBqueryDTO dbDTO = cs.submitChallenges(dalList);
 
-                if (dbDTO.isSuccess()) {
+                if (dbDTO.success) {
 
                     // WHILE Should be here - loop for 30s or until challenged player accepts the challenge
                     ChallengeDTO challengeDTO = cs.checkForMatches(userId);
                     int count = 0;
-                    while(!challengeDTO.isSuccess() && count < 30) {
+                    while(!challengeDTO.success && count < 30) {
                         challengeDTO = cs.checkForMatches(userId);
-                        System.out.println("USER - " + userId + " dto message -> " + challengeDTO.getMessage());
+                        System.out.println("USER - " + userId + " dto message -> " + challengeDTO.message);
                         try {
                             Thread.sleep(1000);
                             count++;
@@ -54,20 +54,20 @@ public class ChallengeServlet extends HttpServlet {
                         }
                     }
 
-                    if (challengeDTO.isSuccess()) {
+                    if (challengeDTO.success) {
 
                         FightDTO fightDTO = cs.checkIfUserGotMatched(userId);
 
-                        if (fightDTO.isSuccess()) {
-                            response.sendRedirect("/fight?fightId=" + fightDTO.getDal().getFightId() +
+                        if (fightDTO.success) {
+                            response.sendRedirect("/fight?fightId=" + fightDTO.dal.fightId +
                                     "&userId=" + userId + "&round=0");
                             return;
                         }
 
-                        fightDTO = cs.createFightForMatchedPlayers(challengeDTO.getList().get(0));
+                        fightDTO = cs.createFightForMatchedPlayers(challengeDTO.list.get(0));
 
-                        if (fightDTO.isSuccess()) {
-                            response.sendRedirect("/fight?fightId=" + fightDTO.getDal().getFightId() +
+                        if (fightDTO.success) {
+                            response.sendRedirect("/fight?fightId=" + fightDTO.dal.fightId +
                                                     "&userId=" + userId + "&round=0");
                             return;
                         }
@@ -85,9 +85,9 @@ public class ChallengeServlet extends HttpServlet {
             }
             // User has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
             ReadyToFightDTO readyDTO = cs.getAllReadyToFightUsersId(userId);
-            if (readyDTO.getList().size() > 0) {
-                request.setAttribute("readyToFightList", readyDTO.getList());
-                readyDTO.getList().forEach(el -> System.out.println(el.getUserName()));
+            if (readyDTO.list.size() > 0) {
+                request.setAttribute("readyToFightList", readyDTO.list);
+                readyDTO.list.forEach(el -> System.out.println(el.userName));
             }
         } else {
             response.sendRedirect("/login");

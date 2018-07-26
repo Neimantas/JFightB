@@ -27,9 +27,9 @@ public class ChallengeService implements IChallenge {
 
     public ChallengeDTO checkForMatches(long userId){
         dto = hs.checkIfTwoUsersChallengedEachOther(userId);
-        if (dto.isSuccess()) {
-            if (dto.getList().size() > 0) {
-                List<Object> list = dto.getList().get(0);
+        if (dto.success) {
+            if (dto.list.size() > 0) {
+                List<Object> list = dto.list.get(0);
                 List<ChallengeDAL> dalList = Arrays.asList(new ChallengeDAL(
                         Long.parseLong(list.get(0).toString()),
                         Long.parseLong(list.get(1).toString())));
@@ -37,38 +37,38 @@ public class ChallengeService implements IChallenge {
             }
             return new ChallengeDTO(false, "No matches found.", null);
         }
-        return new ChallengeDTO(false, dto.getMessage(), null);
+        return new ChallengeDTO(false, dto.message, null);
     }
 
     private FightDTO wasNewFightAlreadyCreated(long userId) {
         dto = hs.checkIfFightIsAlreadyCreated(userId);
-        if (dto.isSuccess()) {
-            if (dto.getList().size() > 0) {
+        if (dto.success) {
+            if (dto.list.size() > 0) {
                 FightDAL dal = new FightDAL();
-                dal.setFightId(dto.getList().get(0).get(0).toString());
-                dal.setUserId1(Long.parseLong(dto.getList().get(0).get(1).toString()));
-                dal.setUserId2(Long.parseLong(dto.getList().get(0).get(2).toString()));
+                dal.fightId = dto.list.get(0).get(0).toString();
+                dal.userId1 = Long.parseLong(dto.list.get(0).get(1).toString());
+                dal.userId2 = Long.parseLong(dto.list.get(0).get(2).toString());
                 return new FightDTO(true, "Fight has been already created.", dal);
             } else {
                 return new FightDTO(true, "No fight found", null);
             }
         }
         // DB has crashed
-        return new FightDTO(false, dto.getMessage(), null);
+        return new FightDTO(false, dto.message, null);
     }
 
     public FightDTO createFightForMatchedPlayers(ChallengeDAL dal) {
         FightDTO fightDTO = wasNewFightAlreadyCreated(dal.userId);
 
-        if (fightDTO.isSuccess()) {
+        if (fightDTO.success) {
 
-            if (fightDTO.getMessage().equals("No fight found")) {
+            if (fightDTO.message.equals("No fight found")) {
                 dto = hs.moveUsersToFight(dal);
 
-                if (dto.isSuccess()) {
+                if (dto.success) {
                     fightDTO = hs.getFightByUserId(dal.userId);
                     insertZeroRoundStatsBeforeFight(fightDTO);
-                    if (fightDTO.isSuccess()) {
+                    if (fightDTO.success) {
                         return fightDTO;
                     }
 
@@ -79,7 +79,7 @@ public class ChallengeService implements IChallenge {
             }
         }
         // DB crash
-        return new FightDTO(false, dto.getMessage(), null);
+        return new FightDTO(false, dto.message, null);
     }
 
     private void insertZeroRoundStatsBeforeFight(FightDTO fightDTO) {
@@ -87,16 +87,16 @@ public class ChallengeService implements IChallenge {
         int hp = 10;
         int round = 0; //stats before fight
         TurnStatsModel turnStatsModel1 = new TurnStatsModel();
-        turnStatsModel1.userName = hs.getUserNameByUserId(fightDTO.getDal().getUserId1()).getUser().getUserName();
-        turnStatsModel1.userId = fightDTO.getDal().getUserId1();
-        turnStatsModel1.fightId = fightDTO.getDal().getFightId();
+        turnStatsModel1.userName = hs.getUserNameByUserId(fightDTO.dal.userId1).user.userName;
+        turnStatsModel1.userId = fightDTO.dal.userId1;
+        turnStatsModel1.fightId = fightDTO.dal.fightId;
         turnStatsModel1.round = round;
         turnStatsModel1.hp = hp;
 
         TurnStatsModel turnStatsModel2 = new TurnStatsModel();
-        turnStatsModel2.userName = hs.getUserNameByUserId(fightDTO.getDal().getUserId2()).getUser().getUserName();
-        turnStatsModel2.userId = fightDTO.getDal().getUserId2();
-        turnStatsModel2.fightId = fightDTO.getDal().getFightId();
+        turnStatsModel2.userName = hs.getUserNameByUserId(fightDTO.dal.userId2).user.userName;
+        turnStatsModel2.userId = fightDTO.dal.userId2;
+        turnStatsModel2.fightId = fightDTO.dal.fightId;
         turnStatsModel2.round = round;
         turnStatsModel2.hp = hp;
 
@@ -107,10 +107,10 @@ public class ChallengeService implements IChallenge {
 
     public IssuedChallengesDTO getIssuedChallenges(long userId) {
         dto = hs.getAllIssuedChallengesByUserId(userId);
-        if (!dto.isSuccess()) {
+        if (!dto.success) {
             return null;
         }
-        List<List<Object>> rows = dto.getList();
+        List<List<Object>> rows = dto.list;
         List<Long> userChallenges = new ArrayList<>();
         List<Long> oppChallenges = new ArrayList<>();
         for (int i = 0; i < rows.size(); i++) {
@@ -131,7 +131,7 @@ public class ChallengeService implements IChallenge {
     public DBqueryDTO addPlayerToReadyToFight(long userId) {
         // Check if user is already in ReadyToFight table
         dto = hs.checkIfUserIsAlreadyInReadyToFightTable(userId);
-        if (dto.isSuccess() && dto.getList().size() > 0) {
+        if (dto.success && dto.list.size() > 0) {
             return dto;
         }
         // TODO as usual....
@@ -140,8 +140,8 @@ public class ChallengeService implements IChallenge {
 
     public FightDTO checkIfUserGotMatched(long userId) {
         FightDTO fightDTO = hs.getFightByUserId(userId);
-        if (fightDTO.isSuccess()) {
-            long oppId = fightDTO.getDal().getUserId1() != userId ? fightDTO.getDal().getUserId1() : fightDTO.getDal().getUserId2();
+        if (fightDTO.success) {
+            long oppId = fightDTO.dal.userId1 != userId ? fightDTO.dal.userId1 : fightDTO.dal.userId2;
             hs.deleteMatchedPlayersFromChallenge(userId, oppId);
             return fightDTO;
         }
