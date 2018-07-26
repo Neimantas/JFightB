@@ -21,9 +21,9 @@ public class FightService implements IFightService {
     private DBqueryDTO checkForOpponent(TurnStatsModel model) {
         DBqueryDTO dto = hs.checkForFightLogByIdAndRound(model);
         // TODO we will need a timeout counter if we cannot get result or opponent leaves
-        while (!dto.isSuccess()) {
+        while (!dto.success) {
             dto = hs.checkForFightLogByIdAndRound(model);
-            if (!dto.isSuccess()) {
+            if (!dto.success) {
                 try {
                     Thread.sleep(1000);
                     System.out.println("Woke up after 1s sleep.");
@@ -38,13 +38,13 @@ public class FightService implements IFightService {
     public TurnOutcomeModel getTurnOutcome(TurnStatsModel userModel) {
         DBqueryDTO dto = sendFightStats(userModel);
         // TODO fix the null part once we can
-        if (!dto.isSuccess()) {
+        if (!dto.success) {
             return null;
         }
         // TODO handle timeout
         dto = checkForOpponent(userModel);
         TurnStatsModel opponent = new TurnStatsModel();
-        List<List<Object>> list = dto.getList();
+        List<List<Object>> list = dto.list;
         for (int i = 0; i < list.size(); i++) {
             List<Object> columns = list.get(i);
             if (Integer.parseInt(columns.get(1).toString()) != userModel.userId) {
@@ -106,11 +106,11 @@ public class FightService implements IFightService {
 
     public TurnOutcomeModel getStatsForRound(TurnStatsModel userModel) {
         DBqueryDTO dto = hs.checkForFightLogByIdAndRound(userModel);
-        if (dto.isSuccess()) {
+        if (dto.success) {
             TurnOutcomeModel outcome = new TurnOutcomeModel();
             List<Object> columns;
-            for (int i = 0; i < dto.getList().size(); i++) {
-                columns = dto.getList().get(i);
+            for (int i = 0; i < dto.list.size(); i++) {
+                columns = dto.list.get(i);
                 if (Integer.parseInt(columns.get(1).toString()) == userModel.userId) {
                     outcome.fightId = columns.get(0).toString();
                     outcome.userHp = Integer.parseInt(columns.get(6).toString());
@@ -122,8 +122,8 @@ public class FightService implements IFightService {
                 }
             }
             // TODO you know the drill....
-            outcome.userName = hs.getUserNameByUserId(outcome.userId).getUser().getUserName();
-            outcome.oppName = hs.getUserNameByUserId(outcome.oppId).getUser().getUserName();
+            outcome.userName = hs.getUserNameByUserId(outcome.userId).user.userName;
+            outcome.oppName = hs.getUserNameByUserId(outcome.oppId).user.userName;
             outcome.fightStatus = FightStatus.FIGHTING;
             return outcome;
         }

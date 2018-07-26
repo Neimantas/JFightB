@@ -13,10 +13,11 @@ public class LoginService implements ILoginService {
     public LoginDTO find(String email, String password) {
         IHigherService hs = new HigherService();
         UserDTO userDTO = hs.getUserByEmailAndPass(email, password);
-        if (!userDTO.isSuccess()) {
-            return new LoginDTO(false, userDTO.getMessage(), null);
+        if (!userDTO.success) {
+            return new LoginDTO(false, userDTO.message, null);
         }
         ModelMapper mod = new ModelMapper();
-        return new LoginDTO(true, null, mod.map(userDTO.getUser(), User.class));
+        mod.getConfiguration().setFieldMatchingEnabled(true);
+        return new LoginDTO(true, null, mod.map(userDTO.user, User.class));
     }
 }

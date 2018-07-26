@@ -28,8 +28,8 @@ public class LoginServlet extends HttpServlet {
 //            request.getRequestDispatcher("/news.jsp").forward(request, response);
 //        }
         LoginDTO login = loginService.find(emailLogin, password);
-        if(login.isSuccess()) {
-            String name = login.getUser().getName();
+        if(login.success) {
+            String name = login.user.name;
             request.setAttribute("username", name);
             request.getRequestDispatcher("/news.jsp").forward(request, response);
         }
