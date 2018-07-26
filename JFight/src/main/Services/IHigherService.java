@@ -2,10 +2,7 @@ package main.Services;
 
 import main.Models.BL.TurnStatsModel;
 import main.Models.DAL.ChallengeDAL;
-import main.Models.DTO.DBqueryDTO;
-import main.Models.DTO.FightDTO;
-import main.Models.DTO.ReadyToFightDTO;
-import main.Models.DTO.UserDTO;
+import main.Models.DTO.*;
 
 public interface IHigherService {
     ReadyToFightDTO getAllReadyToFightUsersId(long UserName);
@@ -22,4 +19,5 @@ public interface IHigherService {
     UserDTO getUserNameByUserId(long userId);
     DBqueryDTO checkIfUserIsAlreadyInReadyToFightTable(long userId);
     DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId);
+    UserDTO getUserByUserNameAndEmail(String userName, String email);
 }

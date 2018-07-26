@@ -6,10 +6,7 @@ import main.Models.DAL.ChallengeDAL;
 import main.Models.DAL.FightDAL;
 import main.Models.DAL.ReadyToFightDAL;
 import main.Models.DAL.UserDAL;
-import main.Models.DTO.DBqueryDTO;
-import main.Models.DTO.FightDTO;
-import main.Models.DTO.ReadyToFightDTO;
-import main.Models.DTO.UserDTO;
+import main.Models.DTO.*;
 import main.Services.ICrud;
 import main.Services.IHigherService;
 
@@ -183,5 +180,24 @@ public class HigherService implements IHigherService {
     public DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId) {
         String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + userId + " OR UserId = " + opponentId + ")";
         return crud.delete(queryDeleteFromChallenge);
+    }
+
+    @Override
+    public UserDTO getUserByUserNameAndEmail(String userName, String email) {
+        String query = "SELECT * from [User] where UserName= '" + userName + "' or Email='" + email;
+        DBqueryDTO dBqueryDTO = crud.read(query);
+        if (!dBqueryDTO.success) {
+            return new UserDTO(false, dBqueryDTO.message, null);
+        }
+        UserDAL userDAL = new UserDAL();
+        if (dBqueryDTO.list.isEmpty()) {
+            return new UserDTO(true, null, userDAL);
+        }
+        List<Object> list = dBqueryDTO.list.get(0);
+        for (int i = 0; i < list.size(); i++) {
+            userDAL.userName = (list.get(1).toString());
+            userDAL.email = (list.get(3).toString());
+        }
+        return new UserDTO(false, null, userDAL);
     }
 }

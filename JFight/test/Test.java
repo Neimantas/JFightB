@@ -1,8 +1,11 @@
 import main.Models.CONS.FighterStatus;
 import main.Models.DTO.DBqueryDTO;
+import main.Models.DTO.RegisterDTO;
 import main.Services.IDataBase;
 import main.Services.Impl.Crud;
 import main.Services.Impl.DataBase;
+import main.Services.Impl.HigherService;
+import main.Services.Impl.RegisterService;
 
 import static org.junit.Assert.assertTrue;
 
@@ -38,21 +41,12 @@ public class Test {
         System.out.println( dBqueryDTO.list.isEmpty());
 
     }
+
+//    @org.junit.Test
+//    public void find() {
+//        HigherService hs = new HigherService();
+//
+//     DBqueryDTO dto = new
+//    }
 }
-
-
-//    @org.junit.Test
-//    public void getAllReadyToFightUsersId() {
-//        FighterService fighterService = new FighterService();
-//        assertTrue(fighterService.getAllReadyToFightUsersId()!=null);
-//    }
-
-//    @org.junit.Test
-//    public void getReadyToFightUserById() {
-//    }
-
-//    @org.junit.Test
-//    public void moveUserToReadyTable() {
-//    }
-
 
