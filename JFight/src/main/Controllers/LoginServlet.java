@@ -31,8 +31,8 @@ public class LoginServlet extends HttpServlet {
         if (regName.equals(null)||regName.equals("")){
             ILoginService loginService = new LoginService();
             LoginDTO login = loginService.find(emailLogin, password);
-            if(login.isSuccess()) {
-                String name = login.getUser().getName();
+            if(login.success) {
+                String name = login.user.name;
                 request.setAttribute("username", name);
                 request.getRequestDispatcher("/news.jsp").forward(request, response);
             } else{
