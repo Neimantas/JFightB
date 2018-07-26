@@ -36,7 +36,8 @@ public class LoginServlet extends HttpServlet {
             if (login.success) {
                 String name = login.user.name;
                 request.setAttribute("username", name);
-                request.getRequestDispatcher("/news.jsp").forward(request, response);
+                response.sendRedirect(request.getContextPath() + "/news.jsp");
+//                request.getRequestDispatcher("/news.jsp").forward(request, response);
             } else {
                 out.print("Sorry username or password error");
                 response.sendRedirect("/login.jsp");
