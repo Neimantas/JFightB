@@ -1,10 +1,33 @@
 var attBoxes = document.getElementsByName("attackBox"),
     defBoxes = document.getElementsByName("defBox"),
     userName = document.getElementById("userName").innerText,
+    userId = document.getElementById("userId").value,
     userHp = document.getElementById("userHp").innerText,
     oppName = document.getElementById("oppName").innerText,
     oppHp = document.getElementById("oppHp").innerText,
-    endBtn = document.getElementById("endTurn");
+    endBtn = document.getElementById("endTurn"),
+    fightStatus = document.getElementById("fightStatus").value;
+
+window.onload = function () {
+    if (fightStatus !== "FIGHTING") {
+        var fightOutcomeText = document.getElementById("fightOutcomeText");
+
+        if (fightStatus === "WINNER") {
+            fightOutcomeText.innerText = "You are  VICTORIOUS!";
+        } else if (fightStatus === "LOSER") {
+            fightOutcomeText.innerText = "You have  LOST  the fight...";
+        } else {
+            fightOutcomeText.innerText = "You both fall to each others blades... it's a  DRAW!";
+        }
+
+        $('#fightEndStatus').modal('show');
+        console.log(fightStatus);
+        endBtn.innerText = "Exit Fight";
+        endBtn.onclick = function () {
+            location.href = "/news?userId=" + userId;
+        }
+    }
+};
 
 function checkMarked(cb) {
     var cBoxes = document.getElementsByName(cb.name);
@@ -66,7 +89,7 @@ var x = setInterval(function() {
     }
 }, 1000);
 
-function getParam(parameter) {
+ function getParam(parameter) {
     var urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has(parameter)) {
         return urlParams.get(parameter);

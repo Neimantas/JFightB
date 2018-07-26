@@ -2,10 +2,7 @@ package main.Services.Impl;
 
 import main.Models.BL.TurnStatsModel;
 import main.Models.CONS.FighterStatus;
-import main.Models.DAL.ChallengeDAL;
-import main.Models.DAL.FightDAL;
-import main.Models.DAL.ReadyToFightDAL;
-import main.Models.DAL.UserDAL;
+import main.Models.DAL.*;
 import main.Models.DTO.DBqueryDTO;
 import main.Models.DTO.FightDTO;
 import main.Models.DTO.ReadyToFightDTO;
@@ -63,19 +60,14 @@ public class HigherService implements IHigherService {
 
         UUID uuid = UUID.randomUUID();
         String randomUUIDString = uuid.toString();
-        String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + dal.userId + " OR UserId = " + dal.opponentId + ")";
-        String QueryDeleteFromReadyToFigth = "DELETE FROM ReadyToFight WHERE UserId = " + dal.userId + " OR UserId = " + dal.opponentId;
-        String query = "insert into Fight (FightId, UserId1, UserId2) select '" + randomUUIDString + "', " + dal.userId + ", " + dal.opponentId;
-        DBqueryDTO dto = crud.delete(queryDeleteFromChallenge);
+//        String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + dal.userId + " OR UserId = " + dal.opponentId + ")";
+        String queryDeleteFromReadyToFight = "DELETE FROM ReadyToFight WHERE UserId = " + dal.userId + " OR UserId = " + dal.opponentId;
+        String queryInsertToFight = "insert into Fight (FightId, UserId1, UserId2) select '" + randomUUIDString + "', " + dal.userId + ", " + dal.opponentId;
+//        DBqueryDTO dto = crud.delete(queryDeleteFromChallenge);
+        DBqueryDTO dto = crud.delete(queryDeleteFromReadyToFight);
         if (dto.isSuccess()) {
-            dto = crud.delete(QueryDeleteFromReadyToFigth);
-            if (dto.isSuccess()) {
-                dto = crud.create(query);
-                return dto;
-            } else {
-                dto.setMessage(FighterStatus.FAILURE);
-                return dto;
-            }
+            dto = crud.create(queryInsertToFight);
+            return dto;
         } else {
             dto.setMessage(FighterStatus.FAILURE);
             return dto;
@@ -115,7 +107,7 @@ public class HigherService implements IHigherService {
     }
 
     @Override
-    public DBqueryDTO checkForFightRecordByIdAndRound(TurnStatsModel model) {
+    public DBqueryDTO checkForFightLogByIdAndRound(TurnStatsModel model) {
         StringBuilder query = new StringBuilder();
         query.append("SELECT * FROM FightLog WHERE FightId = '")
                 .append(model.fightId).append("' AND Round = ")
@@ -188,14 +180,8 @@ public class HigherService implements IHigherService {
         return crud.read(query);
     }
 
-//    @Override
-//    public boolean validate(String email, String pass) {
-//        String query = "select Email, [Password] from [User] where Email= '" + email + "' and Password='" + pass + "'";
-//        DBqueryDTO dBqueryDTO = crud.read(query);
-//        if (dBqueryDTO.getList().isEmpty()){
-//            return false;
-//        }
-//        return true;
-//    }
-
+    public DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId) {
+        String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + userId + " OR UserId = " + opponentId + ")";
+        return crud.delete(queryDeleteFromChallenge);
+    }
 }

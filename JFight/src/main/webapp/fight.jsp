@@ -104,6 +104,36 @@
 </div>
 
 
+<!-- Button trigger modal -->
+<%--<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">--%>
+    <%--Launch demo modal--%>
+<%--</button>--%>
+
+
+<%--Modal--%>
+<div class="modal fade" id="fightEndStatus" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Fight is Over</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="fightOutcomeText">
+
+            </div>
+            <div class="modal-footer text-center">
+                <%--<button type="button" class="btn btn-secondary" data-dismiss="modal">Exit Fight</button>--%>
+                <button type="button" class="btn btn-secondary" onclick="location.href = '/news?userId=' + ${userId}">Exit Fight</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input id="fightStatus" name="fightStatus" type="hidden" value="${fightStatus}">
+<input id="userId" name="userId" type="hidden" value="${userId}">
+
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>
