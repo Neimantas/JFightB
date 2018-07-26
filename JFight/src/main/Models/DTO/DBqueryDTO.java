@@ -2,12 +2,12 @@ package main.Models.DTO;
 
 import java.util.List;
 
-public class DBqueryDTO {
+public class DBqueryDTO <T>{
     public boolean success;
     public String message;
-    public List<List<Object>> list;
+    public List<T> list;
 
-    public DBqueryDTO(boolean Success, String Message, List<List<Object>> List) {
+    public DBqueryDTO(boolean Success, String Message, List<T> List) {
         success = Success;
         message = Message;
         list = List;

@@ -19,10 +19,10 @@ public class FightService implements IFightService {
     }
 
     private DBqueryDTO checkForOpponent(TurnStatsModel model) {
-        DBqueryDTO dto = hs.checkForFightLogByIdAndRound(model);
+        DBqueryDTO dto = hs.getFightLogByIdAndRound(model);
         // TODO we will need a timeout counter if we cannot get result or opponent leaves
         while (!dto.success) {
-            dto = hs.checkForFightLogByIdAndRound(model);
+            dto = hs.getFightLogByIdAndRound(model);
             if (!dto.success) {
                 try {
                     Thread.sleep(1000);
@@ -105,7 +105,7 @@ public class FightService implements IFightService {
     }
 
     public TurnOutcomeModel getStatsForRound(TurnStatsModel userModel) {
-        DBqueryDTO dto = hs.checkForFightLogByIdAndRound(userModel);
+        DBqueryDTO dto = hs.getFightLogByIdAndRound(userModel);
         if (dto.success) {
             TurnOutcomeModel outcome = new TurnOutcomeModel();
             List<Object> columns;

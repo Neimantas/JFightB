@@ -135,7 +135,7 @@ public class ChallengeService implements IChallenge {
             return dto;
         }
         // TODO as usual....
-        return hs.addUserToReadyToFightTable(userId);
+        return hs.insertUserToReadyToFightTable(userId);
     }
 
     public FightDTO checkIfUserGotMatched(long userId) {

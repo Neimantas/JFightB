@@ -1,22 +1,21 @@
 package main.Services;
 
-import main.Models.BL.TurnStatsModel;
 import main.Models.DAL.ChallengeDAL;
-import main.Models.DTO.DBqueryDTO;
-import main.Models.DTO.FightDTO;
-import main.Models.DTO.ReadyToFightDTO;
-import main.Models.DTO.UserDTO;
+import main.Models.DAL.FightLogDAL;
+import main.Models.DAL.ReadyToFightDAL;
+import main.Models.DAL.UserDAL;
+import main.Models.DTO.*;
 
 public interface IHigherService {
-    ReadyToFightDTO getAllReadyToFightUsersId(long UserName);
-    UserDTO getUserByEmailAndPass(String email, String password);
-    DBqueryDTO insertTurnStats(TurnStatsModel model);
-    DBqueryDTO checkForFightLogByIdAndRound(TurnStatsModel model);
+    ReadyToFightDTO getAllReadyToFightUsers();
+    DBqueryDTO insertUserToReadyToFightTable(ReadyToFightDAL readyUserDal);
+    UserDTO getUserByEmailAndPass(UserDAL user);
+    DBqueryDTO insertTurnStats(FightLogDAL fightLog);
+    FightLogDTO getFightLogByIdAndRound(FightLogDAL fightLog);
     FightDTO getFightByUserId(long userId);
     DBqueryDTO insertIntoChallenge(ChallengeDAL dal);
     DBqueryDTO checkIfTwoUsersChallengedEachOther(long userId);
     DBqueryDTO getAllIssuedChallengesByUserId(long userId);
-    DBqueryDTO addUserToReadyToFightTable(long id);
     DBqueryDTO moveUsersToFight(ChallengeDAL dal);
     DBqueryDTO checkIfFightIsAlreadyCreated(long userId);
     UserDTO getUserNameByUserId(long userId);

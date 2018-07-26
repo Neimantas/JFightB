@@ -22,6 +22,9 @@ public class ChallengeServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+        //if(!Someservice.Login) response.sendRedirect("/login");
+
+
         if (request.getParameterMap().size() > 0 && request.getParameter("userId") != null) {
             long userId = Long.parseLong(request.getParameter("userId"));
             request.setAttribute("userId", userId);

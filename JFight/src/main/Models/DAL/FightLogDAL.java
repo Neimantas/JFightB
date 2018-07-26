@@ -2,7 +2,7 @@ package main.Models.DAL;
 
 public class FightLogDAL {
 
-    public long fightId;
+    public String fightId;
     public long userId;
     public String attack1;
     public String attack2;
