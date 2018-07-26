@@ -4,6 +4,7 @@ import main.Models.DAL.ChallengeDAL;
 import main.Models.DTO.*;
 import main.Services.IChallenge;
 import main.Services.Impl.ChallengeService;
+import main.Services.ObjectConverterToString;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -76,18 +77,25 @@ public class ChallengeServlet extends HttpServlet {
                         IssuedChallengesDTO issuedChallengesDTO = cs.getIssuedChallenges(userId);
 
                         if (issuedChallengesDTO.success) {
-                            request.setAttribute("userChallenges", issuedChallengesDTO.issuedChallenge.userChallenges);
-                            request.setAttribute("oppChallenges", issuedChallengesDTO.issuedChallenge.oppChallenges);
+                            request.setAttribute("userChallenges", ObjectConverterToString.convertList(issuedChallengesDTO.issuedChallenge.userChallenges));
+                            request.setAttribute("oppChallenges", ObjectConverterToString.convertList(issuedChallengesDTO.issuedChallenge.oppChallenges));
                         }
-
                     }
                 }
             }
             // User has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
             ReadyToFightDTO readyDTO = cs.getAllReadyToFightUsersId(userId);
             if (readyDTO.list.size() > 0) {
-                request.setAttribute("readyToFightList", readyDTO.list);
+                request.setAttribute("readyToFightList", ObjectConverterToString.convertList(readyDTO.list));
                 readyDTO.list.forEach(el -> System.out.println(el.userName));
+
+//                List<Map<String, String>> list2 = ObjectConverterToString.convertList(readyDTO.list);
+//                for (int i = 0; i < list2.size(); i++) {
+//                    for (Map.Entry<String, String> item: list2.get(i).entrySet()) {
+//                        System.out.println(String.valueOf(item));
+//                    }
+//                    System.out.println("====================");
+//                }
             }
         } else {
             response.sendRedirect("/login");
