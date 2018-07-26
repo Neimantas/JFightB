@@ -8,13 +8,13 @@ import java.util.Map;
 
 public final class ObjectConverterToString {
 
-    public static List<Map<String, String>> listOfObjectsToStringList(List listOfObjects) {
+    public static List<Map<String, String>> convertList(List listOfObjects) {
         List<Map<String, String>> list = new ArrayList<>();
-        listOfObjects.forEach(ob -> list.add(objectToStringMap(ob)));
+        listOfObjects.forEach(ob -> list.add(convertObject(ob)));
         return list;
     }
 
-    public static <T> Map<String, String> objectToStringMap(T object) {
+    public static <T> Map<String, String> convertObject(T object) {
         try {
             Map<String, String> map = new HashMap<>();
             Class<?> objectClass = object.getClass();

@@ -26,14 +26,14 @@
                 </tr>
                 </thead>
                 <tbody>
-                <java:forEach begin="1" varStatus="count" var="user" items="${readyToFightList}">
+                <java:forEach var="item" items="${readyToFightList}">
                     <tr>
-                        <th scope="row"><java:out value="${count.count}"/></th>
-                        <td>${user.getUserName()}</td>
-                        <td>${user.getUserId()}</td>
+                        <th scope="row"></th>
+                        <td>${item.get("userName")}</td>
+                        <td>${item.get("userId")}</td>
                         <td>
                             <div class="form-check">
-                                <input type="checkbox" value="${user.getUserId()}" name="player">
+                                <input type="checkbox" value="${item.get("userId")}" name="player">
                             </div>
                         </td>
                     </tr>
