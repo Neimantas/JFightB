@@ -1,6 +1,7 @@
 var userName = document.getElementById("userName");
 var challengedPlayers = document.getElementsByName("player"),
-    challengeBtn = document.getElementById("challengeBtn");
+    challengeBtn = document.getElementById("challengeBtn"),
+    userId = document.getElementById("userId").innerText;
 
 // function sendChallenge(opp) {
 //     location.href = "/challenge?userName=" + userName.value() + "&oppName=" + opp.value();
@@ -15,7 +16,7 @@ challengeBtn.onclick = function() {
         }
     }
     if (url !== "") {
-        location.href = "/challenge?challengedPlayers=" + url;
+        location.href = "/challenge?userId=" + userId + "&challengedPlayers=" + url;
     } else {
         alert("Please select at least one player to challenge!");
     }

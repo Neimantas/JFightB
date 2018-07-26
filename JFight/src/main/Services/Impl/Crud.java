@@ -22,7 +22,7 @@ public class Crud implements ICrud {
         try {
             connection = dataBase.getConnection();
             statement = connection.createStatement();
-            statement.executeQuery(query);
+            statement.executeUpdate(query);
             dBqueryDTO = new DBqueryDTO(true, null, null);
             statement.close();
             return dBqueryDTO;

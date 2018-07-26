@@ -26,11 +26,12 @@ public class FightServlet extends HttpServlet {
             long userId = Long.parseLong(request.getParameter("userId"));
             String fightId = request.getParameter("fightId");
             TurnOutcomeModel turnOutcomeModel = new TurnOutcomeModel();
-
+            String roundTest = request.getParameter("round");
             if (request.getParameter("round") != null && request.getParameter("round").equals("0")) {
                 // THIS IS 0 ROUND we need to get the stats for the first time
                 TurnStatsModel turnStatsModel = new TurnStatsModel();
                 turnStatsModel.fightId = fightId;
+                turnStatsModel.userId = userId;
                 turnStatsModel.round = 0;
                 turnOutcomeModel = fs.getStatsForRound(turnStatsModel);
             } else {
@@ -42,24 +43,19 @@ public class FightServlet extends HttpServlet {
                 String def2 = request.getParameter("def2");
                 String hp = request.getParameter("userHp");
                 String round = request.getParameter("round");
-                String endTurn = request.getParameter("endTurn");
 
-                if (endTurn != null) {
-                    TurnStatsModel turnStatsModel = new TurnStatsModel();
-                    turnStatsModel.att1 = BodyParts.valueOf(att1);
-                    turnStatsModel.att2 = BodyParts.valueOf(att2);
-                    turnStatsModel.def1 = BodyParts.valueOf(def1);
-                    turnStatsModel.def2 = BodyParts.valueOf(def2);
-                    turnStatsModel.hp = Integer.parseInt(hp);
-                    turnStatsModel.userId = userId;
-                    turnStatsModel.userName = userName;
-                    turnStatsModel.oppName = oppName;
-                    turnStatsModel.round = Integer.parseInt(round);
+                TurnStatsModel turnStatsModel = new TurnStatsModel();
+                turnStatsModel.att1 = BodyParts.valueOf(att1);
+                turnStatsModel.att2 = BodyParts.valueOf(att2);
+                turnStatsModel.def1 = BodyParts.valueOf(def1);
+                turnStatsModel.def2 = BodyParts.valueOf(def2);
+                turnStatsModel.hp = Integer.parseInt(hp);
+                turnStatsModel.userId = userId;
+                turnStatsModel.userName = userName;
+                turnStatsModel.oppName = oppName;
+                turnStatsModel.round = Integer.parseInt(round);
 
-                    turnOutcomeModel = fs.calculateTurnOutcome(turnStatsModel);
-
-
-                }
+                turnOutcomeModel = fs.calculateTurnOutcome(turnStatsModel);
             }
             request.setAttribute("fightId", turnOutcomeModel.fightId);
             request.setAttribute("round", turnOutcomeModel.round);

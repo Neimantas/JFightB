@@ -30,9 +30,9 @@ public class ChallengeService implements IChallenge {
         if (dto.isSuccess()) {
             if (dto.getList().size() > 0) {
                 List<Object> list = dto.getList().get(0);
-                List<ChallengeDAL> dalList = Arrays.asList(new ChallengeDAL(Long.parseLong(list.get(0).toString()),
-                        Long.parseLong(list.get(1).toString()),
-                        Long.parseLong(list.get(2).toString())));
+                List<ChallengeDAL> dalList = Arrays.asList(new ChallengeDAL(
+                        Long.parseLong(list.get(0).toString()),
+                        Long.parseLong(list.get(1).toString())));
                 return new ChallengeDTO(true, "", dalList);
             }
             return new ChallengeDTO(false, "No matches found.", null);
@@ -45,9 +45,9 @@ public class ChallengeService implements IChallenge {
         if (dto.isSuccess()) {
             if (dto.getList().size() > 0) {
                 FightDAL dal = new FightDAL();
-                dal.setFightId(dto.getList().get(0).toString());
-                dal.setUserId1(Long.parseLong(dto.getList().get(1).toString()));
-                dal.setUserId2(Long.parseLong(dto.getList().get(2).toString()));
+                dal.setFightId(dto.getList().get(0).get(0).toString());
+                dal.setUserId1(Long.parseLong(dto.getList().get(0).get(1).toString()));
+                dal.setUserId2(Long.parseLong(dto.getList().get(0).get(2).toString()));
                 return new FightDTO(true, "Fight has been already created.", dal);
             } else {
                 return new FightDTO(true, "No fight found", null);
@@ -87,16 +87,18 @@ public class ChallengeService implements IChallenge {
         int hp = 10;
         int round = 0; //stats before fight
         TurnStatsModel turnStatsModel1 = new TurnStatsModel();
-        turnStatsModel1.userId = hs.getUserNameByUserId(fightDTO.getDal().getUserId1()).getUser().getUserId();
+        turnStatsModel1.userName = hs.getUserNameByUserId(fightDTO.getDal().getUserId1()).getUser().getUserName();
+        turnStatsModel1.userId = fightDTO.getDal().getUserId1();
         turnStatsModel1.fightId = fightDTO.getDal().getFightId();
         turnStatsModel1.round = round;
         turnStatsModel1.hp = hp;
 
         TurnStatsModel turnStatsModel2 = new TurnStatsModel();
-        turnStatsModel2.userId = hs.getUserNameByUserId(fightDTO.getDal().getUserId2()).getUser().getUserId();
+        turnStatsModel2.userName = hs.getUserNameByUserId(fightDTO.getDal().getUserId2()).getUser().getUserName();
+        turnStatsModel2.userId = fightDTO.getDal().getUserId2();
         turnStatsModel2.fightId = fightDTO.getDal().getFightId();
-        turnStatsModel1.round = round;
-        turnStatsModel1.hp = hp;
+        turnStatsModel2.round = round;
+        turnStatsModel2.hp = hp;
 
         // TODO must be check for success
         hs.insertTurnStats(turnStatsModel1);
@@ -124,5 +126,23 @@ public class ChallengeService implements IChallenge {
 
     public ReadyToFightDTO getAllReadyToFightUsersId(long userId) {
         return hs.getAllReadyToFightUsersId(userId);
+    }
+
+    public DBqueryDTO addPlayerToReadyToFight(long userId) {
+        // Check if user is already in ReadyToFight table
+        dto = hs.checkIfUserIsAlreadyInReadyToFightTable(userId);
+        if (dto.isSuccess() && dto.getList().size() > 0) {
+            return dto;
+        }
+        // TODO as usual....
+        return hs.addUserToReadyToFightTable(userId);
+    }
+
+    public FightDTO checkIfUserGotMatched(long userId) {
+        FightDTO fightDTO = hs.getFightByUserId(userId);
+        if (fightDTO.isSuccess()) {
+            return fightDTO;
+        }
+        return new FightDTO(false, "No fight found for userId - " + userId, null);
     }
 }

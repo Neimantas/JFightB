@@ -8,10 +8,10 @@ public class IssuedChallenges {
     public List<Long> userChallenges;
     public List<Long> oppChallenges;
 
-    public IssuedChallenges(long userId, String userName, List<Long> userChallenges, List<Long> oppLong) {
-        this.userId = userId;
-        this.userName = userName;
-        this.userChallenges = userChallenges;
-        this.oppChallenges = oppLong;
+    public IssuedChallenges(long UserId, String UserName, List<Long> UserChallenges, List<Long> OppLong) {
+        userId = UserId;
+        userName = UserName;
+        userChallenges = UserChallenges;
+        oppChallenges = OppLong;
     }
 }

@@ -20,5 +20,5 @@ public interface IHigherService {
     DBqueryDTO moveUsersToFight(ChallengeDAL dal);
     DBqueryDTO checkIfFightIsAlreadyCreated(long userId);
     UserDTO getUserNameByUserId(long userId);
-//    boolean validate(String name, String pass);
+    DBqueryDTO checkIfUserIsAlreadyInReadyToFightTable(long userId);
 }

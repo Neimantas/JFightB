@@ -7,9 +7,9 @@ public class IssuedChallengesDTO {
     public String message;
     public IssuedChallenges issuedChallenge;
 
-    public IssuedChallengesDTO(boolean success, String message, IssuedChallenges issuedChallenge) {
-        this.success = success;
-        this.message = message;
-        this.issuedChallenge = issuedChallenge;
+    public IssuedChallengesDTO(boolean Success, String Message, IssuedChallenges IssuedChallenge) {
+        success = Success;
+        message = Message;
+        issuedChallenge = IssuedChallenge;
     }
 }
