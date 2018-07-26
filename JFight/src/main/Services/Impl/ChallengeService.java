@@ -141,6 +141,8 @@ public class ChallengeService implements IChallenge {
     public FightDTO checkIfUserGotMatched(long userId) {
         FightDTO fightDTO = hs.getFightByUserId(userId);
         if (fightDTO.isSuccess()) {
+            long oppId = fightDTO.getDal().getUserId1() != userId ? fightDTO.getDal().getUserId1() : fightDTO.getDal().getUserId2();
+            hs.deleteMatchedPlayersFromChallenge(userId, oppId);
             return fightDTO;
         }
         return new FightDTO(false, "No fight found for userId - " + userId, null);

@@ -5,7 +5,6 @@ import main.Models.BL.TurnStatsModel;
 import main.Models.CONS.BodyParts;
 import main.Models.CONS.FightStatus;
 import main.Models.DTO.DBqueryDTO;
-import main.Models.DTO.FightDTO;
 import main.Services.IFightService;
 import main.Services.IHigherService;
 
@@ -20,10 +19,10 @@ public class FightService implements IFightService {
     }
 
     private DBqueryDTO checkForOpponent(TurnStatsModel model) {
-        DBqueryDTO dto = hs.checkForFightRecordByIdAndRound(model);
+        DBqueryDTO dto = hs.checkForFightLogByIdAndRound(model);
         // TODO we will need a timeout counter if we cannot get result or opponent leaves
         while (!dto.isSuccess()) {
-            dto = hs.checkForFightRecordByIdAndRound(model);
+            dto = hs.checkForFightLogByIdAndRound(model);
             if (!dto.isSuccess()) {
                 try {
                     Thread.sleep(1000);
@@ -36,13 +35,7 @@ public class FightService implements IFightService {
         return dto;
     }
 
-    public TurnOutcomeModel calculateTurnOutcome(TurnStatsModel userModel) {
-        FightDTO fightDTO = hs.getFightByUserId(userModel.userId);
-        // TODO fix the null part once we can
-        if (!fightDTO.isSuccess()) {
-            return  null;
-        }
-        userModel.fightId = fightDTO.getDal().getFightId();
+    public TurnOutcomeModel getTurnOutcome(TurnStatsModel userModel) {
         DBqueryDTO dto = sendFightStats(userModel);
         // TODO fix the null part once we can
         if (!dto.isSuccess()) {
@@ -69,7 +62,9 @@ public class FightService implements IFightService {
         }
         TurnOutcomeModel model = calculateOutcome(userModel, opponent);
         model.userName = userModel.userName;
+        model.userId = userModel.userId;
         model.oppName = userModel.oppName;
+        model.oppId = userModel.oppId;
         // TODO if model.fightStatus != FIGHTING -> hs.insertWinner()...
         return model;
     }
@@ -110,7 +105,7 @@ public class FightService implements IFightService {
     }
 
     public TurnOutcomeModel getStatsForRound(TurnStatsModel userModel) {
-        DBqueryDTO dto = hs.checkForFightRecordByIdAndRound(userModel);
+        DBqueryDTO dto = hs.checkForFightLogByIdAndRound(userModel);
         if (dto.isSuccess()) {
             TurnOutcomeModel outcome = new TurnOutcomeModel();
             List<Object> columns;

@@ -11,7 +11,7 @@ public interface IHigherService {
     ReadyToFightDTO getAllReadyToFightUsersId(long UserName);
     UserDTO getUserByEmailAndPass(String email, String password);
     DBqueryDTO insertTurnStats(TurnStatsModel model);
-    DBqueryDTO checkForFightRecordByIdAndRound(TurnStatsModel model);
+    DBqueryDTO checkForFightLogByIdAndRound(TurnStatsModel model);
     FightDTO getFightByUserId(long userId);
     DBqueryDTO insertIntoChallenge(ChallengeDAL dal);
     DBqueryDTO checkIfTwoUsersChallengedEachOther(long userId);
@@ -21,4 +21,5 @@ public interface IHigherService {
     DBqueryDTO checkIfFightIsAlreadyCreated(long userId);
     UserDTO getUserNameByUserId(long userId);
     DBqueryDTO checkIfUserIsAlreadyInReadyToFightTable(long userId);
+    DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId);
 }
