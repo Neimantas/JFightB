@@ -2,7 +2,10 @@ package main.Services.Impl;
 
 import main.Models.BL.TurnStatsModel;
 import main.Models.CONS.FighterStatus;
-import main.Models.DAL.*;
+import main.Models.DAL.ChallengeDAL;
+import main.Models.DAL.FightDAL;
+import main.Models.DAL.ReadyToFightDAL;
+import main.Models.DAL.UserDAL;
 import main.Models.DTO.DBqueryDTO;
 import main.Models.DTO.FightDTO;
 import main.Models.DTO.ReadyToFightDTO;
@@ -10,6 +13,9 @@ import main.Models.DTO.UserDTO;
 import main.Services.ICrud;
 import main.Services.IHigherService;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -78,29 +84,34 @@ public class HigherService implements IHigherService {
 
     @Override
     public UserDTO getUserByEmailAndPass(String email, String password) {
-        DBqueryDTO dBqueryDTO = crud.read("SELECT * FROM User WHERE Email = " + email + " AND Password = " + password);
-        if(!dBqueryDTO.isSuccess()) {
+        DBqueryDTO dBqueryDTO = crud.read("SELECT * from [User] where Email= '" + email + "' and Password='" + password + "'");
+        if (!dBqueryDTO.isSuccess()) {
             return new UserDTO(false, dBqueryDTO.getMessage(), null);
         }
-        List<Object> list = dBqueryDTO.getList().get(0);
         UserDAL userDAL = new UserDAL();
+        if (dBqueryDTO.getList().isEmpty()){
+            return new UserDTO(false,null,userDAL);
+        }
+
+        List<Object> list = dBqueryDTO.getList().get(0);
         for (int i = 0; i < list.size(); i++) {
             userDAL.setUserId(Long.parseLong(list.get(0).toString()));
             userDAL.setUserName(list.get(1).toString());
             userDAL.setPassword(list.get(2).toString());
             userDAL.setEmail(list.get(3).toString());
-            userDAL.setAccessLevel(Integer.parseInt(list.get(2).toString()));
+            userDAL.setAccessLevel(Integer.parseInt(list.get(4).toString()));
         }
+        System.out.println("");
         return new UserDTO(true, null, userDAL);
     }
 
     @Override
     public DBqueryDTO insertTurnStats(TurnStatsModel model) {
         String query = "INSERT INTO FightLog VALUES(" +
-                    model.fightId + ", " + model.userId + ", '" +
-                    model.att1 + "', '" + model.att2 + "', '" +
-                    model.def1 + "', '" + model.def2 + "', " +
-                    model.hp + ", " + model.round + ")";
+                model.fightId + ", " + model.userId + ", '" +
+                model.att1 + "', '" + model.att2 + "', '" +
+                model.def1 + "', '" + model.def2 + "', " +
+                model.hp + ", " + model.round + ")";
         return crud.create(query);
     }
 
@@ -137,15 +148,15 @@ public class HigherService implements IHigherService {
 
     public DBqueryDTO insertIntoChallenge(ChallengeDAL dal) {
         String query = "INSERT INTO Challenge ('UserId', 'opponentId') Values("
-                    + dal.userId + ", " + dal.opponentId + ")";
+                + dal.userId + ", " + dal.opponentId + ")";
         return crud.create(query);
     }
 
     public DBqueryDTO checkIfTwoUsersChallengedEachOther(long userId) {
         String query = "DECLARE @tempTable table(id int, userId int, oppId int) " +
-                        "INSERT INTO @tempTable SELECT * FROM Challenge WHERE opponentId = " + userId +
-                        " SELECT ch.userId, ch.oppId " + "FROM Challenge ch " +
-                        "INNER JOIN @tempTable tt on tt.userId = ch.oppId WHERE ch.userId = " + userId;
+                "INSERT INTO @tempTable SELECT * FROM Challenge WHERE opponentId = " + userId +
+                " SELECT ch.userId, ch.oppId " + "FROM Challenge ch " +
+                "INNER JOIN @tempTable tt on tt.userId = ch.oppId WHERE ch.userId = " + userId;
         return crud.read(query);
     }
 
@@ -172,4 +183,15 @@ public class HigherService implements IHigherService {
         }
         return new UserDTO(false, "User not found.", null);
     }
+
+//    @Override
+//    public boolean validate(String email, String pass) {
+//        String query = "select Email, [Password] from [User] where Email= '" + email + "' and Password='" + pass + "'";
+//        DBqueryDTO dBqueryDTO = crud.read(query);
+//        if (dBqueryDTO.getList().isEmpty()){
+//            return false;
+//        }
+//        return true;
+//    }
+
 }

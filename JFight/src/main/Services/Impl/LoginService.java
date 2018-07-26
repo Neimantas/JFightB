@@ -17,6 +17,7 @@ public class LoginService implements ILoginService {
             return new LoginDTO(false, userDTO.getMessage(), null);
         }
         ModelMapper mod = new ModelMapper();
+//        mod.getConfiguration().setFieldMatchingEnabled(true);
         return new LoginDTO(true, null, mod.map(userDTO.getUser(), User.class));
     }
 }

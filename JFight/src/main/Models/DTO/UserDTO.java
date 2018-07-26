@@ -7,6 +7,9 @@ public class UserDTO {
     private String Message;
     private UserDAL User;
 
+    public UserDTO(){
+
+    }
     public UserDTO(boolean success, String message, UserDAL user) {
         Success = success;
         Message = message;
