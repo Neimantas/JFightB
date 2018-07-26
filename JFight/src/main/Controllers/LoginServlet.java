@@ -3,8 +3,6 @@ package main.Controllers;
 import main.Models.DTO.LoginDTO;
 import main.Services.ILoginService;
 import main.Services.Impl.LoginService;
-
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -28,7 +26,7 @@ public class LoginServlet extends HttpServlet {
         String confPass= request.getParameter("confPass");
         String regEmail = request.getParameter("regEmail");
 
-        if (regName.equals(null)||regName.equals("")){
+
             ILoginService loginService = new LoginService();
             LoginDTO login = loginService.find(emailLogin, password);
             if(login.success) {
@@ -40,18 +38,10 @@ public class LoginServlet extends HttpServlet {
                 response.sendRedirect("/login.jsp");
             }
             out.close();
-        }else {
-
-        }
-
 
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        int paramSize = request.getParameterMap().size();
-//        System.out.println(paramSize);
-//        if (paramSize > 0) {
-//        }
         request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 }

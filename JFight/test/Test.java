@@ -34,8 +34,8 @@ public class Test {
         String query = "select Email, [Password] from [User] where Email= 'test@test.lt' and Password='test'";
 
         DBqueryDTO dBqueryDTO = new Crud().read(query);
-        System.out.println( dBqueryDTO.getList());
-        System.out.println( dBqueryDTO.getList().isEmpty());
+        System.out.println( dBqueryDTO.list);
+        System.out.println( dBqueryDTO.list.isEmpty());
 
     }
 }

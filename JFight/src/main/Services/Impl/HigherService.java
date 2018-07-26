@@ -2,7 +2,10 @@ package main.Services.Impl;
 
 import main.Models.BL.TurnStatsModel;
 import main.Models.CONS.FighterStatus;
-import main.Models.DAL.*;
+import main.Models.DAL.ChallengeDAL;
+import main.Models.DAL.FightDAL;
+import main.Models.DAL.ReadyToFightDAL;
+import main.Models.DAL.UserDAL;
 import main.Models.DTO.DBqueryDTO;
 import main.Models.DTO.FightDTO;
 import main.Models.DTO.ReadyToFightDTO;
@@ -10,9 +13,6 @@ import main.Models.DTO.UserDTO;
 import main.Services.ICrud;
 import main.Services.IHigherService;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,13 +23,13 @@ public class HigherService implements IHigherService {
 
     private ReadyToFightDTO createDals(String query) {
         DBqueryDTO dBqueryDTO = crud.read(query);
-        if (dBqueryDTO.isSuccess()) {
-            List<List<Object>> lists = dBqueryDTO.getList();
+        if (dBqueryDTO.success) {
+            List<List<Object>> lists = dBqueryDTO.list;
             List<ReadyToFightDAL> listReadyToFightDal = new ArrayList<>();
             for (int i = 0; i < lists.size(); i++) {
                 ReadyToFightDAL dal = new ReadyToFightDAL();
-                dal.setUserId(Long.parseLong(lists.get(i).get(0).toString()));
-                dal.setUserName(lists.get(i).get(1).toString());
+                dal.userId = (Long.parseLong(lists.get(i).get(0).toString()));
+                dal.userName = (lists.get(i).get(1).toString());
                 listReadyToFightDal.add(dal);
             }
             return new ReadyToFightDTO(true, null, listReadyToFightDal);
@@ -46,11 +46,11 @@ public class HigherService implements IHigherService {
     public DBqueryDTO addUserToReadyToFightTable(long UserId) {
         String query = "insert into ReadyToFight select UserID, UserName from [User] where UserId = " + UserId;
         DBqueryDTO dto = crud.create(query);
-        if (dto.isSuccess()) {
-            dto.setMessage(FighterStatus.SUCCESSREADYTOFIGHT);
+        if (dto.success) {
+            dto.message = (FighterStatus.SUCCESSREADYTOFIGHT);
             return dto;
         } else {
-            dto.setMessage(FighterStatus.FAILURETOINSERTREADYTOFIGHT);
+            dto.message = (FighterStatus.FAILURETOINSERTREADYTOFIGHT);
             return dto;
         }
     }
@@ -65,11 +65,11 @@ public class HigherService implements IHigherService {
         String queryInsertToFight = "insert into Fight (FightId, UserId1, UserId2) select '" + randomUUIDString + "', " + dal.userId + ", " + dal.opponentId;
 //        DBqueryDTO dto = crud.delete(queryDeleteFromChallenge);
         DBqueryDTO dto = crud.delete(queryDeleteFromReadyToFight);
-        if (dto.isSuccess()) {
+        if (dto.success) {
             dto = crud.create(queryInsertToFight);
             return dto;
         } else {
-            dto.setMessage(FighterStatus.FAILURE);
+            dto.message = (FighterStatus.FAILURE);
             return dto;
         }
     }
@@ -77,21 +77,21 @@ public class HigherService implements IHigherService {
     @Override
     public UserDTO getUserByEmailAndPass(String email, String password) {
         DBqueryDTO dBqueryDTO = crud.read("SELECT * from [User] where Email= '" + email + "' and Password='" + password + "'");
-        if (!dBqueryDTO.isSuccess()) {
-            return new UserDTO(false, dBqueryDTO.getMessage(), null);
+        if (!dBqueryDTO.success) {
+            return new UserDTO(false, dBqueryDTO.message, null);
         }
         UserDAL userDAL = new UserDAL();
-        if (dBqueryDTO.getList().isEmpty()){
-            return new UserDTO(false,null,userDAL);
+        if (dBqueryDTO.list.isEmpty()) {
+            return new UserDTO(false, null, userDAL);
         }
 
-        List<Object> list = dBqueryDTO.getList().get(0);
+        List<Object> list = dBqueryDTO.list.get(0);
         for (int i = 0; i < list.size(); i++) {
-            userDAL.setUserId(Long.parseLong(list.get(0).toString()));
-            userDAL.setUserName(list.get(1).toString());
-            userDAL.setPassword(list.get(2).toString());
-            userDAL.setEmail(list.get(3).toString());
-            userDAL.setAccessLevel(Integer.parseInt(list.get(4).toString()));
+            userDAL.userId = (Long.parseLong(list.get(0).toString()));
+            userDAL.userName = (list.get(1).toString());
+            userDAL.password = (list.get(2).toString());
+            userDAL.email = (list.get(3).toString());
+            userDAL.accessLevel = (Integer.parseInt(list.get(4).toString()));
         }
         return new UserDTO(true, null, userDAL);
     }
@@ -99,10 +99,10 @@ public class HigherService implements IHigherService {
     @Override
     public DBqueryDTO insertTurnStats(TurnStatsModel model) {
         String query = "INSERT INTO FightLog VALUES('" +
-                    model.fightId + "', " + model.userId + ", '" +
-                    model.att1 + "', '" + model.att2 + "', '" +
-                    model.def1 + "', '" + model.def2 + "', " +
-                    model.hp + ", " + model.round + ")";
+                model.fightId + "', " + model.userId + ", '" +
+                model.att1 + "', '" + model.att2 + "', '" +
+                model.def1 + "', '" + model.def2 + "', " +
+                model.hp + ", " + model.round + ")";
         return crud.create(query);
     }
 
@@ -113,10 +113,10 @@ public class HigherService implements IHigherService {
                 .append(model.fightId).append("' AND Round = ")
                 .append(model.round);
         DBqueryDTO dto = crud.read(query.toString());
-        if (!dto.isSuccess()) {
+        if (!dto.success) {
             return dto;
         }
-        if (dto.getList().size() != 2) {
+        if (dto.list.size() != 2) {
             return new DBqueryDTO(false, "Only one record found.", null);
         }
         return dto;
@@ -127,14 +127,14 @@ public class HigherService implements IHigherService {
         String query = "SELECT * FROM Fight WHERE UserId1 = " +
                 userId + " or UserId2 = " + userId;
         DBqueryDTO dto = crud.read(query);
-        if (dto.isSuccess() && dto.getList().size() > 0) {
+        if (dto.success && dto.list.size() > 0) {
             FightDAL fightDAL = new FightDAL();
-            fightDAL.setFightId(dto.getList().get(0).get(0).toString());
-            fightDAL.setUserId1(Long.parseLong(dto.getList().get(0).get(1).toString()));
-            fightDAL.setUserId2(Long.parseLong(dto.getList().get(0).get(2).toString()));
+            fightDAL.fightId = (dto.list.get(0).get(0).toString());
+            fightDAL.userId1 = (Long.parseLong(dto.list.get(0).get(1).toString()));
+            fightDAL.userId2 = (Long.parseLong(dto.list.get(0).get(2).toString()));
             return new FightDTO(true, "", fightDAL);
         }
-        return new FightDTO(false, dto.getMessage(), null);
+        return new FightDTO(false, dto.message, null);
     }
 
     public DBqueryDTO insertIntoChallenge(ChallengeDAL dal) {
@@ -145,9 +145,9 @@ public class HigherService implements IHigherService {
 
     public DBqueryDTO checkIfTwoUsersChallengedEachOther(long userId) {
         String query = "DECLARE @tempTable table(userId int, oppId int) " +
-                        "INSERT INTO @tempTable SELECT * FROM Challenge WHERE OpponentId = " + userId +
-                        " SELECT ch.UserId, ch.OpponentId " + "FROM Challenge ch " +
-                        "INNER JOIN @tempTable tt on tt.userId = ch.OpponentId WHERE ch.UserId = " + userId;
+                "INSERT INTO @tempTable SELECT * FROM Challenge WHERE OpponentId = " + userId +
+                " SELECT ch.UserId, ch.OpponentId " + "FROM Challenge ch " +
+                "INNER JOIN @tempTable tt on tt.userId = ch.OpponentId WHERE ch.UserId = " + userId;
         return crud.read(query);
     }
 
@@ -164,12 +164,12 @@ public class HigherService implements IHigherService {
     public UserDTO getUserNameByUserId(long userId) {
         String query = "SELECT UserName From [User] WHERE UserId = " + userId;
         DBqueryDTO dto = crud.read(query);
-        if (!dto.isSuccess()) {
-            return new UserDTO(false, dto.getMessage(), null);
+        if (!dto.success) {
+            return new UserDTO(false, dto.message, null);
         }
-        if (dto.getList().size() > 0) {
+        if (dto.list.size() > 0) {
             UserDAL dal = new UserDAL();
-            dal.setUserName(dto.getList().get(0).get(0).toString());
+            dal.userName = (dto.list.get(0).get(0).toString());
             return new UserDTO(true, "", dal);
         }
         return new UserDTO(false, "User not found.", null);
