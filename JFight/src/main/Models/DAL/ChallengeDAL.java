@@ -8,20 +8,4 @@ public class ChallengeDAL {
         this.userId = userId;
         this.opponentId = opponentId;
     }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public long getOpponentId() {
-        return opponentId;
-    }
-
-    public void setOpponentId(long opponentId) {
-        this.opponentId = opponentId;
-    }
 }
