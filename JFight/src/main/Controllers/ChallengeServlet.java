@@ -2,6 +2,7 @@ package main.Controllers;
 
 import main.Models.DAL.ChallengeDAL;
 import main.Models.DTO.*;
+import main.Services.IChallenge;
 import main.Services.Impl.ChallengeService;
 
 import javax.servlet.ServletException;
@@ -25,7 +26,7 @@ public class ChallengeServlet extends HttpServlet {
             long userId = Long.parseLong(request.getParameter("userId"));
             request.setAttribute("userId", userId);
             List<ChallengeDAL> dalList = new ArrayList<>();
-            ChallengeService cs = new ChallengeService();
+            IChallenge cs = new ChallengeService();
             cs.addPlayerToReadyToFight(userId);
 
             if (request.getParameter("challengedPlayers") != null) {

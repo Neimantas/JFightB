@@ -100,7 +100,7 @@ public class HigherService implements IHigherService {
     }
 
     @Override
-    public DBqueryDTO checkForFightRecordByIdAndRound(TurnStatsModel model) {
+    public DBqueryDTO checkForFightLogByIdAndRound(TurnStatsModel model) {
         StringBuilder query = new StringBuilder();
         query.append("SELECT * FROM FightLog WHERE FightId = '")
                 .append(model.fightId).append("' AND Round = ")

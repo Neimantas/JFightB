@@ -1,6 +1,7 @@
 var attBoxes = document.getElementsByName("attackBox"),
     defBoxes = document.getElementsByName("defBox"),
     userName = document.getElementById("userName").innerText,
+    userId = document.getElementById("userId").value,
     userHp = document.getElementById("userHp").innerText,
     oppName = document.getElementById("oppName").innerText,
     oppHp = document.getElementById("oppHp").innerText,
@@ -9,8 +10,22 @@ var attBoxes = document.getElementsByName("attackBox"),
 
 window.onload = function () {
     if (fightStatus !== "FIGHTING") {
+        var fightOutcomeText = document.getElementById("fightOutcomeText");
+
+        if (fightStatus === "WINNER") {
+            fightOutcomeText.innerText = "You are  VICTORIOUS!";
+        } else if (fightStatus === "LOSER") {
+            fightOutcomeText.innerText = "You have  LOST  the fight...";
+        } else {
+            fightOutcomeText.innerText = "You both fall to each others blades... it's a  DRAW!";
+        }
+
+        $('#fightEndStatus').modal('show');
         console.log(fightStatus);
-        alert("YOU are the -->>> " + fightStatus);
+        endBtn.innerText = "Exit Fight";
+        endBtn.onclick = function () {
+            location.href = "/news?userId=" + userId;
+        }
     }
 };
 
