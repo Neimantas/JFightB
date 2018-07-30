@@ -29,7 +29,7 @@ public class FightServlet extends HttpServlet {
             TurnOutcomeModel turnOutcomeModel;
 
             if (round != null && round.equals("0")) {
-                // THIS IS 0 ROUND we need to get the stats for the first time
+                // THIS IS ROUND 0 we need to get the stats for the first time
                 TurnStatsModel turnStatsModel = new TurnStatsModel();
                 turnStatsModel.fightId = fightId;
                 turnStatsModel.userId = userId;

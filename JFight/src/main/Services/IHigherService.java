@@ -15,9 +15,9 @@ public interface IHigherService {
     FightDTO getFightByUserId(long userId);
     DBqueryDTO insertIntoChallenge(ChallengeDAL dal);
     DBqueryDTO checkIfTwoUsersChallengedEachOther(long userId);
-    DBqueryDTO getAllIssuedChallengesByUserId(long userId);
-    DBqueryDTO moveUsersToFight(ChallengeDAL dal);
-    DBqueryDTO checkIfFightIsAlreadyCreated(long userId);
+    ChallengeDTO getAllIssuedChallengesByUserId(long userId);
+    FightDTO moveUsersToFight(ChallengeDAL dal);
+    FightDTO checkIfFightIsAlreadyCreated(long userId);
     UserDTO getUserNameByUserId(long userId);
     DBqueryDTO checkIfUserIsAlreadyInReadyToFightTable(long userId);
     DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId);

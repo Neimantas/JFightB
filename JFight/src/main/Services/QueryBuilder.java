@@ -53,11 +53,6 @@ public class QueryBuilder {
         return this;
     }
 
-    public QueryBuilder setTableName(String tn) {
-        tableName = tn;
-        return this;
-    }
-
     public String getQuery(){
         return sb.toString();
     }
