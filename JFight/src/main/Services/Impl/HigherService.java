@@ -72,28 +72,6 @@ public class HigherService implements IHigherService {
     }
 
     @Override
-    public UserDTO getUserByEmailAndPass(String email, String password) {
-        DBqueryDTO dBqueryDTO = crud.read("SELECT * from [User] where Email= '" + email + "' and Password='" + password + "'");
-        if (!dBqueryDTO.success) {
-            return new UserDTO(false, dBqueryDTO.message, null);
-        }
-        UserDAL userDAL = new UserDAL();
-        if (dBqueryDTO.list.isEmpty()) {
-            return new UserDTO(false, null, userDAL);
-        }
-
-        List<Object> list = dBqueryDTO.list.get(0);
-        for (int i = 0; i < list.size(); i++) {
-            userDAL.userId = (Long.parseLong(list.get(0).toString()));
-            userDAL.userName = (list.get(1).toString());
-            userDAL.password = (list.get(2).toString());
-            userDAL.email = (list.get(3).toString());
-            userDAL.accessLevel = (Integer.parseInt(list.get(4).toString()));
-        }
-        return new UserDTO(true, null, userDAL);
-    }
-
-    @Override
     public DBqueryDTO insertTurnStats(TurnStatsModel model) {
         String query = "INSERT INTO FightLog VALUES('" +
                 model.fightId + "', " + model.userId + ", '" +
@@ -188,16 +166,42 @@ public class HigherService implements IHigherService {
         DBqueryDTO dBqueryDTO = crud.read(query);
         if (!dBqueryDTO.success) {
             return new UserDTO(false, dBqueryDTO.message, null);
+        } else {
+            UserDAL userDAL = new UserDAL();
+            if (dBqueryDTO.list.isEmpty()) {
+                return new UserDTO(true, null, userDAL);
+            } else {
+                List<Object> list = dBqueryDTO.list.get(0);
+                for (int i = 0; i < list.size(); i++) {
+                    userDAL.userName = (list.get(1).toString());
+                    userDAL.email = (list.get(3).toString());
+                }
+                return new UserDTO(false, null, userDAL);
+            }
         }
-        UserDAL userDAL = new UserDAL();
-        if (dBqueryDTO.list.isEmpty()) {
-            return new UserDTO(true, null, userDAL);
-        }
-        List<Object> list = dBqueryDTO.list.get(0);
-        for (int i = 0; i < list.size(); i++) {
-            userDAL.userName = (list.get(1).toString());
-            userDAL.email = (list.get(3).toString());
-        }
-        return new UserDTO(false, null, userDAL);
     }
+
+    @Override
+    public UserDTO getUserByEmailAndPass(String email, String password) {
+        DBqueryDTO dBqueryDTO = crud.read("SELECT * from [User] where Email= '" + email + "' and Password='" + password + "'");
+        if (!dBqueryDTO.success) {
+            return new UserDTO(false, dBqueryDTO.message, null);
+        } else {
+            UserDAL userDAL = new UserDAL();
+            if (dBqueryDTO.list.isEmpty()) {
+                return new UserDTO(false, null, userDAL);
+            } else {
+                List<Object> list = dBqueryDTO.list.get(0);
+                for (int i = 0; i < list.size(); i++) {
+                    userDAL.userId = (Long.parseLong(list.get(0).toString()));
+                    userDAL.userName = (list.get(1).toString());
+                    userDAL.password = (list.get(2).toString());
+                    userDAL.email = (list.get(3).toString());
+                    userDAL.accessLevel = (Integer.parseInt(list.get(4).toString()));
+                }
+                return new UserDTO(true, null, userDAL);
+            }
+        }
+    }
+
 }

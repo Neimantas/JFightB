@@ -1,7 +1,6 @@
 package main.Services.Impl;
 
-
-
+import main.Models.BL.User;
 import main.Models.BL.UserRegister;
 import main.Models.DTO.RegisterDTO;
 import main.Models.DTO.UserDTO;
@@ -20,7 +19,7 @@ public class RegisterService implements IRegisterService {
         } else {
             ModelMapper mod = new ModelMapper();
 //        mod.getConfiguration().setFieldMatchingEnabled(true);
-            return new RegisterDTO(false, userDTO.message, mod.map(userDTO.user, UserRegister.class));
+            return new RegisterDTO(false, null, mod.map(userDTO.user, User.class));
         }
     }
 }
