@@ -57,10 +57,9 @@ public class HigherService implements IHigherService {
 
         UUID uuid = UUID.randomUUID();
         String randomUUIDString = uuid.toString();
-//        String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + dal.userId + " OR UserId = " + dal.opponentId + ")";
         String queryDeleteFromReadyToFight = "DELETE FROM ReadyToFight WHERE UserId = " + dal.userId + " OR UserId = " + dal.opponentId;
         String queryInsertToFight = "insert into Fight (FightId, UserId1, UserId2) select '" + randomUUIDString + "', " + dal.userId + ", " + dal.opponentId;
-//        DBqueryDTO dto = crud.delete(queryDeleteFromChallenge);
+
         DBqueryDTO dto = crud.delete(queryDeleteFromReadyToFight);
         if (dto.success) {
             dto = crud.create(queryInsertToFight);

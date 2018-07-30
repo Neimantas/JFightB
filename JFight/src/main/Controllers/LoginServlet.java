@@ -1,16 +1,12 @@
 package main.Controllers;
 
-import main.Models.DTO.DBqueryDTO;
 import main.Models.DTO.LoginDTO;
-import main.Models.DTO.RegisterDTO;
 import main.Services.ILoginService;
-import main.Services.IRegisterService;
-import main.Services.Impl.Crud;
 import main.Services.Impl.LoginService;
-import main.Services.Impl.RegisterService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,32 +29,33 @@ public class LoginServlet extends HttpServlet {
         String regEmail = request.getParameter("regEmail");
 
 
-        if (regName == null || regEmail == "") {
+        if (regName == null || regEmail.isEmpty()) {
             ILoginService loginService = new LoginService();
             LoginDTO login = loginService.find(emailLogin, password);
-            if (login.success) {
-                String name = login.user.name;
-                request.setAttribute("username", name);
-                request.getRequestDispatcher("/news.jsp").forward(request, response);
-            } else {
-                out.print("Sorry username or password error");
-                response.sendRedirect("/login.jsp");
-            }
-            out.close();
-        } else {
-            IRegisterService registerService = new RegisterService();
-            RegisterDTO register = registerService.find(regName,regEmail);
-            if (register.success){
-                out.print("Sorry username or email used");
-                response.sendRedirect("/login.jsp");
-            }else {
-                //TODO cia dirbam
-                String name = login.user.name;
-                request.setAttribute("username", name);
-                request.getRequestDispatcher("/news.jsp").forward(request, response);
-            }
-        }
 
+            if (login.success) {
+                System.out.println("******************************");
+                System.out.println("LOGIN SUCCESS");
+                response.addCookie(new Cookie("token", login.user.uuid));
+                request.getRequestDispatcher("/news").forward(request, response);
+            } else {
+                // TODO print an ALERT that Login info is incorrect
+                response.sendRedirect("/login.jsp");
+            }
+
+//        } else {
+//            IRegisterService registerService = new RegisterService();
+//            RegisterDTO register = registerService.find(regName,regEmail);
+//            if (register.success){
+//                out.print("Sorry username or email used");
+//                response.sendRedirect("/login.jsp");
+//            } else {
+//                //TODO cia dirbam
+//                String name = login.user.name;
+//                request.setAttribute("username", name);
+//                request.getRequestDispatcher("/news.jsp").forward(request, response);
+//            }
+        }
 
     }
 

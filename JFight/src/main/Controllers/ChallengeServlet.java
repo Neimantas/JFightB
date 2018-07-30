@@ -1,13 +1,18 @@
 package main.Controllers;
 
+import main.Models.BL.User;
 import main.Models.DAL.ChallengeDAL;
 import main.Models.DTO.*;
+import main.Services.ICache;
 import main.Services.IChallenge;
+import main.Services.Impl.Cache;
 import main.Services.Impl.ChallengeService;
+import main.Services.Impl.LoginService;
 import main.Services.ObjectConverterToString;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,18 +28,24 @@ public class ChallengeServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        if (request.getParameterMap().size() > 0 && request.getParameter("userId") != null) {
-            long userId = Long.parseLong(request.getParameter("userId"));
-            request.setAttribute("userId", userId);
+        LoginService loginService = new LoginService();
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies.length > 0 && loginService.validate(cookies)) {
+            ICache cache = Cache.getInstance();
+            User user = (User) cache.get(cookies[0].getValue());
+            request.setAttribute("userId", user.id);
+
             List<ChallengeDAL> dalList = new ArrayList<>();
             IChallenge cs = new ChallengeService();
-            cs.addPlayerToReadyToFight(userId);
+            cs.addPlayerToReadyToFight(user.id);
 
+            // TODO this should be in POST
             if (request.getParameter("challengedPlayers") != null) {
 
                 String[] split = request.getParameter("challengedPlayers").split("#");
                 for (String s : split) {
-                    dalList.add(new ChallengeDAL(userId, Long.parseLong(s)));
+                    dalList.add(new ChallengeDAL(user.id, Long.parseLong(s)));
                 }
 
                 DBqueryDTO dbDTO = cs.submitChallenges(dalList);
@@ -42,11 +53,11 @@ public class ChallengeServlet extends HttpServlet {
                 if (dbDTO.success) {
 
                     // WHILE Should be here - loop for 30s or until challenged player accepts the challenge
-                    ChallengeDTO challengeDTO = cs.checkForMatches(userId);
+                    ChallengeDTO challengeDTO = cs.checkForMatches(user.id);
                     int count = 0;
                     while(!challengeDTO.success && count < 30) {
-                        challengeDTO = cs.checkForMatches(userId);
-                        System.out.println("USER - " + userId + " dto message -> " + challengeDTO.message);
+                        challengeDTO = cs.checkForMatches(user.id);
+                        System.out.println("USER - " + user.id + " dto message -> " + challengeDTO.message);
                         try {
                             Thread.sleep(1000);
                             count++;
@@ -57,24 +68,24 @@ public class ChallengeServlet extends HttpServlet {
 
                     if (challengeDTO.success) {
 
-                        FightDTO fightDTO = cs.checkIfUserGotMatched(userId);
+                        FightDTO fightDTO = cs.checkIfUserGotMatched(user.id);
 
                         if (fightDTO.success) {
-                            response.sendRedirect("/fight?fightId=" + fightDTO.dal.fightId +
-                                    "&userId=" + userId + "&round=0");
+                            request.getRequestDispatcher("/fight?fightId=" + fightDTO.dal.fightId +
+                                    "&userId=" + user.id + "&round=0").forward(request, response);
                             return;
                         }
 
                         fightDTO = cs.createFightForMatchedPlayers(challengeDTO.list.get(0));
 
                         if (fightDTO.success) {
-                            response.sendRedirect("/fight?fightId=" + fightDTO.dal.fightId +
-                                                    "&userId=" + userId + "&round=0");
+                            request.getRequestDispatcher("/fight?fightId=" + fightDTO.dal.fightId +
+                                    "&userId=" + user.id + "&round=0").forward(request, response);
                             return;
                         }
 
                     } else {
-                        IssuedChallengesDTO issuedChallengesDTO = cs.getIssuedChallenges(userId);
+                        IssuedChallengesDTO issuedChallengesDTO = cs.getIssuedChallenges(user.id);
 
                         if (issuedChallengesDTO.success) {
                             request.setAttribute("userChallenges", ObjectConverterToString.convertList(issuedChallengesDTO.issuedChallenge.userChallenges));
@@ -84,23 +95,15 @@ public class ChallengeServlet extends HttpServlet {
                 }
             }
             // User has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
-            ReadyToFightDTO readyDTO = cs.getAllReadyToFightUsersId(userId);
+            ReadyToFightDTO readyDTO = cs.getAllReadyToFightUsersId(user.id);
+
             if (readyDTO.list.size() > 0) {
                 request.setAttribute("readyToFightList", ObjectConverterToString.convertList(readyDTO.list));
                 readyDTO.list.forEach(el -> System.out.println(el.userName));
-
-//                List<Map<String, String>> list2 = ObjectConverterToString.convertList(readyDTO.list);
-//                for (int i = 0; i < list2.size(); i++) {
-//                    for (Map.Entry<String, String> item: list2.get(i).entrySet()) {
-//                        System.out.println(String.valueOf(item));
-//                    }
-//                    System.out.println("====================");
-//                }
             }
-        } else {
-            response.sendRedirect("/login");
-            return;
+            request.getRequestDispatcher("/challenge.jsp").forward(request, response);
         }
-        request.getRequestDispatcher("/challenge.jsp").forward(request, response);
+
+        response.sendRedirect("/login");
     }
 }
