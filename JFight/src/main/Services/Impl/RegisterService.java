@@ -1,7 +1,6 @@
 package main.Services.Impl;
 
-import main.Models.BL.User;
-import main.Models.BL.UserRegister;
+import main.Models.BL.UserRegisterModel;
 import main.Models.DTO.RegisterDTO;
 import main.Models.DTO.UserDTO;
 import main.Services.IHigherService;
@@ -18,8 +17,27 @@ public class RegisterService implements IRegisterService {
             return new RegisterDTO(true, null, null);
         } else {
             ModelMapper mod = new ModelMapper();
-//        mod.getConfiguration().setFieldMatchingEnabled(true);
-            return new RegisterDTO(false, null, mod.map(userDTO.user, User.class));
+        mod.getConfiguration().setFieldMatchingEnabled(true);
+            return new RegisterDTO(false, null, null);
+        }
+    }
+
+    @Override
+    public RegisterDTO register(String userName, String password, String email) {
+        IHigherService hs = new HigherService();
+        String hash = null;
+        try {
+            hash = HashService.getSaltedHash(password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        UserDTO userDTO = hs.registerUser(userName, hash, email);
+        if (userDTO.success){
+            return new RegisterDTO(false,null, null);
+        }else {
+            ModelMapper mod = new ModelMapper();
+            mod.getConfiguration().setFieldMatchingEnabled(true);
+            return new RegisterDTO(true, null, null);
         }
     }
 }

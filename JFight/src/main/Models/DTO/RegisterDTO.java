@@ -1,16 +1,15 @@
 package main.Models.DTO;
 
-
-import main.Models.BL.User;
+import main.Models.BL.UserRegisterModel;
 
 public class RegisterDTO {
     public boolean success;
     public String message;
-    public User user;
+    public UserRegisterModel userRegisterModel;
 
-    public RegisterDTO(boolean Success, String Message, User User) {
-        success = Success;
-        message = Message;
-        user = User;
+    public RegisterDTO(boolean success, String message, UserRegisterModel userRegisterModel) {
+        this.success = success;
+        this.message = message;
+        this.userRegisterModel = userRegisterModel;
     }
 }

@@ -6,7 +6,10 @@ import main.Models.DAL.ChallengeDAL;
 import main.Models.DAL.FightDAL;
 import main.Models.DAL.ReadyToFightDAL;
 import main.Models.DAL.UserDAL;
-import main.Models.DTO.*;
+import main.Models.DTO.DBqueryDTO;
+import main.Models.DTO.FightDTO;
+import main.Models.DTO.ReadyToFightDTO;
+import main.Models.DTO.UserDTO;
 import main.Services.ICrud;
 import main.Services.IHigherService;
 
@@ -201,6 +204,18 @@ public class HigherService implements IHigherService {
                 }
                 return new UserDTO(true, null, userDAL);
             }
+        }
+    }
+
+    @Override
+    public UserDTO registerUser(String userName, String password, String email) {
+        String query = "insert into [User] (UserName, Password, Email, AccessLevel)\n" +
+                "    values ('" + userName + "','" + password + "','" + email + "','0');";
+        DBqueryDTO dto = crud.read(query);
+        if (!dto.success) {
+            return new UserDTO(false, dto.message, null);
+        } else {
+            return new UserDTO(true, null, null);
         }
     }
 

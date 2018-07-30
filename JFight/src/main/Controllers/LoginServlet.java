@@ -1,11 +1,9 @@
 package main.Controllers;
 
-import main.Models.DTO.DBqueryDTO;
 import main.Models.DTO.LoginDTO;
 import main.Models.DTO.RegisterDTO;
 import main.Services.ILoginService;
 import main.Services.IRegisterService;
-import main.Services.Impl.Crud;
 import main.Services.Impl.LoginService;
 import main.Services.Impl.RegisterService;
 
@@ -47,19 +45,20 @@ public class LoginServlet extends HttpServlet {
             out.close();
         } else {
             IRegisterService registerService = new RegisterService();
-            RegisterDTO register = registerService.find(regName,regEmail);
-            if (register.success){
+            RegisterDTO register = registerService.find(regName, regEmail);
+            if (register.success) {
                 out.print("Sorry username or email used");
                 response.sendRedirect("/login.jsp");
-            }else {
-                //TODO cia dirbam
-                String name = login.user.name;
-                request.setAttribute("username", name);
-                request.getRequestDispatcher("/news.jsp").forward(request, response);
+            } else {
+                IRegisterService registerService1 = new RegisterService();
+                RegisterDTO registerDTO = registerService1.register(regName, regPass, regEmail);
+                if (registerDTO.success) {
+                    response.sendRedirect("/login.jsp");
+                }else {
+                    response.sendRedirect("/login.jsp");
+                }
             }
         }
-
-
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

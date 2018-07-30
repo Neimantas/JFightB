@@ -1,8 +1,8 @@
 package main.Models.BL;
 
-public class UserRegister {
-    public long userId;
+public class UserRegisterModel {
     public String username;
+    public String password;
     public String email;
     public int accessLevel;
 }
