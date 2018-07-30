@@ -6,10 +6,7 @@ import main.Models.DAL.ChallengeDAL;
 import main.Models.DAL.FightDAL;
 import main.Models.DAL.ReadyToFightDAL;
 import main.Models.DAL.UserDAL;
-import main.Models.DTO.DBqueryDTO;
-import main.Models.DTO.FightDTO;
-import main.Models.DTO.ReadyToFightDTO;
-import main.Models.DTO.UserDTO;
+import main.Models.DTO.*;
 import main.Services.ICrud;
 import main.Services.IHigherService;
 
@@ -72,28 +69,6 @@ public class HigherService implements IHigherService {
             dto.message = (FighterStatus.FAILURE);
             return dto;
         }
-    }
-
-    @Override
-    public UserDTO getUserByEmailAndPass(String email, String password) {
-        DBqueryDTO dBqueryDTO = crud.read("SELECT * from [User] where Email= '" + email + "' and Password='" + password + "'");
-        if (!dBqueryDTO.success) {
-            return new UserDTO(false, dBqueryDTO.message, null);
-        }
-        UserDAL userDAL = new UserDAL();
-        if (dBqueryDTO.list.isEmpty()) {
-            return new UserDTO(false, null, userDAL);
-        }
-
-        List<Object> list = dBqueryDTO.list.get(0);
-        for (int i = 0; i < list.size(); i++) {
-            userDAL.userId = (Long.parseLong(list.get(0).toString()));
-            userDAL.userName = (list.get(1).toString());
-            userDAL.password = (list.get(2).toString());
-            userDAL.email = (list.get(3).toString());
-            userDAL.accessLevel = (Integer.parseInt(list.get(4).toString()));
-        }
-        return new UserDTO(true, null, userDAL);
     }
 
     @Override
@@ -184,4 +159,49 @@ public class HigherService implements IHigherService {
         String queryDeleteFromChallenge = "DELETE FROM Challenge WHERE (UserId = " + userId + " OR UserId = " + opponentId + ")";
         return crud.delete(queryDeleteFromChallenge);
     }
+
+    @Override
+    public UserDTO getUserByUserNameAndEmail(String userName, String email) {
+        String query = "SELECT * from [User] where UserName= '" + userName + "' or Email='" + email;
+        DBqueryDTO dBqueryDTO = crud.read(query);
+        if (!dBqueryDTO.success) {
+            return new UserDTO(false, dBqueryDTO.message, null);
+        } else {
+            UserDAL userDAL = new UserDAL();
+            if (dBqueryDTO.list.isEmpty()) {
+                return new UserDTO(true, null, userDAL);
+            } else {
+                List<Object> list = dBqueryDTO.list.get(0);
+                for (int i = 0; i < list.size(); i++) {
+                    userDAL.userName = (list.get(1).toString());
+                    userDAL.email = (list.get(3).toString());
+                }
+                return new UserDTO(false, null, userDAL);
+            }
+        }
+    }
+
+    @Override
+    public UserDTO getUserByEmailAndPass(String email, String password) {
+        DBqueryDTO dBqueryDTO = crud.read("SELECT * from [User] where Email= '" + email + "' and Password='" + password + "'");
+        if (!dBqueryDTO.success) {
+            return new UserDTO(false, dBqueryDTO.message, null);
+        } else {
+            UserDAL userDAL = new UserDAL();
+            if (dBqueryDTO.list.isEmpty()) {
+                return new UserDTO(false, null, userDAL);
+            } else {
+                List<Object> list = dBqueryDTO.list.get(0);
+                for (int i = 0; i < list.size(); i++) {
+                    userDAL.userId = (Long.parseLong(list.get(0).toString()));
+                    userDAL.userName = (list.get(1).toString());
+                    userDAL.password = (list.get(2).toString());
+                    userDAL.email = (list.get(3).toString());
+                    userDAL.accessLevel = (Integer.parseInt(list.get(4).toString()));
+                }
+                return new UserDTO(true, null, userDAL);
+            }
+        }
+    }
+
 }
