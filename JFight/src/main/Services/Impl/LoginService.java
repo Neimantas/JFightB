@@ -30,10 +30,14 @@ public class LoginService implements ILoginService {
         if (testHash == true && userDTO.success) {
             System.out.println("TESTHASH " + testHash);
             System.out.println(userDTO.success);
-
-        return new LoginDTO(true, "", addUserToCache(userDTO.user));
+            return new LoginDTO(true, "", addUserToCache(userDTO.user));
+        } else {
+            System.out.println("TESTHASH" + testHash);
+            System.out.println(userDTO.success);
+            return new LoginDTO(false, userDTO.message, null);
+        }
     }
-            ModelMapper mod = new ModelMapper();
+
     private User addUserToCache(UserDAL userDAL) {
         String uuid = UUID.randomUUID().toString();
         User user = new User(userDAL.userName, userDAL.userId, uuid);

@@ -1,17 +1,22 @@
 package main.Services.Impl;
 
-import main.Models.BL.UserRegisterModel;
+import main.Models.BL.User;
 import main.Models.DTO.RegisterDTO;
 import main.Models.DTO.UserDTO;
+import main.Services.ICache;
 import main.Services.IHigherService;
 import main.Services.IRegisterService;
 import org.modelmapper.ModelMapper;
 
+import java.util.UUID;
+
 public class RegisterService implements IRegisterService {
+
+    IHigherService hs = new HigherService();
+    ICache cache = Cache.getInstance();
 
     @Override
     public RegisterDTO find(String userName, String email) {
-        IHigherService hs = new HigherService();
         UserDTO userDTO = hs.getUserByUserNameAndEmail(userName, email);
         if (userDTO.success) {
             return new RegisterDTO(true, null, null);
@@ -24,7 +29,7 @@ public class RegisterService implements IRegisterService {
 
     @Override
     public RegisterDTO register(String userName, String password, String email) {
-        IHigherService hs = new HigherService();
+
         String hash = null;
         try {
             hash = HashService.getSaltedHash(password);
@@ -32,12 +37,26 @@ public class RegisterService implements IRegisterService {
             e.printStackTrace();
         }
         UserDTO userDTO = hs.registerUser(userName, hash, email);
-        if (userDTO.success){
+        if (!userDTO.success){
             return new RegisterDTO(false,null, null);
-        }else {
-            ModelMapper mod = new ModelMapper();
-            mod.getConfiguration().setFieldMatchingEnabled(true);
-            return new RegisterDTO(true, null, null);
         }
+        ModelMapper mod = new ModelMapper();
+        mod.getConfiguration().setFieldMatchingEnabled(true);
+        return new RegisterDTO(true, null, null);
     }
+
+
+
+
+    public User addUserToCache(String email) {
+        UserDTO userDTO = hs.getUserByEmail(email);
+        if (!userDTO.success) {
+            return null;
+        }
+        String uuid = UUID.randomUUID().toString();
+        User user = new User(userDTO.user.userName, userDTO.user.userId, uuid);
+        cache.put(uuid, user);
+        return user;
+    }
+
 }
