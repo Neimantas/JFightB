@@ -29,9 +29,9 @@ public class Test {
     }
 
 //    @org.junit.Test
-//    public void getAllReadyToFightUsersId() {
+//    public void getReadyToFightUsersExceptPrimaryUser() {
 //        FighterService fighterService = new FighterService();
-//        assertTrue(fighterService.getAllReadyToFightUsersId()!=null);
+//        assertTrue(fighterService.getReadyToFightUsersExceptPrimaryUser()!=null);
 //    }
 
 //    @org.junit.Test

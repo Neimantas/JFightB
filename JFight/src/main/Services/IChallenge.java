@@ -6,11 +6,17 @@ import main.Models.DTO.*;
 import java.util.List;
 
 public interface IChallenge {
-    DBqueryDTO submitChallenges(List<ChallengeDAL> dalList);
+    DBqueryDTO addPlayerToReadyToFight(long userId, String username);
+
     ChallengeDTO checkForMatches(long userId);
-    FightDTO createFightForMatchedPlayers(ChallengeDAL dal);
-    IssuedChallengesDTO getIssuedChallenges(long userId);
-    ReadyToFightDTO getAllReadyToFightUsersId(long userId);
-    DBqueryDTO addPlayerToReadyToFight(long userId);
+
     FightDTO checkIfUserGotMatched(long userId);
+
+    FightDTO createFightForMatchedPlayers(ChallengeDAL dal);
+
+    IssuedChallengesDTO getIssuedChallenges(long userId);
+
+    ReadyToFightDTO getReadyToFightUsersExceptPrimaryUser(long userId);
+
+    boolean submitChallenges(List<ChallengeDAL> dalList);
 }

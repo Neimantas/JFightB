@@ -2,7 +2,7 @@ package main.Services.Impl;
 
 import main.Models.BL.DBQueryModel;
 import main.Models.BL.ProcedureModel;
-import main.Models.CONS.FighterStatus;
+import main.Models.CONS.Settings;
 import main.Models.DAL.*;
 import main.Models.DTO.*;
 import main.Services.ICrud;
@@ -13,7 +13,6 @@ import java.util.UUID;
 public class HigherService implements IHigherService {
 
     private ICrud crud = new Crud();
-    private DBQueryModel dbQueryModel = new DBQueryModel();
 
     /**
      * Gets all users that are inserted into the ReadyToFight table.
@@ -36,43 +35,31 @@ public class HigherService implements IHigherService {
      * or (2) false - insert encountered an error.
      */
     @Override
-    public DBqueryDTO insertUserToReadyToFightTable(ReadyToFightDAL readyUserDal) {
-        DBqueryDTO dto = crud.create(readyUserDal);
-        if (dto.success) {
-            dto.message = FighterStatus.SUCCESSREADYTOFIGHT;
-            return dto;
-        } else {
-            dto.message = FighterStatus.FAILURETOINSERTREADYTOFIGHT;
-            return dto;
-        }
+    public DBqueryDTO insertUserToReadyToFightTable(ReadyToFightDAL readyUserDal) { return crud.create(readyUserDal); }
+
+    @Override
+    public DBqueryDTO deleteUserAndOpponentFromReadyToFight(long userId, long opponentId) {
+        DBQueryModel dbQueryModel = new DBQueryModel();
+        dbQueryModel.where = new String[]{"UserId"};
+        dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId),
+                                                        String.valueOf(opponentId)}};
+        return crud.delete(dbQueryModel, ReadyToFightDAL.class);
     }
 
 
-    /**
-     * Deletes given users inside ChallengeDAL from ReadyToFight table and creates a new fight
-     * using a unique randomUUID as fightId.
-     * @param dal ChallengeDAL, it cannot be null and should have its both fields filled.
-     * @return returns DBqueryDTO with success as (1) true if delete and insert were successful
-     * or (2) false if either of them failed.
-     */
     @Override
-    public FightDTO moveUsersToFight(ChallengeDAL dal) {
-        UUID uuid = UUID.randomUUID();
-        dbQueryModel.where = new String[]{"UserId"};
-        dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(dal.userId),
-                                                        String.valueOf(dal.opponentId)}};
-        DBqueryDTO dto = crud.delete(dbQueryModel, ReadyToFightDAL.class);
+    public FightDTO insertNewFight(ChallengeDAL dal) {
+        String uuid = UUID.randomUUID().toString();
+        FightDAL fightDAL = new FightDAL(uuid, dal.userId, dal.opponentId);
+        DBqueryDTO dto = crud.create(fightDAL);
 
         if (dto.success) {
-            String randomUUIDString = uuid.toString();
-            FightDAL fightDAL = new FightDAL(randomUUIDString, dal.userId, dal.opponentId);
-            // TODO paklausti ar cia visgi reiktu tikrinti ar success or not ? Ty ka tokiais atvejais daryti jeigu false ?
-            crud.create(fightDAL);
             return new FightDTO(true, "", fightDAL);
-        } else {
-            dto.message = FighterStatus.FAILURE;
-            return new FightDTO(false, dto.message, null);
         }
+
+        return new FightDTO(false, dto.message, null);
+
+//        DBqueryDTO dto = crud.delete(dbQueryModel, ReadyToFightDAL.class);
     }
 
     // TODO check what happens if there is no match
@@ -83,6 +70,7 @@ public class HigherService implements IHigherService {
      */
     @Override
     public UserDTO getUserByEmailAndPass(UserDAL user) {
+        DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel.where = new String[]{"Email", "Password"};
         dbQueryModel.whereValue = new String[][]{new String[]{user.email},
                                             new String[]{user.password}};
@@ -96,19 +84,17 @@ public class HigherService implements IHigherService {
     }
 
     @Override
-    public DBqueryDTO insertTurnStats(FightLogDAL fightLog) {
-        return crud.create(fightLog);
-    }
+    public DBqueryDTO insertTurnStats(FightLogDAL fightLog) { return crud.create(fightLog); }
 
     @Override
     public FightLogDTO getFightLogByIdAndRound(FightLogDAL fightLog) {
+        DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel.where = new String[]{"FightId", "Round"};
         dbQueryModel.whereValue = new String[][] {new String[]{fightLog.fightId},
                                             new String[]{String.valueOf(fightLog.round)}};
         DBqueryDTO<FightLogDAL> dto = crud.read(dbQueryModel, FightLogDAL.class);
 
-        // TODO magic number 2 ??? Make it into a constant
-        if (dto.success && dto.list.size() == 2) {
+        if (dto.success && dto.list.size() == Settings.NUMBER_OF_PLAYERS) {
             return new FightLogDTO(true, "", dto.list);
         } else if (dto.success) {
             // TODO change to ENUM
@@ -120,6 +106,7 @@ public class HigherService implements IHigherService {
 
     @Override
     public FightDTO getFightByUserId(long userId) {
+        DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel.where = new String[]{"UserId1", "UserId2"};
         dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId)},
                                             new String[]{String.valueOf(userId)}};
@@ -136,27 +123,35 @@ public class HigherService implements IHigherService {
     }
 
     @Override
-    public DBqueryDTO insertIntoChallenge(ChallengeDAL challengeDAL) {
+    public DBqueryDTO insertChallengedPlayers(ChallengeDAL challengeDAL) {
         return crud.create(challengeDAL);
     }
 
     // TODO THIS IS NOT FIXED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     @Override
-    public DBqueryDTO checkIfTwoUsersChallengedEachOther(long userId) {
+    public ChallengeDTO checkIfTwoUsersChallengedEachOther(long userId) {
         /*String query = "DECLARE @tempTable table(userId int, oppId int) " +
                         "INSERT INTO @tempTable SELECT * FROM Challenge WHERE OpponentId = " + userId +
                         " SELECT ch.UserId, ch.OpponentId " + "FROM Challenge ch " +
                         "INNER JOIN @tempTable tt on tt.userId = ch.OpponentId WHERE ch.UserId = " + userId;*/
+        DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel = new DBQueryModel();
         ProcedureModel procedure = new ProcedureModel();
 //        procedure.name = "CheckChallenges";
 //        procedure.params = userId.toString();
-        return crud.read(dbQueryModel, ChallengeDAL.class);
+        DBqueryDTO<ChallengeDAL> dto = crud.read(dbQueryModel, ChallengeDAL.class);
+
+        if (dto.success) {
+            return new ChallengeDTO(true, "", dto.list);
+        }
+
+        return new ChallengeDTO(false, dto.message, null);
     }
 
     @Override
     public ChallengeDTO getAllIssuedChallengesByUserId(long userId) {
-        dbQueryModel.where = new String[]{"UserId", "OponnentId"};
+        DBQueryModel dbQueryModel = new DBQueryModel();
+        dbQueryModel.where = new String[]{"UserId", "OpponentId"};
         dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId)},
                                                 new String[]{String.valueOf(userId)}};
         DBqueryDTO<ChallengeDAL> dto = crud.read(dbQueryModel, ChallengeDAL.class);
@@ -169,22 +164,8 @@ public class HigherService implements IHigherService {
     }
 
     @Override
-    public FightDTO checkIfFightIsAlreadyCreated(long userId) {
-        dbQueryModel.where = new String[]{"UserId1", "UserId2"};
-        dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId)},
-                                                new String[]{String.valueOf(userId)}};
-        DBqueryDTO<FightDAL> dto = crud.read(dbQueryModel, FightDAL.class);
-
-        if (dto.success && dto.list.size() > 0) {
-            return new FightDTO(true, "", dto.list.get(0));
-        }
-
-        return new FightDTO(false, dto.message, null);
-    }
-
-    //TODO IMPORTANT now this method will return the whole user not just its username
-    @Override
-    public UserDTO getUserNameByUserId(long userId) {
+    public UserDTO getUserByUserId(long userId) {
+        DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel.where = new String[]{"UserId"};
         dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId)}};
         DBqueryDTO<UserDAL> dto = crud.read(dbQueryModel, UserDAL.class);
@@ -198,6 +179,7 @@ public class HigherService implements IHigherService {
 
     @Override
     public DBqueryDTO checkIfUserIsAlreadyInReadyToFightTable(long userId) {
+        DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel.where = new String[]{"UserId"};
         dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId)}};
         return crud.read(dbQueryModel, ReadyToFightDAL.class);
@@ -205,6 +187,7 @@ public class HigherService implements IHigherService {
 
     @Override
     public DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId) {
+        DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel.where = new String[]{"UserId"};
         dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId), String.valueOf(opponentId)}};
         return crud.delete(dbQueryModel, ChallengeDAL.class);

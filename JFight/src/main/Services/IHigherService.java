@@ -7,18 +7,31 @@ import main.Models.DAL.UserDAL;
 import main.Models.DTO.*;
 
 public interface IHigherService {
-    ReadyToFightDTO getAllReadyToFightUsers();
-    DBqueryDTO insertUserToReadyToFightTable(ReadyToFightDAL readyUserDal);
-    UserDTO getUserByEmailAndPass(UserDAL user);
-    DBqueryDTO insertTurnStats(FightLogDAL fightLog);
-    FightLogDTO getFightLogByIdAndRound(FightLogDAL fightLog);
-    FightDTO getFightByUserId(long userId);
-    DBqueryDTO insertIntoChallenge(ChallengeDAL dal);
-    DBqueryDTO checkIfTwoUsersChallengedEachOther(long userId);
-    ChallengeDTO getAllIssuedChallengesByUserId(long userId);
-    FightDTO moveUsersToFight(ChallengeDAL dal);
-    FightDTO checkIfFightIsAlreadyCreated(long userId);
-    UserDTO getUserNameByUserId(long userId);
+    ChallengeDTO checkIfTwoUsersChallengedEachOther(long userId);
+
     DBqueryDTO checkIfUserIsAlreadyInReadyToFightTable(long userId);
+
     DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId);
+
+    DBqueryDTO deleteUserAndOpponentFromReadyToFight(long userId, long opponentId);
+
+    ChallengeDTO getAllIssuedChallengesByUserId(long userId);
+
+    ReadyToFightDTO getAllReadyToFightUsers();
+
+    FightDTO getFightByUserId(long userId);
+
+    FightLogDTO getFightLogByIdAndRound(FightLogDAL fightLog);
+
+    UserDTO getUserByEmailAndPass(UserDAL user);
+
+    UserDTO getUserByUserId(long userId);
+
+    DBqueryDTO insertChallengedPlayers(ChallengeDAL dal);
+
+    FightDTO insertNewFight(ChallengeDAL dal);
+
+    DBqueryDTO insertTurnStats(FightLogDAL fightLog);
+
+    DBqueryDTO insertUserToReadyToFightTable(ReadyToFightDAL readyUserDal);
 }
