@@ -12,12 +12,23 @@ public class LoginService implements ILoginService {
     @Override
     public LoginDTO find(String email, String password) {
         IHigherService hs = new HigherService();
-        UserDTO userDTO = hs.getUserByEmailAndPass(email, password);
-        if (!userDTO.success) {
+        boolean testHash = false;
+        UserDTO userDTO = hs.getUserByEmail(email);
+        String hash = userDTO.user.password;
+        try {
+            testHash = HashService.check(password, hash);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (testHash == true && userDTO.success) {
+            System.out.println("TESTHASH " + testHash);
+            System.out.println(userDTO.success);
+            ModelMapper mod = new ModelMapper();
+            return new LoginDTO(true, null, mod.map(userDTO.user, User.class));
+        } else {
+            System.out.println("TESTHASH" + testHash);
+            System.out.println(userDTO.success);
             return new LoginDTO(false, userDTO.message, null);
         }
-        ModelMapper mod = new ModelMapper();
-//        mod.getConfiguration().setFieldMatchingEnabled(true);
-        return new LoginDTO(true, null, mod.map(userDTO.user, User.class));
     }
 }
