@@ -1,7 +1,13 @@
 package main.Controllers;
 
+import main.Models.BL.User;
+import main.Services.ICache;
+import main.Services.Impl.Cache;
+import main.Services.Impl.LoginService;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -14,6 +20,20 @@ public class NewsServlet extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        request.getRequestDispatcher("/news.jsp").forward(request, response);
+        // Check if user is logged in
+        LoginService loginService = new LoginService();
+        Cookie token = loginService.findTokenCookie(request.getCookies());
+
+        if (token != null && loginService.validate(token)) {
+            ICache cache = Cache.getInstance();
+            User user = (User) cache.get(token.getValue());
+            System.out.println(user.name);
+            request.setAttribute("userName", user.name);
+            request.getRequestDispatcher("/news.jsp").forward(request, response);
+        } else {
+            // User is not logged in
+            response.sendRedirect("/login");
+        }
+
     }
 }
