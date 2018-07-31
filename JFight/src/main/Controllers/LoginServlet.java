@@ -37,7 +37,8 @@ public class LoginServlet extends HttpServlet {
                 System.out.println("******************************");
                 System.out.println("LOGIN SUCCESS");
                 response.addCookie(new Cookie("token", login.user.uuid));
-                request.getRequestDispatcher("/news").forward(request, response);
+//                request.getRequestDispatcher("/news").forward(request, response);
+                response.sendRedirect("/news");
             } else {
                 // TODO print an ALERT that Login info is incorrect
                 response.sendRedirect("/login.jsp");

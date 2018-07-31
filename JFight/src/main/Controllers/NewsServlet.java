@@ -22,12 +22,12 @@ public class NewsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         // Check if user is logged in
         LoginService loginService = new LoginService();
-        Cookie[] cookies = request.getCookies();
-        System.out.println("******************");
-        System.out.println("GOT TO NEWS");
-        if (cookies.length > 0 && loginService.validate(cookies)) {
+        Cookie token = loginService.findTokenCookie(request.getCookies());
+
+        if (token != null && loginService.validate(token)) {
             ICache cache = Cache.getInstance();
-            User user = (User) cache.get(cookies[0].getValue());
+            User user = (User) cache.get(token.getValue());
+            System.out.println(user.name);
             request.setAttribute("userName", user.name);
             request.getRequestDispatcher("/news.jsp").forward(request, response);
         } else {

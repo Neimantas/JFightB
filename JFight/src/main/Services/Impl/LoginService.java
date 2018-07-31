@@ -36,19 +36,7 @@ public class LoginService implements ILoginService {
     }
 
     @Override
-    public boolean validate(Cookie[] cookies) {
-        if (cookies == null || cookies.length == 0){
-            return false;
-        }
-
-        Cookie cookie = null;
-
-        for (Cookie ck : cookies) {
-            if (ck.getName().equals(Settings.COOKIE_NAME)) {
-                cookie = ck;
-                break;
-            }
-        }
+    public boolean validate(Cookie cookie) {
 
         if (cookie == null || cache.get(cookie.getValue()) == null) {
             return false;
@@ -57,5 +45,15 @@ public class LoginService implements ILoginService {
         return true;
     }
 
-
+    @Override
+    public Cookie findTokenCookie(Cookie[] cookies) {
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie ck : cookies) {
+                if (ck.getName().equals(Settings.COOKIE_NAME)) {
+                    return ck;
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -29,12 +29,12 @@ public class ChallengeServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         LoginService loginService = new LoginService();
-        Cookie[] cookies = request.getCookies();
+        Cookie token = loginService.findTokenCookie(request.getCookies());
 
-        if (cookies.length > 0 && loginService.validate(cookies)) {
+        if (token != null && loginService.validate(token)) {
             ICache cache = Cache.getInstance();
-            User user = (User) cache.get(cookies[0].getValue());
-            request.setAttribute("userId", user.id);
+            User user = (User) cache.get(token.getValue());
+            request.setAttribute("userName", user.name);
 
             List<ChallengeDAL> dalList = new ArrayList<>();
             IChallenge cs = new ChallengeService();

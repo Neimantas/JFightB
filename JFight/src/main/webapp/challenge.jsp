@@ -12,7 +12,6 @@
     <div class="row">
         <div class="col">
             <h3 id="userName">${userName}</h3>
-            <h4 id="userId">${userId}</h4>
         </div>
         <div class="col">
             <h3>Challenge:</h3>
