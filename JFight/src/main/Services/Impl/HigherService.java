@@ -185,8 +185,8 @@ public class HigherService implements IHigherService {
     }
 
     @Override
-    public UserDTO getUserByEmailAndPass(String email, String password) {
-        DBqueryDTO dBqueryDTO = crud.read("SELECT * from [User] where Email= '" + email + "' and Password='" + password + "'");
+    public UserDTO getUserByEmail(String email) {
+        DBqueryDTO dBqueryDTO = crud.read("SELECT * from [User] where Email= '" + email + "'");
         if (!dBqueryDTO.success) {
             return new UserDTO(false, dBqueryDTO.message, null);
         } else {

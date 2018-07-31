@@ -10,7 +10,7 @@ import main.Models.DTO.UserDTO;
 public interface IHigherService {
     ReadyToFightDTO getAllReadyToFightUsersId(long UserName);
 
-    UserDTO getUserByEmailAndPass(String email, String password);
+    UserDTO getUserByEmail(String email);
 
     DBqueryDTO insertTurnStats(TurnStatsModel model);
 
