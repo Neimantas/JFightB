@@ -1,6 +1,7 @@
 package main.Controllers;
 
 import main.Models.BL.User;
+import main.Models.CONS.Settings;
 import main.Models.DAL.ChallengeDAL;
 import main.Models.DTO.*;
 import main.Services.ICache;
@@ -9,6 +10,7 @@ import main.Services.Impl.Cache;
 import main.Services.Impl.ChallengeService;
 import main.Services.Impl.LoginService;
 import main.Services.ObjectConverterToString;
+import main.Services.ParameterChecker;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -41,8 +43,8 @@ public class ChallengeServlet extends HttpServlet {
             cs.addPlayerToReadyToFight(user.id);
 
             // TODO this should be in POST
-            if (request.getParameter("challengedPlayers") != null) {
-
+//            if (request.getParameter("challengedPlayers") != null) {
+            if (ParameterChecker.checkParameters(request, Settings.CHALLENGE_PARAMETERS)) {
                 String[] split = request.getParameter("challengedPlayers").split("#");
                 for (String s : split) {
                     dalList.add(new ChallengeDAL(user.id, Long.parseLong(s)));
@@ -72,7 +74,7 @@ public class ChallengeServlet extends HttpServlet {
 
                         if (fightDTO.success) {
                             request.getRequestDispatcher("/fight?fightId=" + fightDTO.dal.fightId +
-                                    "&userId=" + user.id + "&round=0").forward(request, response);
+                                    "&userId=" + user.id + "&round=0" + "&initial=true").forward(request, response);
                             return;
                         }
 
@@ -80,7 +82,7 @@ public class ChallengeServlet extends HttpServlet {
 
                         if (fightDTO.success) {
                             request.getRequestDispatcher("/fight?fightId=" + fightDTO.dal.fightId +
-                                    "&userId=" + user.id + "&round=0").forward(request, response);
+                                    "&userId=" + user.id + "&round=0" + "&initial=true").forward(request, response);
                             return;
                         }
 
