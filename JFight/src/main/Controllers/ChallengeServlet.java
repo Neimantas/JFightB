@@ -22,15 +22,15 @@ public class ChallengeServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        //if(!Someservice.Login) response.sendRedirect("/login");
-
-
         if (request.getParameterMap().size() > 0 && request.getParameter("userId") != null) {
             long userId = Long.parseLong(request.getParameter("userId"));
             request.setAttribute("userId", userId);
             List<ChallengeDAL> dalList = new ArrayList<>();
             IChallenge cs = new ChallengeService();
-            cs.addPlayerToReadyToFight(userId);
+            String username = null;
+            if (!cs.addPlayerToReadyToFight(userId, username)) {
+                // TODO should give a message to Front that an error has occurred.
+            }
 
             if (request.getParameter("challengedPlayers") != null) {
 
@@ -44,10 +44,10 @@ public class ChallengeServlet extends HttpServlet {
                 if (dbDTO.success) {
 
                     // WHILE Should be here - loop for 30s or until challenged player accepts the challenge
-                    ChallengeDTO challengeDTO = cs.checkForMatches(userId);
+                    ChallengeDTO challengeDTO = cs.checkIfUsersChallengedEachOther(userId);
                     int count = 0;
                     while(!challengeDTO.success && count < 30) {
-                        challengeDTO = cs.checkForMatches(userId);
+                        challengeDTO = cs.checkIfUsersChallengedEachOther(userId);
                         System.out.println("USER - " + userId + " dto message -> " + challengeDTO.message);
                         try {
                             Thread.sleep(1000);
@@ -59,7 +59,7 @@ public class ChallengeServlet extends HttpServlet {
 
                     if (challengeDTO.success) {
 
-                        FightDTO fightDTO = cs.checkIfUserGotMatched(userId);
+                        FightDTO fightDTO = cs.checkIfUserIsFighting(userId);
 
                         if (fightDTO.success) {
                             response.sendRedirect("/fight?fightId=" + fightDTO.dal.fightId +

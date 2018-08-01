@@ -48,18 +48,10 @@ public class HigherService implements IHigherService {
 
 
     @Override
-    public FightDTO insertNewFight(ChallengeDAL dal) {
+    public DBqueryDTO insertNewFight(ChallengeDAL dal) {
         String uuid = UUID.randomUUID().toString();
         FightDAL fightDAL = new FightDAL(uuid, dal.userId, dal.opponentId);
-        DBqueryDTO dto = crud.create(fightDAL);
-
-        if (dto.success) {
-            return new FightDTO(true, "", fightDAL);
-        }
-
-        return new FightDTO(false, dto.message, null);
-
-//        DBqueryDTO dto = crud.delete(dbQueryModel, ReadyToFightDAL.class);
+        return crud.create(fightDAL);
     }
 
     // TODO check what happens if there is no match
@@ -76,8 +68,10 @@ public class HigherService implements IHigherService {
                                             new String[]{user.password}};
         DBqueryDTO<UserDAL> dbqueryDTO = crud.read(dbQueryModel, UserDAL.class);
 
-        if(dbqueryDTO.success) {
+        if(dbqueryDTO.success && !dbqueryDTO.list.isEmpty()) {
             return new UserDTO(true, "", dbqueryDTO.list.get(0));
+        } else if (dbqueryDTO.success) {
+            return new UserDTO(false, "User with such Email and Password not found.", null);
         }
 
         return new UserDTO(false, dbqueryDTO.message, null);
@@ -172,17 +166,28 @@ public class HigherService implements IHigherService {
 
         if (dto.success && dto.list.size() > 0) {
             return new UserDTO(true, "", dto.list.get(0));
+        } else if (dto.success) {
+            return  new UserDTO(false, "No such user found.", null);
         }
 
         return new UserDTO(false, dto.message, null);
     }
 
     @Override
-    public DBqueryDTO checkIfUserIsAlreadyInReadyToFightTable(long userId) {
+    public ReadyToFightDTO getUserFromReadyToFightByUserId(long userId) {
         DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel.where = new String[]{"UserId"};
         dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId)}};
-        return crud.read(dbQueryModel, ReadyToFightDAL.class);
+
+        DBqueryDTO<ReadyToFightDAL> dto = crud.read(dbQueryModel, ReadyToFightDAL.class);
+
+        if (dto.success && !dto.list.isEmpty()) {
+            return new ReadyToFightDTO(true, "", dto.list);
+        } else if (dto.success) {
+            return new ReadyToFightDTO(false, "Such user not found in ReadyToFight", null);
+        }
+
+        return new ReadyToFightDTO(false, dto.message, null);
     }
 
     @Override

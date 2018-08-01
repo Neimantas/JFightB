@@ -9,8 +9,6 @@ import main.Models.DTO.*;
 public interface IHigherService {
     ChallengeDTO checkIfTwoUsersChallengedEachOther(long userId);
 
-    DBqueryDTO checkIfUserIsAlreadyInReadyToFightTable(long userId);
-
     DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId);
 
     DBqueryDTO deleteUserAndOpponentFromReadyToFight(long userId, long opponentId);
@@ -27,9 +25,11 @@ public interface IHigherService {
 
     UserDTO getUserByUserId(long userId);
 
+    ReadyToFightDTO getUserFromReadyToFightByUserId(long userId);
+
     DBqueryDTO insertChallengedPlayers(ChallengeDAL dal);
 
-    FightDTO insertNewFight(ChallengeDAL dal);
+    DBqueryDTO insertNewFight(ChallengeDAL dal);
 
     DBqueryDTO insertTurnStats(FightLogDAL fightLog);
 

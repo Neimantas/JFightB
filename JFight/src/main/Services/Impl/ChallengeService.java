@@ -16,48 +16,51 @@ public class ChallengeService implements IChallenge {
     private IHigherService hs = new HigherService();
     private DBqueryDTO dto;
 
-    // Check if user is already in ReadyToFight table
+    // Adds Player to ReadyToFight table
     @Override
-    public DBqueryDTO addPlayerToReadyToFight(long userId, String username) {
-        dto = hs.checkIfUserIsAlreadyInReadyToFightTable(userId);
-
-        if (dto.success && dto.list.size() > 0) {
-            return dto;
-        } else if (dto.success) {
+    public boolean addPlayerToReadyToFight(long userId, String username) {
+        boolean success = checkIfUserIsInReadyToFight(userId);
+        if (success)
             dto = hs.insertUserToReadyToFightTable(new ReadyToFightDAL(userId, username));
+            return true;
         }
 
-        return dto;
+        return false;
+    }
+
+    private boolean checkIfUserIsInReadyToFight(long userId) {
+        return hs.getUserFromReadyToFightByUserId(userId).success;
     }
 
     @Override
-    public ChallengeDTO checkForMatches(long userId){
+    public boolean checkIfUsersChallengedEachOther(long userId){
         ChallengeDTO challengeDTO = hs.checkIfTwoUsersChallengedEachOther(userId);
-        if (challengeDTO.success && challengeDTO.list.size() > 0) {
-            return challengeDTO;
-        } else if (challengeDTO.success) {
-            return new ChallengeDTO(false, "No matches found.", null);
-        }
-        return challengeDTO;
+        return challengeDTO.success && challengeDTO.list.size() > 0;
     }
 
     @Override
-    public FightDTO checkIfUserGotMatched(long userId) {
-        FightDTO fightDTO = hs.getFightByUserId(userId);
-
-        if (fightDTO.success) {
-            long oppId = fightDTO.dal.userId1 != userId ? fightDTO.dal.userId1 : fightDTO.dal.userId2;
-            DBqueryDTO dto = hs.deleteMatchedPlayersFromChallenge(userId, oppId);
-
-            if (dto.success) {
-                return fightDTO;
-            } else {
-                return new FightDTO(false, dto.message, null);
-            }
-        }
-
-        return fightDTO;
+    public boolean checkIfUserIsFighting(long userId) {
+        return hs.getFightByUserId(userId).success;
     }
+
+
+//    @Override
+//    public FightDTO checkIfUserIsFighting(long userId) {
+//        FightDTO fightDTO = hs.getFightByUserId(userId);
+//
+//        if (fightDTO.success) {
+//            long oppId = fightDTO.dal.userId1 != userId ? fightDTO.dal.userId1 : fightDTO.dal.userId2;
+//            DBqueryDTO dto = hs.deleteMatchedPlayersFromChallenge(userId, oppId);
+//
+//            if (dto.success) {
+//                return fightDTO;
+//            } else {
+//                return new FightDTO(false, dto.message, null);
+//            }
+//        }
+//
+//        return fightDTO;
+//    }
 
     @Override
     public FightDTO createFightForMatchedPlayers(ChallengeDAL dal) {
@@ -78,9 +81,9 @@ public class ChallengeService implements IChallenge {
                 return new FightDTO(false, dto.message, null);
             }
 
-            fightDTO = hs.insertNewFight(dal);
+            dto = hs.insertNewFight(dal);
 
-            if (fightDTO.success) {
+            if (dto.success) {
                 if (insertZeroRoundStatsBeforeFight(fightDTO)) {
                     return fightDTO;
                 }
