@@ -28,7 +28,7 @@
                 <small>Register</small>
             </a>
         </div>
-        <input type="submit" class="btn btn-primary" value="login">Login</input>
+        <input type="submit" class="btn btn-primary" value="login">
     </form>
 </div>
 
@@ -64,7 +64,7 @@
                 <small>Go back to Login</small>
             </a>
         </div>
-        <input type="submit" class="btn btn-primary" value="register">Register</input>
+        <input type="submit" class="btn btn-primary" value="register">
     </form>
 </div>
 
