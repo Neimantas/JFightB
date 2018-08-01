@@ -36,6 +36,8 @@ public interface IHigherService {
 
     DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId);
 
+    DBqueryDTO deleteFightLogByUserId(long userId);
+
     UserDTO getUserByUserNameAndEmail(String userName, String email);
 
     UserDTO registerUser(String userName, String password, String email);

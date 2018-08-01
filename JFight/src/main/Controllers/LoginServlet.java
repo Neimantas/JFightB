@@ -3,8 +3,10 @@ package main.Controllers;
 import main.Models.BL.User;
 import main.Models.DTO.LoginDTO;
 import main.Models.DTO.RegisterDTO;
+import main.Services.ILoggerService;
 import main.Services.ILoginService;
 import main.Services.IRegisterService;
+import main.Services.Impl.LoggerService;
 import main.Services.Impl.LoginService;
 import main.Services.Impl.RegisterService;
 
@@ -30,6 +32,8 @@ public class LoginServlet extends HttpServlet {
 
 
         if (isAllRegParamsAreCorrect(emailLogin, password)) {
+            ILoggerService log = new LoggerService();
+            log.error("uuu mama its working");
             ILoginService loginService = new LoginService();
             LoginDTO login = loginService.find(emailLogin, password);
 

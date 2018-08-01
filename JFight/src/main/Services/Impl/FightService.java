@@ -66,6 +66,7 @@ public class FightService implements IFightService {
         model.oppName = userModel.oppName;
         model.oppId = userModel.oppId;
         // TODO if model.fightStatus != FIGHTING -> hs.insertWinner()...
+        deleteFightLogIfOneOfPlayersHPisZero(model.userId, model.userHp);
         return model;
     }
 
@@ -129,5 +130,11 @@ public class FightService implements IFightService {
         }
         // TODO return not null...
         return null;
+    }
+
+    private void deleteFightLogIfOneOfPlayersHPisZero(long userId, int hp) {
+        if (hp <= 0) {
+            hs.deleteFightLogByUserId(userId);
+        }
     }
 }

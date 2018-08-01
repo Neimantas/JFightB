@@ -218,4 +218,13 @@ public class HigherService implements IHigherService {
         }
     }
 
+    @Override
+    public DBqueryDTO deleteFightLogByUserId(long userId) {
+        String query = "DELETE FROM FightLog WHERE userId = " + userId;
+        DBqueryDTO dto = crud.delete(query);
+        if (!dto.success) {
+            //Todo
+        }
+        return dto;
+    }
 }
