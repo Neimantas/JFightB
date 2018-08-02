@@ -1,6 +1,6 @@
 package main.Controllers;
 
-import main.Models.BL.User;
+import main.Models.BL.UserModel;
 import main.Services.ICache;
 import main.Services.Impl.Cache;
 import main.Services.Impl.LoginService;
@@ -26,12 +26,12 @@ public class NewsServlet extends HttpServlet {
 
         if (token != null && loginService.validate(token)) {
             ICache cache = Cache.getInstance();
-            User user = (User) cache.get(token.getValue());
+            UserModel user = (UserModel) cache.get(token.getValue());
             System.out.println(user.name);
             request.setAttribute("userName", user.name);
             request.getRequestDispatcher("/news.jsp").forward(request, response);
         } else {
-            // User is not logged in
+            // UserModel is not logged in
             response.sendRedirect("/login");
         }
 

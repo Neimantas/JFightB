@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: lalalala
-  Date: 7/9/2018
-  Time: 12:54
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
@@ -27,15 +20,19 @@
             <div class="col-6">
                 <ul class="list-group">
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Heath
+                        Wins
                         <span class="badge badge-primary badge-pill"> 1</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Strength
+                        Loses
                         <span class="badge badge-primary badge-pill"> 1</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Defence
+                        Draws
+                        <span class="badge badge-primary badge-pill"> 1</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        Total Fights
                         <span class="badge badge-primary badge-pill"> 1</span>
                     </li>
                 </ul>

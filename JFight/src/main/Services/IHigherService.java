@@ -2,10 +2,7 @@ package main.Services;
 
 import main.Models.BL.TurnStatsModel;
 import main.Models.DAL.ChallengeDAL;
-import main.Models.DTO.DBqueryDTO;
-import main.Models.DTO.FightDTO;
-import main.Models.DTO.ReadyToFightDTO;
-import main.Models.DTO.UserDTO;
+import main.Models.DTO.*;
 
 public interface IHigherService {
     ReadyToFightDTO getAllReadyToFightUsersId(long UserName);
@@ -39,4 +36,6 @@ public interface IHigherService {
     UserDTO getUserByUserNameAndEmail(String userName, String email);
 
     UserDTO registerUser(String userName, String password, String email);
+
+    UserExtendedDTO getUserExtendByUserId(long userId);
 }

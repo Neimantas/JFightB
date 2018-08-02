@@ -2,14 +2,8 @@ package main.Services.Impl;
 
 import main.Models.BL.TurnStatsModel;
 import main.Models.CONS.FighterStatus;
-import main.Models.DAL.ChallengeDAL;
-import main.Models.DAL.FightDAL;
-import main.Models.DAL.ReadyToFightDAL;
-import main.Models.DAL.UserDAL;
-import main.Models.DTO.DBqueryDTO;
-import main.Models.DTO.FightDTO;
-import main.Models.DTO.ReadyToFightDTO;
-import main.Models.DTO.UserDTO;
+import main.Models.DAL.*;
+import main.Models.DTO.*;
 import main.Services.ICrud;
 import main.Services.IHigherService;
 
@@ -44,7 +38,7 @@ public class HigherService implements IHigherService {
 
     @Override
     public DBqueryDTO addUserToReadyToFightTable(long UserId) {
-        String query = "insert into ReadyToFight select UserID, UserName from [User] where UserId = " + UserId;
+        String query = "insert into ReadyToFight select UserID, UserName from [UserModel] where UserId = " + UserId;
         DBqueryDTO dto = crud.create(query);
         if (dto.success) {
             dto.message = (FighterStatus.SUCCESSREADYTOFIGHT);
@@ -139,7 +133,7 @@ public class HigherService implements IHigherService {
     }
 
     public UserDTO getUserNameByUserId(long userId) {
-        String query = "SELECT UserName From [User] WHERE UserId = " + userId;
+        String query = "SELECT UserName From [UserModel] WHERE UserId = " + userId;
         DBqueryDTO dto = crud.read(query);
         if (!dto.success) {
             return new UserDTO(false, dto.message, null);
@@ -149,7 +143,7 @@ public class HigherService implements IHigherService {
             dal.userName = (dto.list.get(0).get(0).toString());
             return new UserDTO(true, "", dal);
         }
-        return new UserDTO(false, "User not found.", null);
+        return new UserDTO(false, "UserModel not found.", null);
     }
 
     public DBqueryDTO checkIfUserIsAlreadyInReadyToFightTable(long userId) {
@@ -164,7 +158,7 @@ public class HigherService implements IHigherService {
 
     @Override
     public UserDTO getUserByUserNameAndEmail(String userName, String email) {
-        String query = "SELECT * from [User] where UserName= '" + userName + "' or Email='" + email;
+        String query = "SELECT * from [UserModel] where UserName= '" + userName + "' or Email='" + email;
         DBqueryDTO dBqueryDTO = crud.read(query);
         if (!dBqueryDTO.success) {
             return new UserDTO(false, dBqueryDTO.message, null);
@@ -185,7 +179,7 @@ public class HigherService implements IHigherService {
 
     @Override
     public UserDTO getUserByEmail(String email) {
-        DBqueryDTO dBqueryDTO = crud.read("SELECT * from [User] where Email= '" + email + "'");
+        DBqueryDTO dBqueryDTO = crud.read("SELECT * from [UserModel] where Email= '" + email + "'");
         if (!dBqueryDTO.success) {
             return new UserDTO(false, dBqueryDTO.message, null);
         } else {
@@ -208,7 +202,7 @@ public class HigherService implements IHigherService {
 
     @Override
     public UserDTO registerUser(String userName, String password, String email) {
-        String query = "insert into [User] (UserName, Password, Email, AccessLevel)\n" +
+        String query = "insert into [UserModel] (UserName, Password, Email, AccessLevel)\n" +
                 "    values ('" + userName + "','" + password + "','" + email + "','0');";
         DBqueryDTO dto = crud.read(query);
         if (!dto.success) {
@@ -218,4 +212,27 @@ public class HigherService implements IHigherService {
         }
     }
 
+    @Override
+    public UserExtendedDTO getUserExtendByUserId(long userId) {
+        String query = "Select * from UserExtended where userId =" + userId;
+        DBqueryDTO dto = crud.read(query);
+        if (!dto.success) {
+            return new UserExtendedDTO(false, dto.message, null);
+        } else if (!dto.list.isEmpty()) {
+            List<List<Object>> rows = dto.list;
+            List<Object> columns = rows.get(0);
+            UserExtendedDAL dal = new UserExtendedDAL();
+
+            dal.userId = (Long) columns.get(0);
+            dal.userName = columns.get(1).toString();
+            dal.image = (byte[]) columns.get(2);
+            dal.win = (Integer) columns.get(3);
+            dal.lose = (Integer) columns.get(4);
+            dal.draw = (Integer) columns.get(5);
+            dal.totalFights = (Integer) columns.get(6);
+
+            return new UserExtendedDTO(true, "", dal);
+        }
+        return new UserExtendedDTO(false, "Such user not found in UserExtended table.", null);
+    }
 }

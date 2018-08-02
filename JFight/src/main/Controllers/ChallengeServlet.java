@@ -1,6 +1,6 @@
 package main.Controllers;
 
-import main.Models.BL.User;
+import main.Models.BL.UserModel;
 import main.Models.CONS.Settings;
 import main.Models.DAL.ChallengeDAL;
 import main.Models.DTO.*;
@@ -35,7 +35,7 @@ public class ChallengeServlet extends HttpServlet {
 
         if (token != null && loginService.validate(token)) {
             ICache cache = Cache.getInstance();
-            User user = (User) cache.get(token.getValue());
+            UserModel user = (UserModel) cache.get(token.getValue());
             request.setAttribute("userName", user.name);
 
             List<ChallengeDAL> dalList = new ArrayList<>();
@@ -96,7 +96,7 @@ public class ChallengeServlet extends HttpServlet {
                     }
                 }
             }
-            // User has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
+            // UserModel has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
             ReadyToFightDTO readyDTO = cs.getAllReadyToFightUsersId(user.id);
 
             if (readyDTO.list.size() > 0) {

@@ -74,7 +74,7 @@ public class FightService implements IFightService {
         // TODO in the future damage variable will change depending on items/skills
         int damage = 1;
 
-        // User outcome
+        // UserModel outcome
         int attacksReceivedUser = 0;
         // Check if user defends against first Opponent attack
         if (user.def1 != opponent.att1 && user.def2 != opponent.att1) attacksReceivedUser++;

@@ -1,6 +1,6 @@
 package main.Services.Impl;
 
-import main.Models.BL.User;
+import main.Models.BL.UserModel;
 import main.Models.DTO.RegisterDTO;
 import main.Models.DTO.UserDTO;
 import main.Services.ICache;
@@ -48,13 +48,13 @@ public class RegisterService implements IRegisterService {
 
 
 
-    public User addUserToCache(String email) {
+    public UserModel addUserToCache(String email) {
         UserDTO userDTO = hs.getUserByEmail(email);
         if (!userDTO.success) {
             return null;
         }
         String uuid = UUID.randomUUID().toString();
-        User user = new User(userDTO.user.userName, userDTO.user.userId, uuid);
+        UserModel user = new UserModel(userDTO.user.userName, userDTO.user.userId, uuid);
         cache.put(uuid, user);
         return user;
     }
