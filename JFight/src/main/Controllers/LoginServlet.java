@@ -36,7 +36,7 @@ public class LoginServlet extends HttpServlet {
             if (login.success) {
                 response.addCookie(new Cookie("token", login.user.uuid));
 //                response.sendRedirect("/news");
-                response.sendRedirect(request.getContextPath() + "/news.jsp");
+                response.sendRedirect(request.getContextPath() + "/news");
 
             }
             if (!login.success) {
