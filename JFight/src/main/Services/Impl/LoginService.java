@@ -19,6 +19,11 @@ public class LoginService implements ILoginService {
     @Override
     public LoginDTO find(String email, String password) {
         IHigherService hs = new HigherService();
+//        UserDAL userDAL = new UserDAL();
+//        userDAL.email = email;
+//        userDAL.password = password;
+//        UserDTO userDTO = hs.getUserByEmailAndPass(userDAL);
+
         boolean testHash = false;
         UserDTO userDTO = hs.getUserByEmail(email);
         String hash = userDTO.user.password;
@@ -27,7 +32,8 @@ public class LoginService implements ILoginService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (testHash == true && userDTO.success) {
+
+        if (testHash && userDTO.success) {
             System.out.println("TESTHASH " + testHash);
             System.out.println(userDTO.success);
             return new LoginDTO(true, "", addUserToCache(userDTO.user));

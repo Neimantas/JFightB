@@ -1,44 +1,45 @@
 package main.Services;
 
-import main.Models.BL.TurnStatsModel;
 import main.Models.DAL.ChallengeDAL;
-import main.Models.DTO.DBqueryDTO;
-import main.Models.DTO.FightDTO;
-import main.Models.DTO.ReadyToFightDTO;
-import main.Models.DTO.UserDTO;
+import main.Models.DAL.FightLogDAL;
+import main.Models.DAL.ReadyToFightDAL;
+import main.Models.DAL.UserDAL;
+import main.Models.DTO.*;
 
 public interface IHigherService {
-    ReadyToFightDTO getAllReadyToFightUsersId(long UserName);
+    ChallengeDTO checkIfTwoUsersChallengedEachOther(long userId);
 
     UserDTO getUserByEmail(String email);
 
-    DBqueryDTO insertTurnStats(TurnStatsModel model);
+    DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId);
 
-    DBqueryDTO checkForFightLogByIdAndRound(TurnStatsModel model);
+    DBqueryDTO deleteUserAndOpponentFromReadyToFight(long userId, long opponentId);
+
+    ChallengeDTO getAllIssuedChallengesByUserId(long userId);
+
+    ReadyToFightDTO getAllReadyToFightUsers();
 
     FightDTO getFightByUserId(long userId);
 
-    DBqueryDTO insertIntoChallenge(ChallengeDAL dal);
+    FightLogDTO getFightLogByIdAndRound(FightLogDAL fightLog);
 
-    DBqueryDTO checkIfTwoUsersChallengedEachOther(long userId);
+    UserDTO getUserByEmailAndPass(UserDAL user);
 
-    DBqueryDTO getAllIssuedChallengesByUserId(long userId);
+    UserDTO getUserByUserId(long userId);
 
-    DBqueryDTO addUserToReadyToFightTable(long id);
+    ReadyToFightDTO getUserFromReadyToFightByUserId(long userId);
 
-    DBqueryDTO moveUsersToFight(ChallengeDAL dal);
+    DBqueryDTO insertChallengedPlayers(ChallengeDAL dal);
 
-    DBqueryDTO checkIfFightIsAlreadyCreated(long userId);
+    DBqueryDTO insertNewFight(ChallengeDAL dal);
 
-    UserDTO getUserNameByUserId(long userId);
+    DBqueryDTO insertTurnStats(FightLogDAL fightLog);
 
-    DBqueryDTO checkIfUserIsAlreadyInReadyToFightTable(long userId);
+    DBqueryDTO insertUserToReadyToFightTable(ReadyToFightDAL readyUserDal);
 
-    DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId);
+    DBqueryDTO registerUser(UserDAL user);
 
     DBqueryDTO deleteFightLogByUserId(long userId);
 
     UserDTO getUserByUserNameAndEmail(String userName, String email);
-
-    UserDTO registerUser(String userName, String password, String email);
 }

@@ -32,16 +32,16 @@ public class LoginServlet extends HttpServlet {
         if (isAllRegParamsAreCorrect(emailLogin, password)) {
             ILoginService loginService = new LoginService();
             LoginDTO login = loginService.find(emailLogin, password);
-
+        response.sendRedirect("/login");
             if (login.success) {
                 response.addCookie(new Cookie("token", login.user.uuid));
-                response.sendRedirect("/news");
+//                response.sendRedirect("/news");
+                response.sendRedirect(request.getContextPath() + "/news");
             }
             if (!login.success) {
                 response.sendRedirect("/login.jsp");
             }
         }
-
         if (isAllRegParamsAreCorrect(regName, regEmail, regPass, confPass)) {
             IRegisterService registerService = new RegisterService();
             RegisterDTO isRegistered = registerService.find(regName, regEmail);

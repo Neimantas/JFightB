@@ -1,6 +1,8 @@
 package main.Services.Impl;
 
 import main.Models.BL.User;
+import main.Models.DAL.UserDAL;
+import main.Models.DTO.DBqueryDTO;
 import main.Models.DTO.RegisterDTO;
 import main.Models.DTO.UserDTO;
 import main.Services.ICache;
@@ -18,6 +20,7 @@ public class RegisterService implements IRegisterService {
     @Override
     public RegisterDTO find(String userName, String email) {
         UserDTO userDTO = hs.getUserByUserNameAndEmail(userName, email);
+
         if (userDTO.success) {
             return new RegisterDTO(true, null, null);
         } else {
@@ -25,6 +28,7 @@ public class RegisterService implements IRegisterService {
         mod.getConfiguration().setFieldMatchingEnabled(true);
             return new RegisterDTO(false, null, null);
         }
+
     }
 
     @Override
@@ -36,13 +40,20 @@ public class RegisterService implements IRegisterService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        UserDTO userDTO = hs.registerUser(userName, hash, email);
-        if (!userDTO.success){
-            return new RegisterDTO(false,null, null);
+
+        UserDAL user = new UserDAL();
+        user.userName = userName;
+        user.password = hash;
+        user.email = email;
+        DBqueryDTO dto = hs.registerUser(user);
+
+        if (!dto.success){
+            return new RegisterDTO(false, dto.message, null);
         }
+
         ModelMapper mod = new ModelMapper();
         mod.getConfiguration().setFieldMatchingEnabled(true);
-        return new RegisterDTO(true, null, null);
+        return new RegisterDTO(true, "", null);
     }
 
 

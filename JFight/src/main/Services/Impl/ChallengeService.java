@@ -1,150 +1,221 @@
 package main.Services.Impl;
 
 import main.Models.BL.IssuedChallenges;
-import main.Models.BL.TurnStatsModel;
 import main.Models.DAL.ChallengeDAL;
-import main.Models.DAL.FightDAL;
+import main.Models.DAL.FightLogDAL;
+import main.Models.DAL.ReadyToFightDAL;
 import main.Models.DTO.*;
-import main.Services.IChallenge;
+import main.Services.IChallengeService;
 import main.Services.IHigherService;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class ChallengeService implements IChallenge {
+public class ChallengeService implements IChallengeService {
 
     private IHigherService hs = new HigherService();
     private DBqueryDTO dto;
 
-    public DBqueryDTO submitChallenges(List<ChallengeDAL> dalList) {
-        dto = new DBqueryDTO(false, null, null);
-        for (ChallengeDAL dal : dalList) {
-            dto = hs.insertIntoChallenge(dal);
+    @Override
+    public boolean addPlayerToReadyToFight(long userId, String username) {
+        ReadyToFightDTO userIsInReadyToFight = checkIfUserIsInReadyToFight(userId);
+        // TODO use Enums
+        if (!userIsInReadyToFight.success && userIsInReadyToFight.message.equals("Such user not found in ReadyToFight")) {
+            dto = hs.insertUserToReadyToFightTable(new ReadyToFightDAL(userId, username));
+            return dto.success;
         }
+
+        return userIsInReadyToFight.success;
+    }
+
+    private ReadyToFightDTO checkIfUserIsInReadyToFight(long userId) {
+        return hs.getUserFromReadyToFightByUserId(userId);
+    }
+
+    @Override
+    public boolean checkIfUserGotMatched(long userId){
+        ChallengeDTO challengeDTO = hs.checkIfTwoUsersChallengedEachOther(userId);
+        int count = 0;
+
+        while(!challengeDTO.success && count < 15) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            challengeDTO = hs.checkIfTwoUsersChallengedEachOther(userId);
+            count++;
+        }
+        return challengeDTO.success && challengeDTO.list.size() > 0;
+    }
+
+    @Override
+    public FightDTO createFightForMatchedPlayers(long userId) {
+        FightDTO fightDTO = isFightAlreadyCreated(userId);
+
+        // TODO use enums here
+        if (!fightDTO.success && fightDTO.message.equals("No fight has been found.")) {
+            // Fight has not been created so we move create new Fight and remove users from Challenge, ReadyTOFight tables
+            ChallengeDTO challengeDTO = hs.checkIfTwoUsersChallengedEachOther(userId);
+
+            if (!challengeDTO.success) {
+                return new FightDTO(false, challengeDTO.message, null);
+            }
+
+            ChallengeDAL challengeDAL = challengeDTO.list.get(0);
+            // TODO check the query if this is actually necessary -> is it possible for OpponnentId to be UserId ???
+            long opponentId = challengeDAL.opponentId != userId ? challengeDAL.opponentId : challengeDAL.userId;
+
+            dto = deleteMatchedUsersFromChallengeAndReadyToFight(userId, opponentId);
+            if (!dto.success) {
+                return new FightDTO(false, dto.message, null);
+            }
+
+            dto = hs.insertNewFight(challengeDAL);
+            if (!dto.success) {
+                return new FightDTO(false, dto.message, null);
+            }
+
+            dto = insertZeroRoundStatsBeforeFight(fightDTO);
+            if (!dto.success) {
+                return new FightDTO(false, dto.message, null);
+            }
+
+        }
+
+        // Fight is already created or DB crash
+        return fightDTO;
+    }
+
+    private DBqueryDTO deleteMatchedUsersFromChallengeAndReadyToFight(long userId, long opponentId) {
+        DBqueryDTO dto = hs.deleteMatchedPlayersFromChallenge(userId, opponentId);
+
+        if (!dto.success) {
+            // TODO log error message here
+            return dto;
+        }
+
+        dto = hs.deleteUserAndOpponentFromReadyToFight(userId, opponentId);
+
+        if (!dto.success) {
+            // TODO log error message here
+            return dto;
+        }
+
         return dto;
     }
 
-    public ChallengeDTO checkForMatches(long userId){
-        dto = hs.checkIfTwoUsersChallengedEachOther(userId);
-        if (dto.success) {
-            if (dto.list.size() > 0) {
-                List<Object> list = dto.list.get(0);
-                List<ChallengeDAL> dalList = Arrays.asList(new ChallengeDAL(
-                        Long.parseLong(list.get(0).toString()),
-                        Long.parseLong(list.get(1).toString())));
-                return new ChallengeDTO(true, "", dalList);
-            }
-            return new ChallengeDTO(false, "No matches found.", null);
+    @Override
+    public IssuedChallengesDTO getIssuedChallenges(long userId) {
+        ChallengeDTO challengeDTO = hs.getAllIssuedChallengesByUserId(userId);
+        if (!challengeDTO.success) {
+            return new IssuedChallengesDTO(false, "", null);
+        } else if (challengeDTO.list.isEmpty()) {
+            // TODO use ENUM
+            return new IssuedChallengesDTO(false, "No one challenged the player.", null);
         }
-        return new ChallengeDTO(false, dto.message, null);
-    }
 
-    private FightDTO wasNewFightAlreadyCreated(long userId) {
-        dto = hs.checkIfFightIsAlreadyCreated(userId);
-        if (dto.success) {
-            if (dto.list.size() > 0) {
-                FightDAL dal = new FightDAL();
-                dal.fightId = dto.list.get(0).get(0).toString();
-                dal.userId1 = Long.parseLong(dto.list.get(0).get(1).toString());
-                dal.userId2 = Long.parseLong(dto.list.get(0).get(2).toString());
-                return new FightDTO(true, "Fight has been already created.", dal);
+        List<Long> userChallenges = new ArrayList<>();
+        List<Long> oppChallenges = new ArrayList<>();
+
+        challengeDTO.list.forEach(challenge -> {
+
+            if (challenge.userId == userId) {
+                userChallenges.add(challenge.opponentId);
             } else {
-                return new FightDTO(true, "No fight found", null);
+                oppChallenges.add(challenge.userId);
             }
-        }
-        // DB has crashed
-        return new FightDTO(false, dto.message, null);
+
+        });
+
+        return new IssuedChallengesDTO(true, "", new IssuedChallenges(userId, "", userChallenges, oppChallenges));
     }
 
-    public FightDTO createFightForMatchedPlayers(ChallengeDAL dal) {
-        FightDTO fightDTO = wasNewFightAlreadyCreated(dal.userId);
+    @Override
+    public ReadyToFightDTO getReadyToFightUsersExceptPrimaryUser(long userId) {
+        ReadyToFightDTO readyToFightDTO = hs.getAllReadyToFightUsers();
 
-        if (fightDTO.success) {
-
-            if (fightDTO.message.equals("No fight found")) {
-                dto = hs.moveUsersToFight(dal);
-
-                if (dto.success) {
-                    fightDTO = hs.getFightByUserId(dal.userId);
-                    insertZeroRoundStatsBeforeFight(fightDTO);
-                    if (fightDTO.success) {
-                        return fightDTO;
-                    }
-
+        if (readyToFightDTO.success) {
+            for (int i = 0; i < readyToFightDTO.list.size(); i++) {
+                if (readyToFightDTO.list.get(i).userId == userId) {
+                    readyToFightDTO.list.remove(i);
+                    break;
                 }
-
-            } else {
-                return fightDTO;
             }
         }
-        // DB crash
-        return new FightDTO(false, dto.message, null);
+
+        return readyToFightDTO;
     }
 
-    private void insertZeroRoundStatsBeforeFight(FightDTO fightDTO) {
+    @Override
+    public boolean submitChallenges(long userId, String[] challengedPlayers) {
+
+        for (String player : challengedPlayers) {
+            ChallengeDAL challenged = new ChallengeDAL(userId, Long.parseLong(player));
+
+            dto = hs.insertChallengedPlayers(challenged);
+            if (!dto.success) {
+                // TODO we should use a logger here to log any errors
+                return false;
+            }
+
+        }
+
+        return true;
+    }
+
+    @Override
+    public FightDTO mainFightProcedure(long userId, String[] challengedPlayers) {
+        if (!submitChallenges(userId, challengedPlayers)) {
+            // TODO use enums
+            return new FightDTO(false, "Failed to submit challenges.", null);
+        }
+
+        if (!checkIfUserGotMatched(userId)) {
+            return new FightDTO(false, "User has no matches", null);
+        }
+
+        return createFightForMatchedPlayers(userId);
+    }
+
+    private DBqueryDTO insertZeroRoundStatsBeforeFight(FightDTO fightDTO) {
         // TODO we need to get stats from user Character table (not implemented)
         int hp = 10;
         int round = 0; //stats before fight
-        TurnStatsModel turnStatsModel1 = new TurnStatsModel();
-        turnStatsModel1.userName = hs.getUserNameByUserId(fightDTO.dal.userId1).user.userName;
-        turnStatsModel1.userId = fightDTO.dal.userId1;
-        turnStatsModel1.fightId = fightDTO.dal.fightId;
-        turnStatsModel1.round = round;
-        turnStatsModel1.hp = hp;
 
-        TurnStatsModel turnStatsModel2 = new TurnStatsModel();
-        turnStatsModel2.userName = hs.getUserNameByUserId(fightDTO.dal.userId2).user.userName;
-        turnStatsModel2.userId = fightDTO.dal.userId2;
-        turnStatsModel2.fightId = fightDTO.dal.fightId;
-        turnStatsModel2.round = round;
-        turnStatsModel2.hp = hp;
+        FightLogDAL fightLog = new FightLogDAL();
+        fightLog.userId = fightDTO.dal.userId1;
+        fightLog.fightId = fightDTO.dal.fightId;
+        fightLog.round = round;
+        fightLog.hp = hp;
 
-        // TODO must be check for success
-        hs.insertTurnStats(turnStatsModel1);
-        hs.insertTurnStats(turnStatsModel2);
-    }
-
-    public IssuedChallengesDTO getIssuedChallenges(long userId) {
-        dto = hs.getAllIssuedChallengesByUserId(userId);
+        dto = hs.insertTurnStats(fightLog);
         if (!dto.success) {
-            return null;
-        }
-        List<List<Object>> rows = dto.list;
-        List<Long> userChallenges = new ArrayList<>();
-        List<Long> oppChallenges = new ArrayList<>();
-        for (int i = 0; i < rows.size(); i++) {
-            List<Object> columns = rows.get(i);
-            if (Long.parseLong(columns.get(1).toString()) == userId) {
-                userChallenges.add(Long.parseLong(columns.get(2).toString()));
-            } else {
-                oppChallenges.add(Long.parseLong(columns.get(1).toString()));
-            }
-        }
-        return new IssuedChallengesDTO(true, "", new IssuedChallenges(userId, null, userChallenges, oppChallenges));
-    }
-
-    public ReadyToFightDTO getAllReadyToFightUsersId(long userId) {
-        return hs.getAllReadyToFightUsersId(userId);
-    }
-
-    public DBqueryDTO addPlayerToReadyToFight(long userId) {
-        // Check if user is already in ReadyToFight table
-        dto = hs.checkIfUserIsAlreadyInReadyToFightTable(userId);
-        if (dto.success && dto.list.size() > 0) {
+            // TODO log error
             return dto;
         }
-        // TODO as usual....
-        return hs.addUserToReadyToFightTable(userId);
+
+        fightLog.userId = fightDTO.dal.userId2;
+
+        dto = hs.insertTurnStats(fightLog);
+        if (!dto.success) {
+            // TODO log error
+            return dto;
+        }
+
+        return dto;
     }
 
-    public FightDTO checkIfUserGotMatched(long userId) {
+    private FightDTO isFightAlreadyCreated(long userId) {
         FightDTO fightDTO = hs.getFightByUserId(userId);
-        if (fightDTO.success) {
-            long oppId = fightDTO.dal.userId1 != userId ? fightDTO.dal.userId1 : fightDTO.dal.userId2;
-            hs.deleteMatchedPlayersFromChallenge(userId, oppId);
-            return fightDTO;
+
+        if (fightDTO.success && fightDTO.dal != null) {
+            return new FightDTO(true, "Fight has been already created.", fightDTO.dal);
+        } else if (fightDTO.success){
+            return new FightDTO(false, "No fight has been found.", null);
         }
-        return new FightDTO(false, "No fight found for userId - " + userId, null);
+
+        // DB has crashed
+        return new FightDTO(false, dto.message, null);
     }
 }
