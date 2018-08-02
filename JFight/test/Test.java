@@ -9,7 +9,7 @@ public class Test {
     @org.junit.Test
     public void DbgetConnectionTest() throws Exception {
         IDataBase dataBase = new DataBase();
-        assertTrue(dataBase.getConnection()!=null);
+        assertTrue(dataBase.getConnection() != null);
     }
 
 //    @org.junit.Test
@@ -22,7 +22,7 @@ public class Test {
 
     @org.junit.Test
     public void ReadyStatus() {
-        assertTrue(FighterStatus.SUCCESS!=null);
+        assertTrue(FighterStatus.SUCCESS != null);
         System.out.println(FighterStatus.SUCCESS);
         System.out.println(FighterStatus.FAILURE);
     }
@@ -31,14 +31,16 @@ public class Test {
 //    public void getReadyToFightUsersExceptPrimaryUser() {
 //        FighterService fighterService = new FighterService();
 //        assertTrue(fighterService.getReadyToFightUsersExceptPrimaryUser()!=null);
+//        DBqueryDTO dBqueryDTO = new Crud().read(query);
+//        System.out.println( dBqueryDTO.list);
+//        System.out.println( dBqueryDTO.list.isEmpty());
 //    }
 
 //    @org.junit.Test
-//    public void getReadyToFightUserById() {
+//    public void find() {
+//        HigherService hs = new HigherService();
+//
+//     DBqueryDTO dto = new
 //    }
-
-//    @org.junit.Test
-//    public void moveUserToReadyTable() {
-//    }
-
 }
+

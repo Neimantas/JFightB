@@ -9,6 +9,8 @@ import main.Models.DTO.*;
 public interface IHigherService {
     ChallengeDTO checkIfTwoUsersChallengedEachOther(long userId);
 
+    UserDTO getUserByEmail(String email);
+
     DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId);
 
     DBqueryDTO deleteUserAndOpponentFromReadyToFight(long userId, long opponentId);
@@ -34,4 +36,8 @@ public interface IHigherService {
     DBqueryDTO insertTurnStats(FightLogDAL fightLog);
 
     DBqueryDTO insertUserToReadyToFightTable(ReadyToFightDAL readyUserDal);
+
+    DBqueryDTO registerUser(UserDAL user);
+
+    UserDTO getUserByUserNameAndEmail(String userName, String email);
 }

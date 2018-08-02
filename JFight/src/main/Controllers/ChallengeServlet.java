@@ -1,18 +1,23 @@
 package main.Controllers;
 
-import main.Models.DAL.ChallengeDAL;
-import main.Models.DTO.*;
+import main.Models.BL.User;
+import main.Models.DTO.FightDTO;
+import main.Models.DTO.IssuedChallengesDTO;
+import main.Models.DTO.ReadyToFightDTO;
+import main.Services.ICache;
 import main.Services.IChallengeService;
+import main.Services.Impl.Cache;
 import main.Services.Impl.ChallengeService;
+import main.Services.Impl.LoginService;
+import main.Services.ObjectConverterToString;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @WebServlet(name = "ChallengeServlet", urlPatterns = {"/challenge"})
 public class ChallengeServlet extends HttpServlet {
@@ -22,13 +27,16 @@ public class ChallengeServlet extends HttpServlet {
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        if (request.getParameterMap().size() > 0 && request.getParameter("userId") != null) {
-            long userId = Long.parseLong(request.getParameter("userId"));
-            request.setAttribute("userId", userId);
-            List<ChallengeDAL> dalList = new ArrayList<>();
+        LoginService loginService = new LoginService();
+        Cookie token = loginService.findTokenCookie(request.getCookies());
+
+        if (token != null && loginService.validate(token)) {
             IChallengeService cs = new ChallengeService();
-            String username = null;
-            if (!cs.addPlayerToReadyToFight(userId, username)) {
+            ICache cache = Cache.getInstance();
+            User user = (User) cache.get(token.getValue());
+            request.setAttribute("userName", user.name);
+
+            if (!cs.addPlayerToReadyToFight(user.id, user.name)) {
                 // TODO should give a message to Front that an error has occurred.
             }
 
@@ -40,26 +48,25 @@ public class ChallengeServlet extends HttpServlet {
                 // What should we do when a user challenges someone and they challenge him after 15seconds.
                 // Find out any possibilities of semi refresh of page
 
-                if (cs.submitChallenges(userId, challengedPlayers)) {
+                if (cs.submitChallenges(user.id, challengedPlayers)) {
 
-                    if (cs.checkIfUserGotMatched(userId)) {
+                    if (cs.checkIfUserGotMatched(user.id)) {
 
-                        FightDTO fightDTO = cs.createFightForMatchedPlayers(userId);
+                        FightDTO fightDTO = cs.createFightForMatchedPlayers(user.id);
 
                         if (fightDTO.success) {
-                            response.sendRedirect("/fight?fightId=" + fightDTO.dal.fightId +
-                                                    "&userId=" + userId + "&round=0");
+                            request.getRequestDispatcher("/fight?fightId=" + fightDTO.dal.fightId +
+                                    "&userId=" + user.id + "&round=0" + "&initial=true").forward(request, response);
                             return;
                         }
 
                     } else {
-                        IssuedChallengesDTO issuedChallengesDTO = cs.getIssuedChallenges(userId);
+                        IssuedChallengesDTO issuedChallengesDTO = cs.getIssuedChallenges(user.id);
 
                         if (issuedChallengesDTO.success) {
-                            request.setAttribute("userChallenges", issuedChallengesDTO.issuedChallenge.userChallenges);
-                            request.setAttribute("oppChallenges", issuedChallengesDTO.issuedChallenge.oppChallenges);
+                            request.setAttribute("userChallenges", ObjectConverterToString.convertList(issuedChallengesDTO.issuedChallenge.userChallenges));
+                            request.setAttribute("oppChallenges", ObjectConverterToString.convertList(issuedChallengesDTO.issuedChallenge.oppChallenges));
                         }
-
                     }
                 }
 
@@ -81,16 +88,16 @@ public class ChallengeServlet extends HttpServlet {
 
             }
             // User has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
-            ReadyToFightDTO readyDTO = cs.getReadyToFightUsersExceptPrimaryUser(userId);
+            ReadyToFightDTO readyDTO = cs.getReadyToFightUsersExceptPrimaryUser(user.id);
 
             if (readyDTO.list.size() > 0) {
-                request.setAttribute("readyToFightList", readyDTO.list);
+                request.setAttribute("readyToFightList", ObjectConverterToString.convertList(readyDTO.list));
                 readyDTO.list.forEach(el -> System.out.println("Users in ReadyToFight -> " + el.userName));
                 request.getRequestDispatcher("/challenge.jsp").forward(request, response);
             }
 
-        } else {
-            response.sendRedirect("/login");
         }
+
+        response.sendRedirect("/login");
     }
 }
