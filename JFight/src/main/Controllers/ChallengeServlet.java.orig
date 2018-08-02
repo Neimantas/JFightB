@@ -1,9 +1,16 @@
 package main.Controllers;
 
-import main.Models.BL.UserModel;
+<<<<<<< HEAD
+import main.Models.BL.User;
 import main.Models.DTO.FightDTO;
 import main.Models.DTO.IssuedChallengesDTO;
 import main.Models.DTO.ReadyToFightDTO;
+=======
+import main.Models.BL.UserModel;
+import main.Models.CONS.Settings;
+import main.Models.DAL.ChallengeDAL;
+import main.Models.DTO.*;
+>>>>>>> F6
 import main.Services.ICache;
 import main.Services.IChallengeService;
 import main.Services.Impl.Cache;
@@ -87,8 +94,13 @@ public class ChallengeServlet extends HttpServlet {
 //                }
 
             }
-            // UserModel has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
+<<<<<<< HEAD
+            // User has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
             ReadyToFightDTO readyDTO = cs.getReadyToFightUsersExceptPrimaryUser(user.id);
+=======
+            // UserModel has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
+            ReadyToFightDTO readyDTO = cs.getAllReadyToFightUsersId(user.id);
+>>>>>>> F6
 
             if (readyDTO.list.size() > 0) {
                 request.setAttribute("readyToFightList", ObjectConverterToString.convertList(readyDTO.list));

@@ -1,8 +1,12 @@
 package main.Services.Impl;
 
-import main.Models.BL.UserModel;
+<<<<<<< HEAD
+import main.Models.BL.User;
 import main.Models.DAL.UserDAL;
 import main.Models.DTO.DBqueryDTO;
+=======
+import main.Models.BL.UserModel;
+>>>>>>> F6
 import main.Models.DTO.RegisterDTO;
 import main.Models.DTO.UserDTO;
 import main.Services.ICache;

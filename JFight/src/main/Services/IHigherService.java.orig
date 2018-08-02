@@ -1,9 +1,12 @@
 package main.Services;
 
 import main.Models.DAL.ChallengeDAL;
+<<<<<<< HEAD
 import main.Models.DAL.FightLogDAL;
 import main.Models.DAL.ReadyToFightDAL;
 import main.Models.DAL.UserDAL;
+=======
+>>>>>>> F6
 import main.Models.DTO.*;
 
 public interface IHigherService {
@@ -41,7 +44,11 @@ public interface IHigherService {
 
     DBqueryDTO deleteFightLogByUserId(long userId);
 
+<<<<<<< HEAD
     UserDTO getUserByUserNameAndEmail(String userName, String email);
+=======
+    UserDTO registerUser(String userName, String password, String email);
 
     UserExtendedDTO getUserExtendByUserId(long userId);
+>>>>>>> F6
 }

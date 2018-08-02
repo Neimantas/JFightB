@@ -1,15 +1,15 @@
 package main.Services.Impl;
 
+<<<<<<< HEAD
 import main.Models.BL.DBQueryModel;
 import main.Models.BL.ProcedureModel;
-import main.Models.DAL.ChallengeDAL;
-import main.Models.DAL.FightDAL;
-import main.Models.DAL.ReadyToFightDAL;
-import main.Models.DAL.UserDAL;
-import main.Models.DTO.DBqueryDTO;
-import main.Models.DTO.FightDTO;
-import main.Models.DTO.ReadyToFightDTO;
-import main.Models.DTO.UserDTO;
+import main.Models.CONS.Settings;
+=======
+import main.Models.BL.TurnStatsModel;
+import main.Models.CONS.FighterStatus;
+>>>>>>> F6
+import main.Models.DAL.*;
+import main.Models.DTO.*;
 import main.Services.ICrud;
 import main.Services.IHigherService;
 
@@ -25,8 +25,20 @@ public class HigherService implements IHigherService {
      * @return returns a DTO filed with all users that are available to be challenged.
      */
     @Override
+<<<<<<< HEAD
     public ReadyToFightDTO getAllReadyToFightUsers() {
         DBqueryDTO<ReadyToFightDAL> dto = crud.read(new DBQueryModel(), ReadyToFightDAL.class);
+=======
+    public ReadyToFightDTO getAllReadyToFightUsersId(long UserId) {
+        String query = "select * from ReadyToFight WHERE UserId <> " + UserId;
+        return createDals(query);
+    }
+
+    @Override
+    public DBqueryDTO addUserToReadyToFightTable(long UserId) {
+        String query = "insert into ReadyToFight select UserID, UserName from [UserModel] where UserId = " + UserId;
+        DBqueryDTO dto = crud.create(query);
+>>>>>>> F6
         if (dto.success) {
             return new ReadyToFightDTO(true, "", dto.list);
         }
@@ -145,6 +157,7 @@ public class HigherService implements IHigherService {
         return new ChallengeDTO(false, dto.message, null);
     }
 
+<<<<<<< HEAD
     @Override
     public ChallengeDTO getAllIssuedChallengesByUserId(long userId) {
         DBQueryModel dbQueryModel = new DBQueryModel();
@@ -155,6 +168,13 @@ public class HigherService implements IHigherService {
 
         if (dto.success) {
             return new ChallengeDTO(true, "", dto.list);
+=======
+    public UserDTO getUserNameByUserId(long userId) {
+        String query = "SELECT UserName From [UserModel] WHERE UserId = " + userId;
+        DBqueryDTO dto = crud.read(query);
+        if (!dto.success) {
+            return new UserDTO(false, dto.message, null);
+>>>>>>> F6
         }
 
         return new ChallengeDTO(false, dto.message, null);
@@ -172,8 +192,12 @@ public class HigherService implements IHigherService {
         } else if (dto.success) {
             return  new UserDTO(false, "No such user found.", null);
         }
+<<<<<<< HEAD
 
         return new UserDTO(false, dto.message, null);
+=======
+        return new UserDTO(false, "UserModel not found.", null);
+>>>>>>> F6
     }
 
     @Override
@@ -202,6 +226,7 @@ public class HigherService implements IHigherService {
     }
 
     @Override
+<<<<<<< HEAD
     public UserDTO getUserByEmail(String email) {
 
         DBQueryModel dbQueryModel = new DBQueryModel();
@@ -214,12 +239,32 @@ public class HigherService implements IHigherService {
             return new UserDTO(true, "", dBqueryDTO.list.get(0));
         } else if (dBqueryDTO.success) {
             return new UserDTO(false, "User not found.", null);
+=======
+    public UserDTO getUserByUserNameAndEmail(String userName, String email) {
+        String query = "SELECT * from [UserModel] where UserName= '" + userName + "' or Email='" + email;
+        DBqueryDTO dBqueryDTO = crud.read(query);
+        if (!dBqueryDTO.success) {
+            return new UserDTO(false, dBqueryDTO.message, null);
+        } else {
+            UserDAL userDAL = new UserDAL();
+            if (dBqueryDTO.list.isEmpty()) {
+                return new UserDTO(true, null, userDAL);
+            } else {
+                List<Object> list = dBqueryDTO.list.get(0);
+                for (int i = 0; i < list.size(); i++) {
+                    userDAL.userName = (list.get(1).toString());
+                    userDAL.email = (list.get(3).toString());
+                }
+                return new UserDTO(false, null, userDAL);
+            }
+>>>>>>> F6
         }
 
         return new UserDTO(false, dBqueryDTO.message, null);
     }
 
     @Override
+<<<<<<< HEAD
     public DBqueryDTO registerUser(UserDAL user) {
         user.accessLevel = 0;
         return crud.create(user);
@@ -248,10 +293,46 @@ public class HigherService implements IHigherService {
             return new UserDTO(false, "User not found.", null);
         }
 
-    @Override
-    public UserExtendedDTO getUserExtendByUserId(long userId) {
         return new UserDTO(false, dto.message, null);
     }
+}
+=======
+    public UserDTO getUserByEmail(String email) {
+        DBqueryDTO dBqueryDTO = crud.read("SELECT * from [UserModel] where Email= '" + email + "'");
+        if (!dBqueryDTO.success) {
+            return new UserDTO(false, dBqueryDTO.message, null);
+        } else {
+            UserDAL userDAL = new UserDAL();
+            if (dBqueryDTO.list.isEmpty()) {
+                return new UserDTO(false, null, userDAL);
+            } else {
+                List<Object> list = dBqueryDTO.list.get(0);
+                for (int i = 0; i < list.size(); i++) {
+                    userDAL.userId = (Long.parseLong(list.get(0).toString()));
+                    userDAL.userName = (list.get(1).toString());
+                    userDAL.password = (list.get(2).toString());
+                    userDAL.email = (list.get(3).toString());
+                    userDAL.accessLevel = (Integer.parseInt(list.get(4).toString()));
+                }
+                return new UserDTO(true, null, userDAL);
+            }
+        }
+    }
+
+    @Override
+    public UserDTO registerUser(String userName, String password, String email) {
+        String query = "insert into [UserModel] (UserName, Password, Email, AccessLevel)\n" +
+                "    values ('" + userName + "','" + password + "','" + email + "','0');";
+        DBqueryDTO dto = crud.read(query);
+        if (!dto.success) {
+            return new UserDTO(false, dto.message, null);
+        } else {
+            return new UserDTO(true, null, null);
+        }
+    }
+
+    @Override
+    public UserExtendedDTO getUserExtendByUserId(long userId) {
         String query = "Select * from UserExtended where userId =" + userId;
         DBqueryDTO dto = crud.read(query);
         if (!dto.success) {
@@ -274,3 +355,4 @@ public class HigherService implements IHigherService {
         return new UserExtendedDTO(false, "Such user not found in UserExtended table.", null);
     }
 }
+>>>>>>> F6

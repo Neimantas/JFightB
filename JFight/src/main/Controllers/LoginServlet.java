@@ -1,6 +1,6 @@
 package main.Controllers;
 
-import main.Models.BL.User;
+import main.Models.BL.UserModel;
 import main.Models.DTO.LoginDTO;
 import main.Models.DTO.RegisterDTO;
 import main.Services.ILoginService;
@@ -51,7 +51,7 @@ public class LoginServlet extends HttpServlet {
             }
             if (!isRegistered.success) {
                 RegisterDTO registerDTO = registerService.register(regName, regPass, regEmail);
-                User user = registerService.addUserToCache(regEmail);
+                UserModel user = registerService.addUserToCache(regEmail);
                 response.addCookie(new Cookie("token", user.uuid));
                 response.sendRedirect("/news");
             }

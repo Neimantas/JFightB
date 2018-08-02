@@ -92,7 +92,7 @@ public class FightServlet extends HttpServlet {
             }
 
         } else {
-            // User is not logged in
+            // UserModel is not logged in
             response.sendRedirect("/login");
         }
     }
