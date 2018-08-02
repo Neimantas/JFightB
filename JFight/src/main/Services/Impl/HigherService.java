@@ -8,7 +8,6 @@ import main.Models.DTO.*;
 import main.Services.ICrud;
 import main.Services.IHigherService;
 
-import java.util.List;
 import java.util.UUID;
 
 public class HigherService implements IHigherService {
@@ -243,6 +242,7 @@ public class HigherService implements IHigherService {
         } else if (dto.success) {
             return new UserDTO(false, "User not found.", null);
         }
+        return new UserDTO(false, dto.message, null);
     }
     @Override
     public UserExtendedDTO getUserExtendByUserId(long userId) {
