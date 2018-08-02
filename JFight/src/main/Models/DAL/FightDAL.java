@@ -10,4 +10,6 @@ public class FightDAL {
         userId1 = _userId1;
         userId2 = _userId2;
     }
+
+    public FightDAL(){}
 }

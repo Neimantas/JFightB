@@ -94,6 +94,9 @@ public class ChallengeServlet extends HttpServlet {
                 request.setAttribute("readyToFightList", ObjectConverterToString.convertList(readyDTO.list));
                 readyDTO.list.forEach(el -> System.out.println("Users in ReadyToFight -> " + el.userName));
                 request.getRequestDispatcher("/challenge.jsp").forward(request, response);
+            } else {
+                System.out.println("NO USERS INSIDE LIST");
+                request.getRequestDispatcher("/challenge.jsp").forward(request, response);
             }
 
         }
