@@ -2,12 +2,12 @@ package main.Controllers;
 
 import main.Models.BL.UserExtendedModel;
 import main.Models.BL.UserModel;
+import main.Services.Helpers.ObjectConverterToString;
 import main.Services.ICache;
 import main.Services.ILoginService;
 import main.Services.Impl.Cache;
 import main.Services.Impl.LoginService;
 import main.Services.Impl.UserInfoService;
-import main.Services.ObjectConverterToString;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

@@ -2,7 +2,7 @@ package main.Controllers;
 
 import main.Models.BL.TurnOutcomeModel;
 import main.Models.BL.TurnStatsModel;
-import main.Models.BL.User;
+import main.Models.BL.UserModel;
 import main.Models.CONS.BodyParts;
 import main.Models.CONS.Settings;
 import main.Services.ICache;
@@ -31,7 +31,7 @@ public class FightServlet extends HttpServlet {
 
         if (loginService.validate(token)) {
             ICache cache = Cache.getInstance();
-            User user = (User) cache.get(token.getValue());
+            UserModel user = (UserModel) cache.get(token.getValue());
             FightService fs = new FightService();
             TurnOutcomeModel turnOutcomeModel = null;
             String fightId;
