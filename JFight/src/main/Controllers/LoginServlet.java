@@ -32,29 +32,32 @@ public class LoginServlet extends HttpServlet {
         if (isAllRegParamsAreCorrect(emailLogin, password)) {
             ILoginService loginService = new LoginService();
             LoginDTO login = loginService.find(emailLogin, password);
-        response.sendRedirect("/login");
+
             if (login.success) {
                 response.addCookie(new Cookie("token", login.user.uuid));
-//                response.sendRedirect("/news");
                 response.sendRedirect(request.getContextPath() + "/news");
             }
+
             if (!login.success) {
                 response.sendRedirect("/login.jsp");
             }
-        }
-        if (isAllRegParamsAreCorrect(regName, regEmail, regPass, confPass)) {
+
+        } else if (isAllRegParamsAreCorrect(regName, regEmail, regPass, confPass)) {
             IRegisterService registerService = new RegisterService();
             RegisterDTO isRegistered = registerService.find(regName, regEmail);
+
             if (isRegistered.success) {
                 //TODO send some parameter and display in js that this user is already registered
                 response.sendRedirect("/login.jsp");
             }
+
             if (!isRegistered.success) {
                 RegisterDTO registerDTO = registerService.register(regName, regPass, regEmail);
                 User user = registerService.addUserToCache(regEmail);
                 response.addCookie(new Cookie("token", user.uuid));
                 response.sendRedirect("/news");
             }
+
         }
     }
 

@@ -9,4 +9,6 @@ public class ReadyToFightDAL {
         this.userId = userId;
         this.userName = userName;
     }
+
+    public ReadyToFightDAL(){}
 }
