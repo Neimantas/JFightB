@@ -252,7 +252,7 @@ public class HigherService implements IHigherService {
         model.whereValue = new String[][] {new String[]{String.valueOf(userId)}};
 
         DBqueryDTO<UserExtendedDAL> dto = crud.read(model, UserExtendedDAL.class);
-        
+
         if (dto.success && !dto.list.isEmpty()) {
             return new UserExtendedDTO(true, "", dto.list.get(0));
         } else if (dto.success) {
