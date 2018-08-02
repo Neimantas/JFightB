@@ -8,7 +8,7 @@ import main.Services.IChallenge;
 import main.Services.Impl.Cache;
 import main.Services.Impl.ChallengeService;
 import main.Services.Impl.LoginService;
-import main.Services.ObjectConverterToString;
+import main.Services.Helpers.ObjectConverterToString;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
