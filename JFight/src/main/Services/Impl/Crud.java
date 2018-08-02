@@ -40,9 +40,9 @@ public class Crud implements ICrud {
             statement = connection.createStatement();
             // TODO make a check for a procedure != null
             ResultSet rs = statement
-                    .executeQuery(new QueryBuilder(getClassNameWithoutDAL(dalType))
-                    .buildQuery(dbQueryModel, "read")
-                    .getQuery());
+                            .executeQuery(new QueryBuilder(getClassNameWithoutDAL(dalType))
+                            .buildQuery(dbQueryModel, "read")
+                            .getQuery());
             List<T> rows = new ArrayList<>();
             while (rs.next()) {
                 T dal = dalType.newInstance();
@@ -109,11 +109,15 @@ public class Crud implements ICrud {
             Class<?> type = field.getType();
             if (isPrimitive(type)) {
                 Class<?> boxed = boxPrimitiveClass(type);
+
                 if (type == boolean.class) {
                     value = (int) value == 1;
+                } else if (type == long.class){
+                    value = Long.parseLong(value.toString());
                 } else {
                     value = boxed.cast(value);
                 }
+
             }
             field.set(object, value);
         }
@@ -129,16 +133,14 @@ public class Crud implements ICrud {
         Field[] fields = zclass.getDeclaredFields();
         for(int i = 0; i < fields.length; i++) {
             fields[i].setAccessible(true);
-            if (fields[i].getName().equals("Id")) {
-                sb.append("null");
-            } else {
-                sb.append(quoteIdentifier(fields[i].get(object).toString()));
-            }
+            sb.append(quoteIdentifier(fields[i].get(object).toString()));
+
             if (i != fields.length - 1) {
                 sb.append(",");
             } else {
                 sb.append(")");
             }
+
         }
         return sb.toString();
     }
@@ -192,7 +194,7 @@ public class Crud implements ICrud {
     }
 
     private String quoteIdentifier(String value) {
-        return "\"" + value + "\"";
+        return "'" + value + "'";
     }
 
     private boolean isPrimitive(Class<?> type)

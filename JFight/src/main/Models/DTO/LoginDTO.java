@@ -1,15 +1,15 @@
 package main.Models.DTO;
 
-import main.Models.BL.User;
+import main.Models.BL.UserModel;
 
 public class LoginDTO {
     public boolean success;
     public String message;
-    public User user;
+    public UserModel user;
 
-    public LoginDTO(boolean Success, String Message, User User) {
+    public LoginDTO(boolean Success, String Message, UserModel UserModel) {
         success = Success;
         message = Message;
-        user = User;
+        user = UserModel;
     }
 }

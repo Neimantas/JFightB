@@ -42,4 +42,6 @@ public interface IHigherService {
     DBqueryDTO deleteFightLogByUserId(long userId);
 
     UserDTO getUserByUserNameAndEmail(String userName, String email);
+
+    UserExtendedDTO getUserExtendByUserId(long userId);
 }

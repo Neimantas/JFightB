@@ -1,6 +1,6 @@
 package main.Services.Impl;
 
-import main.Models.BL.User;
+import main.Models.BL.UserModel;
 import main.Models.CONS.Settings;
 import main.Models.DAL.UserDAL;
 import main.Models.DTO.LoginDTO;
@@ -44,9 +44,9 @@ public class LoginService implements ILoginService {
         }
     }
 
-    private User addUserToCache(UserDAL userDAL) {
+    private UserModel addUserToCache(UserDAL userDAL) {
         String uuid = UUID.randomUUID().toString();
-        User user = new User(userDAL.userName, userDAL.userId, uuid);
+        UserModel user = new UserModel(userDAL.userName, userDAL.userId, uuid);
         cache.put(uuid, user);
         return user;
     }

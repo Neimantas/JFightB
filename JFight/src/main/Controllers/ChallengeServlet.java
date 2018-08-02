@@ -1,6 +1,6 @@
 package main.Controllers;
 
-import main.Models.BL.User;
+import main.Models.BL.UserModel;
 import main.Models.DTO.FightDTO;
 import main.Models.DTO.IssuedChallengesDTO;
 import main.Models.DTO.ReadyToFightDTO;
@@ -33,7 +33,7 @@ public class ChallengeServlet extends HttpServlet {
         if (token != null && loginService.validate(token)) {
             IChallengeService cs = new ChallengeService();
             ICache cache = Cache.getInstance();
-            User user = (User) cache.get(token.getValue());
+            UserModel user = (UserModel) cache.get(token.getValue());
             request.setAttribute("userName", user.name);
 
             if (!cs.addPlayerToReadyToFight(user.id, user.name)) {
@@ -87,12 +87,15 @@ public class ChallengeServlet extends HttpServlet {
 //                }
 
             }
-            // User has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
+            // UserModel has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
             ReadyToFightDTO readyDTO = cs.getReadyToFightUsersExceptPrimaryUser(user.id);
 
             if (readyDTO.list.size() > 0) {
                 request.setAttribute("readyToFightList", ObjectConverterToString.convertList(readyDTO.list));
                 readyDTO.list.forEach(el -> System.out.println("Users in ReadyToFight -> " + el.userName));
+                request.getRequestDispatcher("/challenge.jsp").forward(request, response);
+            } else {
+                System.out.println("NO USERS INSIDE LIST");
                 request.getRequestDispatcher("/challenge.jsp").forward(request, response);
             }
 

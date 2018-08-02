@@ -233,16 +233,32 @@ public class HigherService implements IHigherService {
     public UserDTO getUserByUserNameAndEmail(String userName, String email) {
         DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel.where = new String[]{"UserName", "Email"};
-        dbQueryModel.whereValue = new String[][] {new String[]{userName},
-                                                  new String[]{email}};
+        dbQueryModel.whereValue = new String[][]{new String[]{userName},
+                new String[]{email}};
         DBqueryDTO<UserDAL> dto = crud.read(dbQueryModel, UserDAL.class);
 
         if (dto.success && !dto.list.isEmpty()) {
             return new UserDTO(true, "", dto.list.get(0));
-        } else if (dto.success){
+        } else if (dto.success) {
             return new UserDTO(false, "User not found.", null);
         }
-
         return new UserDTO(false, dto.message, null);
+    }
+    @Override
+    public UserExtendedDTO getUserExtendByUserId(long userId) {
+        DBQueryModel model = new DBQueryModel();
+
+        model.where = new String[] {"UserId"};
+        model.whereValue = new String[][] {new String[]{String.valueOf(userId)}};
+
+        DBqueryDTO<UserExtendedDAL> dto = crud.read(model, UserExtendedDAL.class);
+
+        if (dto.success && !dto.list.isEmpty()) {
+            return new UserExtendedDTO(true, "", dto.list.get(0));
+        } else if (dto.success) {
+            return new UserExtendedDTO(false, "Such user not found in UserExtended table.", null);
+        }
+
+        return new UserExtendedDTO(false, dto.message, null);
     }
 }

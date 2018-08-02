@@ -8,4 +8,6 @@ public class ChallengeDAL {
         this.userId = userId;
         this.opponentId = opponentId;
     }
+
+    public ChallengeDAL(){}
 }
