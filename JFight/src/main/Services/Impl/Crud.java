@@ -29,7 +29,7 @@ public class Crud implements ICrud {
             e.printStackTrace();
             return new DBqueryDTO(false, e.getMessage(), null);
         } finally {
-            dataBase.closeConnection();
+            dataBase.closeConnection(connection);
         }
     }
 
@@ -55,7 +55,7 @@ public class Crud implements ICrud {
             e.printStackTrace();
             return new DBqueryDTO(false, e.getMessage(), null);
         } finally {
-            dataBase.closeConnection();
+            dataBase.closeConnection(connection);
         }
     }
 
@@ -74,7 +74,7 @@ public class Crud implements ICrud {
             e.printStackTrace();
             return new DBqueryDTO(false, e.getMessage(), null);
         } finally {
-            dataBase.closeConnection();
+            dataBase.closeConnection(connection);
         }
     }
 
@@ -94,7 +94,7 @@ public class Crud implements ICrud {
             e.printStackTrace();
             return new DBqueryDTO(false, null, null);
         } finally {
-            dataBase.closeConnection();
+            dataBase.closeConnection(connection);
         }
     }
 

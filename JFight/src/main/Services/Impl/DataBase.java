@@ -17,17 +17,11 @@ public class DataBase implements IDataBase {
     String connectionUrl = "jdbc:sqlserver://192.168.1.101\\SQLEXPRESS;" +
             "databaseName=FightDBB;user=sa;password=Qwerty11";
 
-    // Declare the JDBC objects.
-    Connection connection = null;
-    Statement stmt = null;
-    ResultSet rs = null;
-
     @Override
     public Connection getConnection() {
         try {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-            connection = DriverManager.getConnection(connectionUrl);
-            return connection;
+            return DriverManager.getConnection(connectionUrl);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             return null;
@@ -35,7 +29,7 @@ public class DataBase implements IDataBase {
     }
 
     @Override
-    public void closeConnection() {
+    public void closeConnection(Connection connection) {
         try {
             if (connection != null) {
                 connection.close();
