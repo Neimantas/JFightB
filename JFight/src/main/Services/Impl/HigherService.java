@@ -2,17 +2,13 @@ package main.Services.Impl;
 
 import main.Models.BL.DBQueryModel;
 import main.Models.BL.ProcedureModel;
-import main.Models.DAL.ChallengeDAL;
-import main.Models.DAL.FightDAL;
-import main.Models.DAL.ReadyToFightDAL;
-import main.Models.DAL.UserDAL;
-import main.Models.DTO.DBqueryDTO;
-import main.Models.DTO.FightDTO;
-import main.Models.DTO.ReadyToFightDTO;
-import main.Models.DTO.UserDTO;
+import main.Models.CONS.Settings;
+import main.Models.DAL.*;
+import main.Models.DTO.*;
 import main.Services.ICrud;
 import main.Services.IHigherService;
 
+import java.util.List;
 import java.util.UUID;
 
 public class HigherService implements IHigherService {
@@ -238,39 +234,31 @@ public class HigherService implements IHigherService {
     public UserDTO getUserByUserNameAndEmail(String userName, String email) {
         DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel.where = new String[]{"UserName", "Email"};
-        dbQueryModel.whereValue = new String[][] {new String[]{userName},
-                                                  new String[]{email}};
+        dbQueryModel.whereValue = new String[][]{new String[]{userName},
+                new String[]{email}};
         DBqueryDTO<UserDAL> dto = crud.read(dbQueryModel, UserDAL.class);
 
         if (dto.success && !dto.list.isEmpty()) {
             return new UserDTO(true, "", dto.list.get(0));
-        } else if (dto.success){
+        } else if (dto.success) {
             return new UserDTO(false, "User not found.", null);
         }
-
+    }
     @Override
     public UserExtendedDTO getUserExtendByUserId(long userId) {
-        return new UserDTO(false, dto.message, null);
-    }
-        String query = "Select * from UserExtended where userId =" + userId;
-        DBqueryDTO dto = crud.read(query);
-        if (!dto.success) {
-            return new UserExtendedDTO(false, dto.message, null);
-        } else if (!dto.list.isEmpty()) {
-            List<List<Object>> rows = dto.list;
-            List<Object> columns = rows.get(0);
-            UserExtendedDAL dal = new UserExtendedDAL();
+        DBQueryModel model = new DBQueryModel();
 
-            dal.userId = (Long) columns.get(0);
-            dal.userName = columns.get(1).toString();
-            dal.image = (byte[]) columns.get(2);
-            dal.win = (Integer) columns.get(3);
-            dal.lose = (Integer) columns.get(4);
-            dal.draw = (Integer) columns.get(5);
-            dal.totalFights = (Integer) columns.get(6);
+        model.where = new String[] {"UserId"};
+        model.whereValue = new String[][] {new String[]{String.valueOf(userId)}};
 
-            return new UserExtendedDTO(true, "", dal);
+        DBqueryDTO<UserExtendedDAL> dto = crud.read(model, UserExtendedDAL.class);
+        
+        if (dto.success && !dto.list.isEmpty()) {
+            return new UserExtendedDTO(true, "", dto.list.get(0));
+        } else if (dto.success) {
+            return new UserExtendedDTO(false, "Such user not found in UserExtended table.", null);
         }
-        return new UserExtendedDTO(false, "Such user not found in UserExtended table.", null);
+
+        return new UserExtendedDTO(false, dto.message, null);
     }
 }
