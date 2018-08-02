@@ -220,6 +220,9 @@ public class Crud implements ICrud {
     }
 
     private String getClassNameWithoutDAL(Class c) {
+        if (c.getSimpleName().equals("UserDAL")) {
+            return "[User]";
+        }
         return c.getSimpleName().replace("DAL", "");
     }
 }

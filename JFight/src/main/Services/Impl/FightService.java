@@ -10,8 +10,6 @@ import main.Models.DTO.FightLogDTO;
 import main.Services.IFightService;
 import main.Services.IHigherService;
 
-import java.util.List;
-
 public class FightService implements IFightService {
 
     private IHigherService hs = new HigherService();
@@ -36,13 +34,15 @@ public class FightService implements IFightService {
     private FightLogDTO checkForOpponent(FightLogDAL model) {
         FightLogDTO dto = hs.getFightLogByIdAndRound(model);
         // TODO we will need a timeout counter if we cannot get result or opponent leaves
-        while (!dto.success && dto.message.equals("Only one record found.")) {
+        int count = 0;
+        while ((!dto.success && dto.message.equals("Only one record found.")) && count < 30) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             dto = hs.getFightLogByIdAndRound(model);
+            count++;
         }
         return dto;
     }
@@ -119,20 +119,21 @@ public class FightService implements IFightService {
     }
 
     public TurnOutcomeModel getStatsForRound(TurnStatsModel userModel) {
-        DBqueryDTO dto = hs.getFightLogByIdAndRound(userModel);
+        FightLogDAL fightLogDAL = createFightLogFromTurnStatsModel(userModel);
+        FightLogDTO dto = hs.getFightLogByIdAndRound(fightLogDAL);
         if (dto.success) {
             TurnOutcomeModel outcome = new TurnOutcomeModel();
-            List<Object> columns;
-            for (int i = 0; i < dto.list.size(); i++) {
-                columns = dto.list.get(i);
-                if (Integer.parseInt(columns.get(1).toString()) == userModel.userId) {
-                    outcome.fightId = columns.get(0).toString();
-                    outcome.userHp = Integer.parseInt(columns.get(6).toString());
-                    outcome.round = 0;
+
+            for (FightLogDAL dal : dto.list) {
+
+                if (dal.userId == userModel.userId) {
+                    outcome.fightId = dal.fightId;
+                    outcome.userHp = dal.hp;
+                    outcome.round = dal.round;
                     outcome.userId = userModel.userId;
                 } else {
-                    outcome.oppId = Integer.parseInt(columns.get(1).toString());
-                    outcome.oppHp = Integer.parseInt(columns.get(6).toString());
+                    outcome.oppId = dal.userId;
+                    outcome.oppHp = dal.hp;
                 }
             }
             // TODO you know the drill....

@@ -1,6 +1,5 @@
 import main.Models.CONS.FighterStatus;
 import main.Services.IDataBase;
-import main.Services.Impl.Crud;
 import main.Services.Impl.DataBase;
 
 import static org.junit.Assert.assertTrue;
@@ -13,13 +12,13 @@ public class Test {
         assertTrue(dataBase.getConnection()!=null);
     }
 
-    @org.junit.Test
-    public void ReadDbTest() throws Exception {
-
-        String query = "select Email from [User]";
-        Crud crud = new Crud();
-        assertTrue(crud.read(query)!=null);
-    }
+//    @org.junit.Test
+//    public void ReadDbTest() throws Exception {
+//
+//        String query = "select Email from [User]";
+//        Crud crud = new Crud();
+//        assertTrue(crud.read(query)!=null);
+//    }
 
     @org.junit.Test
     public void ReadyStatus() {

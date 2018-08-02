@@ -24,9 +24,6 @@ public class LoginServlet extends HttpServlet {
         String confPass= request.getParameter("confPass");
         String regEmail = request.getParameter("regEmail");
 
-//        if (username != null && password != null) {
-//            request.getRequestDispatcher("/news.jsp").forward(request, response);
-//        }
         LoginDTO login = loginService.find(emailLogin, password);
         if(login.success) {
             String name = login.user.name;
@@ -34,25 +31,10 @@ public class LoginServlet extends HttpServlet {
             request.getRequestDispatcher("/news.jsp").forward(request, response);
         }
         // TODO if the email || pass is invalid send an error to Front end
-
-
-
-//        if (user != null) {
-//            request.getSession().setAttribute("user", user);
-//            response.sendRedirect("news");
-//        }
-//        else {
-//            request.setAttribute("error", "Unknown user, please try again");
-//            request.getRequestDispatcher("/login.jsp").forward(request, response);
-//        }
-//        doGet(request,response);
+        response.sendRedirect("/login");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//        int paramSize = request.getParameterMap().size();
-//        System.out.println(paramSize);
-//        if (paramSize > 0) {
-//        }
         request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 }
