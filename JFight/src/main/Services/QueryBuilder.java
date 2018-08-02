@@ -1,10 +1,17 @@
 package main.Services;
 
 import main.Models.BL.DBQueryModel;
+import main.Models.BL.ProcedureModel;
 
 public class QueryBuilder {
+    // TODO fix this part -> merge QueryBuilder with DbQueryModel -> both ar not needed
+    public String[] where;
+    public String[][] whereValue;
+    public ProcedureModel procedure;
+    public String tableName;
+
     private StringBuilder sb = new StringBuilder();
-    private String tableName;
+
 
     public QueryBuilder(String tn) {
         tableName = tn;
@@ -40,16 +47,22 @@ public class QueryBuilder {
     }
 
     private QueryBuilder whereClause(DBQueryModel queryModel) {
-        String[] values = queryModel.whereValue;
-        sb.append(" AND ").append(queryModel.where).append(" IN (");
-        for (int i = 0; i < values.length; i++) {
-            sb.append("'").append(values[i]).append("'");
-            // Check if it's the last value if it is omit the ','
-            if (i != values.length - 1) {
-                sb.append(",");
+        String[][] values = queryModel.whereValue;
+        String[] where = queryModel.where;
+
+        for (int i = 0; i < where.length; i++) {
+            sb.append(" AND ").append(where[i]).append(" IN (");
+
+            for (int j = 0; j < values[i].length; j++) {
+                sb.append("'").append(values[i][j]).append("'");
+                // Check if it's the last value if it is omit the ','
+                if (j != values[i].length - 1) {
+                    sb.append(",");
+                }
             }
+            sb.append(")");
         }
-        sb.append(")");
+
         return this;
     }
 

@@ -4,7 +4,9 @@ import main.Models.BL.TurnOutcomeModel;
 import main.Models.BL.TurnStatsModel;
 import main.Models.CONS.BodyParts;
 import main.Models.CONS.FightStatus;
+import main.Models.DAL.FightLogDAL;
 import main.Models.DTO.DBqueryDTO;
+import main.Models.DTO.FightLogDTO;
 import main.Services.IFightService;
 import main.Services.IHigherService;
 
@@ -14,49 +16,61 @@ public class FightService implements IFightService {
 
     private IHigherService hs = new HigherService();
 
-    private DBqueryDTO sendFightStats(TurnStatsModel model) {
+    private DBqueryDTO insertTurnFightLog(FightLogDAL model) {
         return hs.insertTurnStats(model);
     }
 
-    private DBqueryDTO checkForOpponent(TurnStatsModel model) {
-        DBqueryDTO dto = hs.getFightLogByIdAndRound(model);
+    private FightLogDAL createFightLogFromTurnStatsModel(TurnStatsModel model) {
+        FightLogDAL fightLog = new FightLogDAL();
+        fightLog.userId = model.userId;
+        fightLog.fightId = model.fightId;
+        fightLog.attack1 = model.att1.toString();
+        fightLog.attack2 = model.att2.toString();
+        fightLog.defence1 = model.def1.toString();
+        fightLog.defence2 = model.def2.toString();
+        fightLog.round = model.round;
+        fightLog.hp = model.hp;
+        return fightLog;
+    }
+
+    private FightLogDTO checkForOpponent(FightLogDAL model) {
+        FightLogDTO dto = hs.getFightLogByIdAndRound(model);
         // TODO we will need a timeout counter if we cannot get result or opponent leaves
-        while (!dto.success) {
-            dto = hs.getFightLogByIdAndRound(model);
-            if (!dto.success) {
-                try {
-                    Thread.sleep(1000);
-                    System.out.println("Woke up after 1s sleep.");
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+        while (!dto.success && dto.message.equals("Only one record found.")) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+            dto = hs.getFightLogByIdAndRound(model);
         }
         return dto;
     }
 
     public TurnOutcomeModel getTurnOutcome(TurnStatsModel userModel) {
-        DBqueryDTO dto = sendFightStats(userModel);
+        FightLogDAL fightLogDAL = createFightLogFromTurnStatsModel(userModel);
+        DBqueryDTO dto = insertTurnFightLog(fightLogDAL);
+
         // TODO fix the null part once we can
         if (!dto.success) {
             return null;
         }
+
         // TODO handle timeout
-        dto = checkForOpponent(userModel);
+        FightLogDTO fightLogDTO = checkForOpponent(fightLogDAL);
+
         TurnStatsModel opponent = new TurnStatsModel();
-        List<List<Object>> list = dto.list;
-        for (int i = 0; i < list.size(); i++) {
-            List<Object> columns = list.get(i);
-            if (Integer.parseInt(columns.get(1).toString()) != userModel.userId) {
-                opponent.fightId = columns.get(0).toString();
-                opponent.userId = Integer.parseInt(columns.get(1).toString());
+        for (FightLogDAL dal : fightLogDTO.list) {
+            if (dal.userId != userModel.userId) {
+                opponent.fightId = dal.fightId;
+                opponent.userId = dal.userId;
                 opponent.userName = userModel.oppName;
-                opponent.att1 = BodyParts.valueOf(columns.get(2).toString());
-                opponent.att2 = BodyParts.valueOf(columns.get(3).toString());
-                opponent.def1 = BodyParts.valueOf(columns.get(4).toString());
-                opponent.def2 = BodyParts.valueOf(columns.get(5).toString());
-                opponent.hp = Integer.parseInt(columns.get(6).toString());
-                opponent.round = Integer.parseInt(columns.get(7).toString());
+                opponent.att1 = BodyParts.valueOf(dal.attack1);
+                opponent.att2 = BodyParts.valueOf(dal.attack2);
+                opponent.def1 = BodyParts.valueOf(dal.defence1);
+                opponent.def2 = BodyParts.valueOf(dal.defence2);
+                opponent.hp = dal.hp;
+                opponent.round = dal.round;
                 break;
             }
         }

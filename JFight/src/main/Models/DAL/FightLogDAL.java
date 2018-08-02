@@ -9,5 +9,5 @@ public class FightLogDAL {
     public String defence1;
     public String defence2;
     public int hp;
-    public long round;
+    public int round;
 }
