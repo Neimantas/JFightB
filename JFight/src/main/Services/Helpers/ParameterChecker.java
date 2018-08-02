@@ -1,4 +1,4 @@
-package main.Services;
+package main.Services.Helpers;
 
 import javax.servlet.http.HttpServletRequest;
 

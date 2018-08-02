@@ -9,7 +9,7 @@ import main.Services.ICache;
 import main.Services.Impl.Cache;
 import main.Services.Impl.FightService;
 import main.Services.Impl.LoginService;
-import main.Services.ParameterChecker;
+import main.Services.Helpers.ParameterChecker;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
