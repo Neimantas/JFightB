@@ -221,6 +221,15 @@ public class HigherService implements IHigherService {
     }
 
     @Override
+    public DBqueryDTO deleteFightLogByUserId(long userId) {
+        DBQueryModel model = new DBQueryModel();
+        model.where = new String[] {"userId"};
+        model.whereValue = new String[][] {new String[]{String.valueOf(userId)}};
+        DBqueryDTO dto = crud.delete(model, FightLogDAL.class);
+        return dto;
+    }
+
+    @Override
     public UserDTO getUserByUserNameAndEmail(String userName, String email) {
         DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel.where = new String[]{"UserName", "Email"};

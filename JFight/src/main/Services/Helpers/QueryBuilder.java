@@ -1,4 +1,4 @@
-package main.Services;
+package main.Services.Helpers;
 
 import main.Models.BL.DBQueryModel;
 import main.Models.BL.ProcedureModel;

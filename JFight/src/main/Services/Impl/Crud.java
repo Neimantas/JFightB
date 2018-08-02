@@ -4,7 +4,7 @@ import main.Models.BL.DBQueryModel;
 import main.Models.DTO.DBqueryDTO;
 import main.Services.ICrud;
 import main.Services.IDataBase;
-import main.Services.QueryBuilder;
+import main.Services.Helpers.QueryBuilder;
 
 import java.lang.reflect.Field;
 import java.sql.*;
