@@ -7,6 +7,7 @@ import main.Services.ILoginService;
 import main.Services.Impl.Cache;
 import main.Services.Impl.LoginService;
 import main.Services.Impl.UserInfoService;
+import main.Services.ObjectConverterToString;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -36,13 +37,7 @@ public class UserServlet extends HttpServlet {
 
             if (userExtendedModel != null) {
 
-                request.setAttribute("userId", userExtendedModel.userId);
-                request.setAttribute("userName", userExtendedModel.userName);
-                request.setAttribute("image", userExtendedModel.image);
-                request.setAttribute("win", userExtendedModel.win);
-                request.setAttribute("lose", userExtendedModel.lose);
-                request.setAttribute("draw", userExtendedModel.draw);
-                request.setAttribute("totalFights", userExtendedModel.totalFights);
+                request.setAttribute("userExtended", ObjectConverterToString.convertObject(userExtendedModel));
                 request.getRequestDispatcher("/user.jsp").forward(request, response);
             } else {
                 // TODO an error has occurred SHOW ERROR message to Front

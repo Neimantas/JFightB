@@ -21,7 +21,7 @@
                 <ul class="list-group">
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         Wins
-                        <span class="badge badge-primary badge-pill"> 1</span>
+                        <span class="badge badge-primary badge-pill"> ${userExtended.get("win")}1</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         Loses
