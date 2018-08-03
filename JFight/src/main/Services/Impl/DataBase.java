@@ -31,7 +31,7 @@ public class DataBase implements IDataBase {
     @Override
     public void closeConnection(Connection connection) {
         try {
-            if (connection != null) {
+            if (!connection.isClosed()) {
                 connection.close();
             }
         } catch (Exception e) {

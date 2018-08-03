@@ -15,14 +15,13 @@ public class DataBaseTest {
     public void getConnection() throws SQLException {
         Connection con = dataBase.getConnection();
         assertTrue(!con.isClosed());
+        con.isClosed();
     }
 
     @Test
     public void closeConnection() throws SQLException {
         Connection con = dataBase.getConnection();
-        System.out.println("con" + con.toString());
         dataBase.closeConnection(con);
-        System.out.println("conection " + con.toString());
         assertTrue(con.isClosed());
     }
 }

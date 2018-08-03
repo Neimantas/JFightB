@@ -2,9 +2,9 @@ package main.Services.Impl;
 
 import main.Models.BL.DBQueryModel;
 import main.Models.DTO.DBqueryDTO;
+import main.Services.Helpers.QueryBuilder;
 import main.Services.ICrud;
 import main.Services.IDataBase;
-import main.Services.Helpers.QueryBuilder;
 
 import java.lang.reflect.Field;
 import java.sql.*;
@@ -40,7 +40,7 @@ public class Crud implements ICrud {
             statement = connection.createStatement();
             // TODO make a check for a procedure != null
             ResultSet rs = statement
-                            .executeQuery(new QueryBuilder(getClassNameWithoutDAL(dalType))
+                    .executeQuery(new QueryBuilder(getClassNameWithoutDAL(dalType))
                             .buildQuery(dbQueryModel, "read")
                             .getQuery());
             List<T> rows = new ArrayList<>();
@@ -102,7 +102,7 @@ public class Crud implements ICrud {
     private void loadResultSetIntoObject(ResultSet rst, Object object)
             throws IllegalArgumentException, IllegalAccessException, SQLException {
         Class<?> zclass = object.getClass();
-        for(Field field : zclass.getDeclaredFields()) {
+        for (Field field : zclass.getDeclaredFields()) {
             String name = field.getName();
             field.setAccessible(true);
             Object value = rst.getObject(name);
@@ -112,7 +112,7 @@ public class Crud implements ICrud {
 
                 if (type == boolean.class) {
                     value = (int) value == 1;
-                } else if (type == long.class){
+                } else if (type == long.class) {
                     value = Long.parseLong(value.toString());
                 } else {
                     value = boxed.cast(value);
@@ -131,9 +131,14 @@ public class Crud implements ICrud {
                 .append(getClassNameWithoutDAL(zclass))
                 .append(" VALUES (");
         Field[] fields = zclass.getDeclaredFields();
-        for(int i = 0; i < fields.length; i++) {
+        for (int i = 0; i < fields.length; i++) {
             fields[i].setAccessible(true);
-            sb.append(quoteIdentifier(fields[i].get(object).toString()));
+
+            if (fields[i].getName().equals("userId")) {
+                continue;
+            } else {
+                sb.append(quoteIdentifier(fields[i].get(object).toString()));
+            }
 
             if (i != fields.length - 1) {
                 sb.append(",");
@@ -154,19 +159,18 @@ public class Crud implements ICrud {
             stmt = connection.prepareStatement(Sql);
             Field[] fields = zclass.getDeclaredFields();
             int pkSequence = fields.length;
-            for(int i = 0; i < fields.length; i++) {
+            for (int i = 0; i < fields.length; i++) {
                 Field field = fields[i];
                 field.setAccessible(true);
                 Object value = field.get(object);
                 String name = field.getName();
-                if(name.equals(primaryKey)) {
+                if (name.equals(primaryKey)) {
                     stmt.setObject(pkSequence, value);
                 } else {
                     stmt.setObject(i, value);
                 }
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             throw new RuntimeException("Unable to create PreparedStatement: " + e.getMessage(), e);
         }
         return stmt;
@@ -181,7 +185,7 @@ public class Crud implements ICrud {
             if (name.equals(primaryKey)) {
                 where = " WHERE " + pair;
             } else {
-                if (sets.length()>1) {
+                if (sets.length() > 1) {
                     sets.append(", ");
                 }
                 sets.append(pair);
@@ -197,26 +201,31 @@ public class Crud implements ICrud {
         return "'" + value + "'";
     }
 
-    private boolean isPrimitive(Class<?> type)
-    {
+    private boolean isPrimitive(Class<?> type) {
         return (type == int.class || type == long.class ||
-                type == double.class  || type == float.class
+                type == double.class || type == float.class
                 || type == boolean.class || type == byte.class
                 || type == char.class || type == short.class);
     }
 
-    private Class<?> boxPrimitiveClass(Class<?> type)
-    {
-        if (type == int.class){return Integer.class;}
-        else if (type == long.class){return Long.class;}
-        else if (type == double.class){return Double.class;}
-        else if (type == float.class){return Float.class;}
-        else if (type == boolean.class){return Boolean.class;}
-        else if (type == byte.class){return Byte.class;}
-        else if (type == char.class){return Character.class;}
-        else if (type == short.class){return Short.class;}
-        else
-        {
+    private Class<?> boxPrimitiveClass(Class<?> type) {
+        if (type == int.class) {
+            return Integer.class;
+        } else if (type == long.class) {
+            return Long.class;
+        } else if (type == double.class) {
+            return Double.class;
+        } else if (type == float.class) {
+            return Float.class;
+        } else if (type == boolean.class) {
+            return Boolean.class;
+        } else if (type == byte.class) {
+            return Byte.class;
+        } else if (type == char.class) {
+            return Character.class;
+        } else if (type == short.class) {
+            return Short.class;
+        } else {
             throw new IllegalArgumentException("Class '" + type.getName() + "' is not a primitive");
         }
     }
