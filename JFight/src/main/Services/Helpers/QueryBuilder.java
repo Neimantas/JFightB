@@ -1,20 +1,14 @@
 package main.Services.Helpers;
 
 import main.Models.BL.DBQueryModel;
-import main.Models.BL.ProcedureModel;
 
 public class QueryBuilder {
-    // TODO fix this part -> merge QueryBuilder with DbQueryModel -> both ar not needed
-    public String[] where;
-    public String[][] whereValue;
-    public ProcedureModel procedure;
-    public String tableName;
 
     private StringBuilder sb = new StringBuilder();
+    private String tableName;
 
-
-    public QueryBuilder(String tn) {
-        tableName = tn;
+    public QueryBuilder(String theTableName) {
+        tableName = theTableName;
     }
 
     public QueryBuilder buildQuery(DBQueryModel queryModel, String readOrDelete) {
@@ -40,30 +34,33 @@ public class QueryBuilder {
         }
 
         if (queryModel.where != null && queryModel.whereValue != null) {
-            return whereClause(queryModel);
+            whereClause(queryModel);
         }
 
         return this;
     }
 
-    private QueryBuilder whereClause(DBQueryModel queryModel) {
+    private void whereClause(DBQueryModel queryModel) {
         String[][] values = queryModel.whereValue;
         String[] where = queryModel.where;
+        sb.append(" AND ");
 
         for (int i = 0; i < where.length; i++) {
-            sb.append(" AND ").append(where[i]).append(" IN (");
+            sb.append(where[i]).append(" IN (");
 
             for (int j = 0; j < values[i].length; j++) {
                 sb.append("'").append(values[i][j]).append("'");
                 // Check if it's the last value if it is omit the ','
                 if (j != values[i].length - 1) {
                     sb.append(",");
+                } else {
+                    sb.append(") ");
                 }
             }
-            sb.append(")");
+
+            if (i != where.length -1) sb.append(queryModel.logicalOperator).append(" ");
         }
 
-        return this;
     }
 
     public String getQuery(){

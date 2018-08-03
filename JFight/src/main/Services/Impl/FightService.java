@@ -22,10 +22,10 @@ public class FightService implements IFightService {
         FightLogDAL fightLog = new FightLogDAL();
         fightLog.userId = model.userId;
         fightLog.fightId = model.fightId;
-        fightLog.attack1 = model.att1.toString();
-        fightLog.attack2 = model.att2.toString();
-        fightLog.defence1 = model.def1.toString();
-        fightLog.defence2 = model.def2.toString();
+        fightLog.attack1 = model.att1 != null ? model.att1.toString() : "NONE";
+        fightLog.attack2 = model.att2 != null ? model.att2.toString() : "NONE";
+        fightLog.defence1 = model.def1 != null ? model.def1.toString() : "NONE";
+        fightLog.defence2 = model.def2 != null ? model.def2.toString() : "NONE";
         fightLog.round = model.round;
         fightLog.hp = model.hp;
         return fightLog;

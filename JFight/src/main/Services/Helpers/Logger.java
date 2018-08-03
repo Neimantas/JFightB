@@ -18,8 +18,8 @@ public final class Logger {
         }
     }
 
-    private static String pathFinder(String relitivePath) {
-        String path = new File(Logger.class.getClassLoader().getResource(relitivePath).getFile()).getAbsolutePath();
+    private static String pathFinder(String relativePath) {
+        String path = new File(Logger.class.getClassLoader().getResource(relativePath).getFile()).getAbsolutePath();
         System.out.println(path);
         String[] absolutePathArr = path.split("\\\\");
         StringBuilder newPath = new StringBuilder();
@@ -33,7 +33,7 @@ public final class Logger {
                 newPath.append(absolutePathArr[i]).append("/");
             }
         }
-        newPath.append(relitivePath);
+        newPath.append(relativePath);
         System.out.println(newPath.toString());
         return newPath.toString();
     }

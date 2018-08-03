@@ -1,10 +1,11 @@
 package main.Services.Impl;
 
+import javafx.util.Pair;
 import main.Models.BL.DBQueryModel;
 import main.Models.DTO.DBqueryDTO;
+import main.Services.Helpers.QueryBuilder;
 import main.Services.ICrud;
 import main.Services.IDataBase;
-import main.Services.Helpers.QueryBuilder;
 
 import java.lang.reflect.Field;
 import java.sql.*;
@@ -36,20 +37,46 @@ public class Crud implements ICrud {
     @Override
     public <T> DBqueryDTO<T> read(DBQueryModel dbQueryModel, Class<T> dalType) {
         try {
+
             connection = dataBase.getConnection();
-            statement = connection.createStatement();
-            // TODO make a check for a procedure != null
-            ResultSet rs = statement
-                            .executeQuery(new QueryBuilder(getClassNameWithoutDAL(dalType))
-                            .buildQuery(dbQueryModel, "read")
-                            .getQuery());
+            ResultSet rs;
+            CallableStatement cstmt = null;
+
+            if (dbQueryModel.procedure != null) {
+                cstmt = connection.prepareCall(dbQueryModel.procedure.name);
+                List<Pair<String, Object>> params = dbQueryModel.procedure.params;
+                for (Pair<String, Object> pair : params) {
+
+                    if (pair.getValue().getClass().getSimpleName().equals("Integer")) {
+                        cstmt.setInt(pair.getKey(), (int) pair.getValue());
+                    } else {
+                        cstmt.setString(pair.getKey(), (String) pair.getValue());
+                    }
+
+                }
+                cstmt.execute();
+                rs = cstmt.getResultSet();
+            } else {
+                statement = connection.createStatement();
+                rs = statement
+                        .executeQuery(new QueryBuilder(getClassNameWithoutDAL(dalType))
+                        .buildQuery(dbQueryModel, "read")
+                        .getQuery());
+            }
+
             List<T> rows = new ArrayList<>();
             while (rs.next()) {
                 T dal = dalType.newInstance();
                 loadResultSetIntoObject(rs, dal);
                 rows.add(dal);
             }
-            statement.close();
+
+            if (statement != null) {
+                statement.close();
+            } else if (cstmt != null) {
+                cstmt.close();
+            }
+
             return new DBqueryDTO<>(true, "", rows);
         } catch (Exception e) {
             e.printStackTrace();
