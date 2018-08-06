@@ -1,15 +1,14 @@
 package main.Services;
 
-import main.Models.DAL.ChallengeDAL;
-import main.Models.DAL.FightLogDAL;
-import main.Models.DAL.ReadyToFightDAL;
-import main.Models.DAL.UserDAL;
+import main.Models.DAL.*;
 import main.Models.DTO.*;
 
 public interface IHigherService {
     ChallengeDTO checkIfTwoUsersChallengedEachOther(long userId);
 
-    UserDTO getUserByEmail(String email);
+    DBqueryDTO deleteFightLogByUserId(long userId);
+
+    DBqueryDTO deleteAllFightLogsByFightId(String fightId);
 
     DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId);
 
@@ -21,15 +20,23 @@ public interface IHigherService {
 
     FightDTO getFightByUserId(long userId);
 
-    FightLogDTO getFightLogByIdAndRound(FightLogDAL fightLog);
+    FightLogDTO getFightLogByIdAndRound(String fightId, int round);
+
+    UserDTO getUserByEmail(String email);
 
     UserDTO getUserByEmailAndPass(UserDAL user);
 
     UserDTO getUserByUserId(long userId);
 
+    UserDTO getUserByUserNameAndEmail(String userName, String email);
+
+    UserExtendedDTO getUserExtendByUserId(long userId);
+
     ReadyToFightDTO getUserFromReadyToFightByUserId(long userId);
 
     DBqueryDTO insertChallengedPlayers(ChallengeDAL dal);
+
+    DBqueryDTO insertFightResults(FightResultDAL fightResults);
 
     DBqueryDTO insertNewFight(ChallengeDAL dal);
 
@@ -38,10 +45,4 @@ public interface IHigherService {
     DBqueryDTO insertUserToReadyToFightTable(ReadyToFightDAL readyUserDal);
 
     DBqueryDTO registerUser(UserDAL user);
-
-    DBqueryDTO deleteFightLogByUserId(long userId);
-
-    UserDTO getUserByUserNameAndEmail(String userName, String email);
-
-    UserExtendedDTO getUserExtendByUserId(long userId);
 }

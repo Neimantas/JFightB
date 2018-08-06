@@ -72,23 +72,8 @@ public class ChallengeServlet extends HttpServlet {
                     }
                 }
 
-                // OPTION 2
-//                FightDTO fDTO = cs.mainFightProcedure(userId, challengedPlayers);
-//
-//                if (fDTO.success) {
-//                    response.sendRedirect("/fight");
-//                } else if (fDTO.message.equals("User has no matches")) {
-//                    IssuedChallengesDTO issuedChallengesDTO = cs.getIssuedChallenges(userId);
-//
-//                    if (issuedChallengesDTO.success) {
-//                        request.setAttribute("userChallenges", issuedChallengesDTO.issuedChallenge.userChallenges);
-//                        request.setAttribute("oppChallenges", issuedChallengesDTO.issuedChallenge.oppChallenges);
-//                    }
-//                } else if (fDTO.message.equals(........)){
-//
-//                }
-
             }
+
             // UserModel has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
             ReadyToFightDTO readyDTO = cs.getReadyToFightUsersExceptPrimaryUser(user.id);
 

@@ -85,12 +85,12 @@ public class HigherService implements IHigherService {
     public DBqueryDTO insertTurnStats(FightLogDAL fightLog) { return crud.create(fightLog); }
 
     @Override
-    public FightLogDTO getFightLogByIdAndRound(FightLogDAL fightLog) {
+    public FightLogDTO getFightLogByIdAndRound(String fightId, int round) {
         DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel.where = new String[]{"FightId", "Round"};
         dbQueryModel.logicalOperator = "AND";
-        dbQueryModel.whereValue = new String[][] {new String[]{fightLog.fightId},
-                                            new String[]{String.valueOf(fightLog.round)}};
+        dbQueryModel.whereValue = new String[][] {new String[]{fightId},
+                                            new String[]{String.valueOf(round)}};
         DBqueryDTO<FightLogDAL> dto = crud.read(dbQueryModel, FightLogDAL.class);
 
         if (dto.success && dto.list.size() == Settings.NUMBER_OF_PLAYERS) {
@@ -272,5 +272,18 @@ public class HigherService implements IHigherService {
         }
 
         return new UserExtendedDTO(false, dto.message, null);
+    }
+
+    @Override
+    public DBqueryDTO deleteAllFightLogsByFightId(String fightId) {
+        DBQueryModel model = new DBQueryModel();
+        model.where = new String[] {"FightId"};
+        model.whereValue = new String[][] {new String[]{fightId}};
+        return crud.delete(model, FightLogDAL.class);
+    }
+
+    @Override
+    public DBqueryDTO insertFightResults(FightResultDAL fightResults) {
+        return crud.create(fightResults);
     }
 }

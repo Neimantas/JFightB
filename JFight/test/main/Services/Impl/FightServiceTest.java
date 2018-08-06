@@ -16,6 +16,6 @@ public class FightServiceTest {
 
     @Test
     public void getStatsForRound() {
-        assertNotNull(fightService.getStatsForRound(new TurnStatsModel()));
+        assertNotNull(fightService.getStatsForRoundZero(new TurnStatsModel()));
     }
 }
