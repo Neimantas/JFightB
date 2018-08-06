@@ -59,28 +59,43 @@ public class ChallengeService implements IChallengeService {
             ChallengeDTO challengeDTO = hs.checkIfTwoUsersChallengedEachOther(userId);
 
             if (!challengeDTO.success) {
+                System.out.println("CHECK IF TWO USERS CRASH");
                 return new FightDTO(false, challengeDTO.message, null);
             }
 
             ChallengeDAL challengeDAL = challengeDTO.list.get(0);
+            dto = hs.insertNewFight(challengeDAL);
+            if (!dto.success) {
+                System.out.println("NEW FIGHT CREATION ERROR");
+                return new FightDTO(false, dto.message, null);
+            }
+
+            FightDTO fightDTO2 = hs.getFightByUserId(userId);
+            if (!fightDTO2.success) {
+                System.out.println("GET FIGHT BY USER ID CRASH");
+                return new FightDTO(false, fightDTO2.message, null);
+            }
+
+            dto = insertZeroRoundStatsBeforeFight(fightDTO2);
+            if (!dto.success) {
+                System.out.println("INSERT ZERO ROUND STATS");
+                return new FightDTO(false, dto.message, null);
+            }
+
+            return fightDTO2;
+
+        } else if (fightDTO.success){
+            // Fight was already created so delete user from Challenge and ReadyToFight tables
             // TODO check the query if this is actually necessary -> is it possible for OpponnentId to be UserId ???
-            long opponentId = challengeDAL.opponentId != userId ? challengeDAL.opponentId : challengeDAL.userId;
+            long opponentId = fightDTO.dal.userId1 != userId ? fightDTO.dal.userId1 : fightDTO.dal.userId2;
 
             dto = deleteMatchedUsersFromChallengeAndReadyToFight(userId, opponentId);
             if (!dto.success) {
+                System.out.println("DELETE FROM TABLES CRASH");
                 return new FightDTO(false, dto.message, null);
             }
 
-            dto = hs.insertNewFight(challengeDAL);
-            if (!dto.success) {
-                return new FightDTO(false, dto.message, null);
-            }
-
-            dto = insertZeroRoundStatsBeforeFight(fightDTO);
-            if (!dto.success) {
-                return new FightDTO(false, dto.message, null);
-            }
-
+            return fightDTO;
         }
 
         // Fight is already created or DB crash
@@ -209,9 +224,9 @@ public class ChallengeService implements IChallengeService {
     private FightDTO isFightAlreadyCreated(long userId) {
         FightDTO fightDTO = hs.getFightByUserId(userId);
 
-        if (fightDTO.success && fightDTO.dal != null) {
+        if (fightDTO.success) {
             return new FightDTO(true, "Fight has been already created.", fightDTO.dal);
-        } else if (fightDTO.success){
+        } else if (fightDTO.message.equals("No Fights with such UserId found.")){
             return new FightDTO(false, "No fight has been found.", null);
         }
 
