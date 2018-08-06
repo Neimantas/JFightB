@@ -1,8 +1,10 @@
 package main.Controllers;
 
+import main.Models.BL.RegistrationEventModel;
 import main.Models.BL.UserModel;
 import main.Models.DTO.LoginDTO;
 import main.Models.DTO.RegisterDTO;
+import main.Services.Helpers.IsNullOrEmpty;
 import main.Services.ILoginService;
 import main.Services.IRegisterService;
 import main.Services.Impl.LoginService;
@@ -19,46 +21,8 @@ import java.io.IOException;
 @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
 
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String emailLogin = request.getParameter("email");
-        String password = request.getParameter("password");
-        String regName = request.getParameter("regName");
-        String regPass = request.getParameter("regPass");
-        String confPass = request.getParameter("confPass");
-        String regEmail = request.getParameter("regEmail");
-
-
-        if (isAllRegParamsAreCorrect(emailLogin, password)) {
-            ILoginService loginService = new LoginService();
-            LoginDTO login = loginService.find(emailLogin, password);
-
-            if (login.success) {
-                response.addCookie(new Cookie("token", login.user.uuid));
-                response.sendRedirect(request.getContextPath() + "/news");
-            }
-
-            if (!login.success) {
-                response.sendRedirect("/login.jsp");
-            }
-
-        } else if (isAllRegParamsAreCorrect(regName, regEmail, regPass, confPass)) {
-            IRegisterService registerService = new RegisterService();
-            RegisterDTO isRegistered = registerService.find(regName, regEmail);
-
-            if (isRegistered.success) {
-                //TODO send some parameter and display in js that this user is already registered
-                response.sendRedirect("/login.jsp");
-            }
-
-            if (!isRegistered.success) {
-                RegisterDTO registerDTO = registerService.register(regName, regPass, regEmail);
-                UserModel user = registerService.addUserToCache(regEmail);
-                response.addCookie(new Cookie("token", user.uuid));
-                response.sendRedirect("/news");
-            }
-
-        }
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+        EventMethodSelector(request, response);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws
@@ -66,14 +30,76 @@ public class LoginServlet extends HttpServlet {
         request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 
-    private boolean isAllRegParamsAreCorrect(String... params) {
+    private void EventMethodSelector(HttpServletRequest request, HttpServletResponse response) throws IOException, IllegalAccessException {
+        RegistrationEventModel getParams = getRegistrationParams(request);
+
+        if (isAllRegParamsAreCorrect(getParams, true)) {
+            LoginRedirect(request, response, getParams.emailLogin, getParams.password);
+        } else if (isAllRegParamsAreCorrect(getParams, false)) {
+            RegistrationRedirect(response, getParams.regName, getParams.regPass, getParams.regEmail);
+        }
+    }
+
+    private RegistrationEventModel getRegistrationParams(HttpServletRequest request) {
+        RegistrationEventModel model = new RegistrationEventModel();
+        model.emailLogin = request.getParameter("email");
+        model.password = request.getParameter("password");
+        model.regName = request.getParameter("regName");
+        model.regPass = request.getParameter("regPass");
+        model.confPass = request.getParameter("confPass");
+        model.regEmail = request.getParameter("regEmail");
+
+        return model;
+    }
+
+    private void RegistrationRedirect(HttpServletResponse response, String regName, String regPass, String regEmail) throws IOException {
+        IRegisterService registerService = new RegisterService();
+        RegisterDTO isRegistered = registerService.find(regName, regEmail);
+
+        if (isRegistered.success) {
+            //TODO send some parameter and display in js that this user is already registered
+            response.sendRedirect("/login.jsp");
+        } else {
+            RegisterDTO registerDTO = registerService.register(regName, regPass, regEmail);
+            UserModel user = registerService.addUserToCache(regEmail);
+            response.addCookie(new Cookie("token", user.uuid));
+            response.sendRedirect("/news");
+        }
+    }
+
+    private void LoginRedirect(HttpServletRequest request, HttpServletResponse response, String emailLogin, String password) throws IOException {
+        ILoginService loginService = new LoginService();
+        LoginDTO login = loginService.find(emailLogin, password);
+
+        if (login.success) {
+            response.addCookie(new Cookie("token", login.user.uuid));
+            response.sendRedirect(request.getContextPath() + "/news");
+        } else {
+            response.sendRedirect("/login.jsp");
+        }
+    }
+
+    private boolean isAllRegParamsAreCorrect(RegistrationEventModel model, boolean isLogin) throws IllegalAccessException {
         boolean success = true;
-        for (int i = 0; i < params.length; i++) {
-            if (params[i] == null || params[i].isEmpty()) {
-                success = false;
-            }
+        IsNullOrEmpty isNullOrEmpty = new IsNullOrEmpty();
+        if (isLogin) {
+            if (isNullOfEmpty(model.emailLogin) || isNullOfEmpty(model.password)) success = false;
+        } else {
+            if (isNullOfEmpty(model.regName) || isNullOfEmpty(model.regEmail)
+                    || isNullOfEmpty(model.regPass) || isNullOfEmpty(model.confPass)) success = false;
         }
         return success;
     }
+
+
+    private boolean isNullOfEmpty(String param) {
+        boolean check = false;
+        if (param == null || param.isEmpty()) {
+            check = true;
+        }
+
+        return check;
+    }
+
 }
 
