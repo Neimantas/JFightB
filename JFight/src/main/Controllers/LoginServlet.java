@@ -43,6 +43,9 @@ public class LoginServlet extends HttpServlet {
             LoginRedirect(request, response, registrationParams.emailLogin, registrationParams.password);
         } else if (areAllRequestParamsCorrect(registrationParams, false)) {
             RegistrationRedirect(response, registrationParams.regName, registrationParams.regPass, registrationParams.regEmail);
+        }else {
+            //TODO send some parameter and display in js that logis or registration failed
+            response.sendRedirect("/login.jsp");
         }
     }
 

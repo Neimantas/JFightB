@@ -1,9 +1,6 @@
 package main.Services;
 
-import main.Models.DAL.ChallengeDAL;
-import main.Models.DAL.FightLogDAL;
-import main.Models.DAL.ReadyToFightDAL;
-import main.Models.DAL.UserDAL;
+import main.Models.DAL.*;
 import main.Models.DTO.*;
 
 public interface IHigherService {
@@ -32,6 +29,8 @@ public interface IHigherService {
     DBqueryDTO insertChallengedPlayers(ChallengeDAL dal);
 
     DBqueryDTO insertNewFight(ChallengeDAL dal);
+
+    DBqueryDTO insertNewUserExtended(UserExtendedDAL userExtendedDAL);
 
     DBqueryDTO insertTurnStats(FightLogDAL fightLog);
 

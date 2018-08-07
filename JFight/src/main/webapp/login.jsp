@@ -56,7 +56,7 @@
         <div class="form-group">
             <label for="emailRegister">Email address</label>
             <input type="email" class="form-control" id="emailRegister" aria-describedby="emailHelp"
-                   placeholder="Enter email" name="regEmail">
+                   placeholder="Enter email" name="regEmail" required>
             <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
         </div>
         <div class="form-group">

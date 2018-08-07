@@ -60,8 +60,8 @@ public class Crud implements ICrud {
                 statement = connection.createStatement();
                 rs = statement
                         .executeQuery(new QueryBuilder(getClassNameWithoutDAL(dalType))
-                        .buildQuery(dbQueryModel, "read")
-                        .getQuery());
+                                .buildQuery(dbQueryModel, "read")
+                                .getQuery());
             }
 
             List<T> rows = new ArrayList<>();
@@ -161,7 +161,7 @@ public class Crud implements ICrud {
         for (int i = 0; i < fields.length; i++) {
             fields[i].setAccessible(true);
 
-            if (fields[i].getName().equals("userId")) {
+            if (fields[i].getName().equals("userId") && object.getClass().getSimpleName().equals("UserDAL")) {
                 continue;
             } else {
                 sb.append(quoteIdentifier(fields[i].get(object).toString()));

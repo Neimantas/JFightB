@@ -37,8 +37,16 @@ public class UserServlet extends HttpServlet {
 
             if (userExtendedModel != null) {
 
-                request.setAttribute("userExtended", ObjectConverterToString.convertObject(userExtendedModel));
-                request.getRequestDispatcher("/user.jsp").forward(request, response);
+//                request.setAttribute("userExtended", ObjectConverterToString.convertObject(userExtendedModel));
+//                request.setAttribute("userName", userExtendedModel.userName);
+//                request.setAttribute("totalFights",userExtendedModel.totalFights);
+//                request.setAttribute("draw",userExtendedModel.draw);
+//                request.setAttribute("lose",userExtendedModel.lose);
+//                request.setAttribute("userId",userExtendedModel.userId);
+//                request.setAttribute("win",userExtendedModel.win);
+
+
+                request.getRequestDispatcher("/user").forward(request, response);
             } else {
                 // TODO an error has occurred SHOW ERROR message to Front
             }
