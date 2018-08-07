@@ -1,5 +1,7 @@
 package main.Controllers;
 
+import main.Models.BL.LoginModel;
+import main.Models.BL.RegisterModel;
 import main.Models.BL.RegistrationEventModel;
 import main.Models.BL.UserModel;
 import main.Models.DTO.LoginDTO;
@@ -22,7 +24,11 @@ import java.io.IOException;
 public class LoginServlet extends HttpServlet {
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        EventMethodSelector(request, response);
+        try {
+            EventMethodSelector(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws
@@ -31,12 +37,12 @@ public class LoginServlet extends HttpServlet {
     }
 
     private void EventMethodSelector(HttpServletRequest request, HttpServletResponse response) throws IOException, IllegalAccessException {
-        RegistrationEventModel getParams = getRegistrationParams(request);
+        RegistrationEventModel registrationParams = getRegistrationParams(request);
 
-        if (isAllRegParamsAreCorrect(getParams, true)) {
-            LoginRedirect(request, response, getParams.emailLogin, getParams.password);
-        } else if (isAllRegParamsAreCorrect(getParams, false)) {
-            RegistrationRedirect(response, getParams.regName, getParams.regPass, getParams.regEmail);
+        if (areAllRequestParamsCorrect(registrationParams, true)) {
+            LoginRedirect(request, response, registrationParams.emailLogin, registrationParams.password);
+        } else if (areAllRequestParamsCorrect(registrationParams, false)) {
+            RegistrationRedirect(response, registrationParams.regName, registrationParams.regPass, registrationParams.regEmail);
         }
     }
 
@@ -52,6 +58,22 @@ public class LoginServlet extends HttpServlet {
         return model;
     }
 
+    private LoginModel getLoginModel(RegistrationEventModel registrationEventModel) {
+        LoginModel loginModel = new LoginModel();
+        loginModel.emailLogin = registrationEventModel.emailLogin;
+        loginModel.password = registrationEventModel.password;
+        return loginModel;
+    }
+
+    private RegisterModel getRegisterModel(RegistrationEventModel registrationEventModel) {
+        RegisterModel registerModel = new RegisterModel();
+        registerModel.regName = registrationEventModel.regName;
+        registerModel.regEmail = registrationEventModel.regEmail;
+        registerModel.regPass = registrationEventModel.regPass;
+        registerModel.confPass = registrationEventModel.confPass;
+        return registerModel;
+    }
+
     private void RegistrationRedirect(HttpServletResponse response, String regName, String regPass, String regEmail) throws IOException {
         IRegisterService registerService = new RegisterService();
         RegisterDTO isRegistered = registerService.find(regName, regEmail);
@@ -61,9 +83,14 @@ public class LoginServlet extends HttpServlet {
             response.sendRedirect("/login.jsp");
         } else {
             RegisterDTO registerDTO = registerService.register(regName, regPass, regEmail);
-            UserModel user = registerService.addUserToCache(regEmail);
-            response.addCookie(new Cookie("token", user.uuid));
-            response.sendRedirect("/news");
+            if (registerDTO.success) {
+                UserModel user = registerService.addUserToCache(regEmail);
+                response.addCookie(new Cookie("token", user.uuid));
+                response.sendRedirect("/news");
+            } else {
+                //TODO add on error msg
+                response.sendRedirect("/login.jsp");
+            }
         }
     }
 
@@ -79,27 +106,14 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    private boolean isAllRegParamsAreCorrect(RegistrationEventModel model, boolean isLogin) throws IllegalAccessException {
-        boolean success = true;
-        IsNullOrEmpty isNullOrEmpty = new IsNullOrEmpty();
+    private boolean areAllRequestParamsCorrect(RegistrationEventModel model, boolean isLogin) throws IllegalAccessException {
         if (isLogin) {
-            if (isNullOfEmpty(model.emailLogin) || isNullOfEmpty(model.password)) success = false;
+            LoginModel loginModel = getLoginModel(model);
+            return !IsNullOrEmpty.isRegParamsNull(loginModel);
         } else {
-            if (isNullOfEmpty(model.regName) || isNullOfEmpty(model.regEmail)
-                    || isNullOfEmpty(model.regPass) || isNullOfEmpty(model.confPass)) success = false;
+            RegisterModel registerModel = getRegisterModel(model);
+            return !IsNullOrEmpty.isRegParamsNull(registerModel);
         }
-        return success;
     }
-
-
-    private boolean isNullOfEmpty(String param) {
-        boolean check = false;
-        if (param == null || param.isEmpty()) {
-            check = true;
-        }
-
-        return check;
-    }
-
 }
 

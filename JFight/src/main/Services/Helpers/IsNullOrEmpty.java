@@ -2,22 +2,21 @@ package main.Services.Helpers;
 
 import java.lang.reflect.Field;
 
-public class IsNullOrEmpty {
+public final class IsNullOrEmpty {
 
-    public <T> boolean isRegParamsNull(T model) throws IllegalAccessException {
+    private IsNullOrEmpty(){}
+
+    public static <T> boolean isRegParamsNull(T model) throws IllegalAccessException {
 
         Field[] fields = model.getClass().getDeclaredFields();
         for (Field field : fields) {
             Class<?> fieldType = field.getType();
-            if (field.get(model) != null) {
-
-                if (fieldType.equals(String.class)) {
-                    String a = (String) field.get(model);
-                    if (a.isEmpty()) {
-                        return true;
-                    }
+            if (field.get(model) != null && fieldType.equals(String.class)) {
+                String a = (String) field.get(model);
+                if (a.isEmpty()) {
+                    return true;
                 }
-            } else {
+            } else if (field.get(model) == null){
                 return true;
             }
         }
