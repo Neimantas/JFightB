@@ -208,7 +208,6 @@ public class HigherService implements IHigherService {
 
     @Override
     public UserDTO getUserByEmail(String email) {
-
         DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel.where = new String[]{"Email"};
         dbQueryModel.whereValue = new String[][]{ new String[]{email}};
@@ -285,5 +284,29 @@ public class HigherService implements IHigherService {
     @Override
     public DBqueryDTO insertFightResults(FightResultDAL fightResults) {
         return crud.create(fightResults);
+    }
+
+    @Override
+    public FightResultDTO getFightResultByFightId(String fightId) {
+        DBQueryModel model = new DBQueryModel();
+        model.where = new String[]{"FightId"};
+        model.whereValue = new String[][]{new String[]{fightId}};
+        DBqueryDTO<FightResultDAL> dto = crud.read(model, FightResultDAL.class);
+
+        if (dto.success && !dto.list.isEmpty()) {
+            return new FightResultDTO(true, "", dto.list.get(0));
+        } else if (dto.success){
+            return new FightResultDTO(false, "FightResult not found with such FightId", null);
+        }
+
+        return new FightResultDTO(false, dto.message, null);
+    }
+
+    @Override
+    public DBqueryDTO deleteFightByFightId(String fightId) {
+        DBQueryModel model = new DBQueryModel();
+        model.where = new String[]{"FightId"};
+        model.whereValue = new String[][]{new String[]{fightId}};
+        return crud.delete(model, FightDAL.class);
     }
 }

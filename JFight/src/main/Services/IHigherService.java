@@ -10,6 +10,8 @@ public interface IHigherService {
 
     DBqueryDTO deleteAllFightLogsByFightId(String fightId);
 
+    DBqueryDTO deleteFightByFightId(String fightId);
+
     DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId);
 
     DBqueryDTO deleteUserAndOpponentFromReadyToFight(long userId, long opponentId);
@@ -21,6 +23,8 @@ public interface IHigherService {
     FightDTO getFightByUserId(long userId);
 
     FightLogDTO getFightLogByIdAndRound(String fightId, int round);
+
+    FightResultDTO getFightResultByFightId(String fightId);
 
     UserDTO getUserByEmail(String email);
 

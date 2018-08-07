@@ -166,6 +166,13 @@ public class FightService implements IFightService {
         // First check if Winner has already been inserted!
         // If he was then you can safely delete Fight, FightLog records with that FightId;
         if (outcome.fightStatus != FightStatus.FIGHTING) {
+
+            if (checkIfWinResultAlreadyAdded(outcome.fightId)) {
+                hs.deleteAllFightLogsByFightId(outcome.fightId);
+                // Delete Fight by FightId and anything else that might be needed.
+                return;
+            }
+
             FightResultDAL fightResult = new FightResultDAL();
             fightResult.fightId = outcome.fightId;
 
@@ -180,9 +187,12 @@ public class FightService implements IFightService {
             }
 
             hs.insertFightResults(fightResult);
-            hs.deleteAllFightLogsByFightId(outcome.fightId);
         }
 
+    }
+
+    private boolean checkIfWinResultAlreadyAdded(String fightId) {
+        return hs.getFightResultByFightId(fightId).success;
     }
 
 }
