@@ -10,7 +10,7 @@
     <div class="container top5">
 
         <div class="row">
-            <h3>Username</h3>
+            <h3>${userExtended.get("userName")}</h3>
         </div>
 
         <div class="row">
@@ -25,15 +25,15 @@
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         Loses
-                        <span class="badge badge-primary badge-pill"> 1</span>
+                        <span class="badge badge-primary badge-pill"> ${userExtended.get("lose")}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         Draws
-                        <span class="badge badge-primary badge-pill"> 1</span>
+                        <span class="badge badge-primary badge-pill"> ${userExtended.get("draw")}</span>
                     </li>
                     <li class="list-group-item d-flex justify-content-between align-items-center">
                         Total Fights
-                        <span class="badge badge-primary badge-pill"> 1</span>
+                        <span class="badge badge-primary badge-pill"> ${userExtended.get("totalFights")}</span>
                     </li>
                 </ul>
             </div>
