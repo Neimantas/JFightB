@@ -15,14 +15,129 @@ public class FightService implements IFightService {
 
     private IHigherService hs = new HigherService();
 
-    private DBqueryDTO insertTurnFightLog(FightLogDAL model) {
-        return hs.insertTurnStats(model);
+    public TurnOutcomeModel getTurnOutcome(TurnStatsModel userModel) {
+
+        DBqueryDTO dto = insertTurnFightLog(createFightLogFromTurnStatsModel(userModel));
+        // TODO fix the null part once we can
+        if (!dto.success) {
+            return null;
+        }
+
+        // TODO handle timeout
+        FightLogDTO fightLogDTO = checkForOpponent(userModel.fightId, userModel.round);
+
+        if (!fightLogDTO.success) {
+            return null;
+        }
+
+        TurnStatsModel opponent = new TurnStatsModel();
+        for (FightLogDAL dal : fightLogDTO.list) {
+            if (dal.userId != userModel.userId) {
+                opponent = createTurnStatsModelFromFightLog(dal);
+                opponent.userName = hs.getUserByUserId(dal.userId).user.userName;
+                break;
+            }
+        }
+
+        TurnOutcomeModel turnOutcome = calculateOutcome(userModel, opponent);
+
+        fightCleanup(turnOutcome);
+
+        return turnOutcome;
+    }
+
+    public TurnOutcomeModel getTurnOutcomeForFirstRound(TurnStatsModel userModel) {
+        FightLogDTO dto = hs.getFightLogByIdAndRound(userModel.fightId, 0);
+
+        if (dto.success) {
+            TurnOutcomeModel outcome = new TurnOutcomeModel();
+            outcome.fightId = userModel.fightId;
+            outcome.round = 1;
+            outcome.userId = userModel.userId;
+            outcome.userName = userModel.userName;
+            outcome.fightStatus = FightStatus.FIGHTING;
+
+            for (FightLogDAL dal : dto.list) {
+                if (dal.userId == userModel.userId) {
+                    outcome.userHp = dal.hp;
+                } else {
+                    outcome.oppHp = dal.hp;
+                    // TODO handle errors
+                    outcome.oppName = hs.getUserByUserId(dal.userId).user.userName;
+                }
+            }
+            return outcome;
+        }
+        return null;
+    }
+
+    private TurnOutcomeModel calculateOutcome(TurnStatsModel user, TurnStatsModel opponent) {
+        TurnOutcomeModel turnOutcome = new TurnOutcomeModel();
+
+        // TODO create FIGHT LOG
+        calculateDamage(user, opponent);
+
+        // TODO check if this is actually necessary !!!!!!
+        turnOutcome.round = user.round + 1;
+
+        determineFightStatus(turnOutcome);
+
+        turnOutcome.userName = user.userName;
+        turnOutcome.userId = user.userId;
+        turnOutcome.oppName = opponent.userName;
+        turnOutcome.oppId = opponent.userId;
+
+        return turnOutcome;
+    }
+
+    private void calculateDamage(TurnStatsModel user, TurnStatsModel opponent) {
+        TurnOutcomeModel turnOutcome = new TurnOutcomeModel();
+        // TODO in the future damage variable will change depending on items/skills
+        int damage = 1;
+
+        // User outcome
+        int attacksReceivedUser = 0;
+        // Check if user defends against first Opponent attack
+        if (user.def1 != opponent.att1 && user.def2 != opponent.att1) attacksReceivedUser++;
+        // Check if user defends against second Opponent attack
+        if (user.def1 != opponent.att2 && user.def2 != opponent.att2) attacksReceivedUser++;
+
+        turnOutcome.userHp = user.hp - (attacksReceivedUser * damage);
+
+        // Opponent outcome
+        int attacksReceivedOpp = 0;
+        if (opponent.def1 != user.att1 && opponent.def2 != user.att1) attacksReceivedOpp++;
+        if (opponent.def1 != user.att2 && opponent.def2 != user.att2) attacksReceivedOpp++;
+
+        turnOutcome.oppHp = opponent.hp - (attacksReceivedOpp * damage);
+    }
+
+    private FightLogDTO checkForOpponent(String fightId, int round) {
+        FightLogDTO dto = hs.getFightLogByIdAndRound(fightId, round);
+        // TODO we will need a timeout counter if we cannot get result or opponent leaves
+        int count = 0;
+        while ((!dto.success && dto.message.equals("Only one record found.")) && count < 30) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            dto = hs.getFightLogByIdAndRound(fightId, round);
+            count++;
+        }
+        return dto;
+    }
+
+    private boolean checkIfWinResultAlreadyAdded(String fightId) {
+        // TODO should return more than just boolean in case of DB error
+        return hs.getFightResultByFightId(fightId).success;
     }
 
     private FightLogDAL createFightLogFromTurnStatsModel(TurnStatsModel model) {
         FightLogDAL fightLog = new FightLogDAL();
         fightLog.userId = model.userId;
         fightLog.fightId = model.fightId;
+        // TODO check what happens if BodyParts.valueOf('INVALID NAME'); ---> IllegalArgumentException
         fightLog.attack1 = model.att1 != null ? model.att1.toString() : "NONE";
         fightLog.attack2 = model.att2 != null ? model.att2.toString() : "NONE";
         fightLog.defence1 = model.def1 != null ? model.def1.toString() : "NONE";
@@ -45,130 +160,40 @@ public class FightService implements IFightService {
         return turnStatsModel;
     }
 
-    private FightLogDTO checkForOpponent(String fightId, int round) {
-        FightLogDTO dto = hs.getFightLogByIdAndRound(fightId, round);
-        // TODO we will need a timeout counter if we cannot get result or opponent leaves
-        int count = 0;
-        while ((!dto.success && dto.message.equals("Only one record found.")) && count < 30) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            dto = hs.getFightLogByIdAndRound(fightId, round);
-            count++;
-        }
-        return dto;
-    }
+    private boolean deleteFightLogsAndFight(String fightId) {
+        DBqueryDTO dto = hs.deleteAllFightLogsByFightId(fightId);
 
-    public TurnOutcomeModel getStatsForRoundZero(TurnStatsModel userModel) {
-        FightLogDTO dto = hs.getFightLogByIdAndRound(userModel.fightId, userModel.round);
-
-        if (dto.success) {
-            TurnOutcomeModel outcome = new TurnOutcomeModel();
-            outcome.fightId = dto.list.get(0).fightId;
-            outcome.round = dto.list.get(0).round;
-            outcome.userId = userModel.userId;
-            outcome.userName = userModel.userName;
-
-            for (FightLogDAL dal : dto.list) {
-
-                if (dal.userId == userModel.userId) {
-                    outcome.userHp = dal.hp;
-                } else {
-                    outcome.oppId = dal.userId;
-                    outcome.oppHp = dal.hp;
-                }
-
-            }
-
-            // TODO handle errors
-            outcome.oppName = hs.getUserByUserId(outcome.oppId).user.userName;
-            outcome.fightStatus = FightStatus.FIGHTING;
-            return outcome;
-        }
-
-        return new TurnOutcomeModel();
-    }
-
-    public TurnOutcomeModel getTurnOutcome(TurnStatsModel userModel) {
-
-        DBqueryDTO dto = insertTurnFightLog(createFightLogFromTurnStatsModel(userModel));
-        // TODO fix the null part once we can
         if (!dto.success) {
-            return null;
+            return false;
         }
 
-        // TODO handle timeout
-        FightLogDTO fightLogDTO = checkForOpponent(userModel.fightId, userModel.round);
+        dto = hs.deleteFightByFightId(fightId);
 
-        if (!fightLogDTO.success) {
-            return null;
-        }
-
-        TurnStatsModel opponent = null;
-        for (FightLogDAL dal : fightLogDTO.list) {
-            if (dal.userId != userModel.userId) {
-                opponent = createTurnStatsModelFromFightLog(dal);
-                opponent.userName = userModel.oppName;
-                break;
-            }
-        }
-
-        TurnOutcomeModel turnOutcome = calculateOutcome(userModel, opponent);
-        turnOutcome.userName = userModel.userName;
-        turnOutcome.userId = userModel.userId;
-        turnOutcome.oppName = userModel.oppName;
-        turnOutcome.oppId = userModel.oppId;
-
-        fightCleanup(turnOutcome);
-
-        return turnOutcome;
+        return dto.success;
     }
 
-    private TurnOutcomeModel calculateOutcome(TurnStatsModel user, TurnStatsModel opponent) {
-        TurnOutcomeModel model = new TurnOutcomeModel();
-        // TODO in the future damage variable will change depending on items/skills
-        int damage = 1;
+    private void determineFightStatus(TurnOutcomeModel turnOutcome) {
 
-        // User outcome
-        int attacksReceivedUser = 0;
-        // Check if user defends against first Opponent attack
-        if (user.def1 != opponent.att1 && user.def2 != opponent.att1) attacksReceivedUser++;
-        // Check if user defends against second Opponent attack
-        if (user.def1 != opponent.att2 && user.def2 != opponent.att2) attacksReceivedUser++;
-
-        model.userHp = user.hp - (attacksReceivedUser * damage);
-
-        // Opponent outcome
-        int attacksReceivedOpp = 0;
-        if (opponent.def1 != user.att1 && opponent.def2 != user.att1) attacksReceivedOpp++;
-        if (opponent.def1 != user.att2 && opponent.def2 != user.att2) attacksReceivedOpp++;
-
-        model.oppHp = opponent.hp - (attacksReceivedOpp * damage);
-        model.round = user.round + 1;
-
-        // TODO create FIGHT LOG
-
-        if (model.userHp <= 0 && model.oppHp <= 0){
-            model.fightStatus = FightStatus.DRAW;
-        } else if (model.userHp <= 0) {
-            model.fightStatus = FightStatus.LOSER;
-        } else if (model.oppHp <= 0) {
-            model.fightStatus = FightStatus.WINNER;
+        if (turnOutcome.userHp <= 0 && turnOutcome.oppHp <= 0) {
+            turnOutcome.fightStatus = FightStatus.DRAW;
+        } else if (turnOutcome.userHp <= 0) {
+            turnOutcome.fightStatus = FightStatus.LOSER;
+        } else if (turnOutcome.oppHp <= 0) {
+            turnOutcome.fightStatus = FightStatus.WINNER;
         } else {
-            model.fightStatus = FightStatus.FIGHTING;
+            turnOutcome.fightStatus = FightStatus.FIGHTING;
         }
-        return model;
+
     }
 
-    private void fightCleanup(TurnOutcomeModel outcome){
+    private void fightCleanup(TurnOutcomeModel outcome) {
         // First check if Winner has already been inserted!
         // If he was then you can safely delete Fight, FightLog records with that FightId;
         if (outcome.fightStatus != FightStatus.FIGHTING) {
 
             if (checkIfWinResultAlreadyAdded(outcome.fightId)) {
 
+                // TODO needs error handling
                 deleteFightLogsAndFight(outcome.fightId);
 
             } else {
@@ -182,30 +207,18 @@ public class FightService implements IFightService {
                 } else if (outcome.fightStatus == FightStatus.LOSER) {
                     fightResult.winnerId = outcome.oppId;
                     fightResult.loserId = outcome.userId;
-                } else if (outcome.fightStatus == FightStatus.DRAW){
+                } else if (outcome.fightStatus == FightStatus.DRAW) {
                     fightResult.draw = 1;
                 }
 
+                // TODO needs error handling
                 hs.insertFightResults(fightResult);
             }
         }
     }
 
-    private boolean deleteFightLogsAndFight(String fightId) {
-        DBqueryDTO dto = hs.deleteAllFightLogsByFightId(fightId);
-
-        if (!dto.success) {
-            return false;
-        }
-
-        dto = hs.deleteFightByFightId(fightId);
-
-        return dto.success;
-    }
-
-    private boolean checkIfWinResultAlreadyAdded(String fightId) {
-        // TODO should return more than just boolean in case of DB error
-        return hs.getFightResultByFightId(fightId).success;
+    private DBqueryDTO insertTurnFightLog(FightLogDAL model) {
+        return hs.insertTurnStats(model);
     }
 
 }

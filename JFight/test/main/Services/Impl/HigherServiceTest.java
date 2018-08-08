@@ -1,12 +1,10 @@
 package main.Services.Impl;
 
-import main.Models.DAL.ChallengeDAL;
-import main.Models.DAL.FightLogDAL;
 import main.Models.DAL.ReadyToFightDAL;
 import main.Models.DAL.UserDAL;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 public class HigherServiceTest {
 
@@ -44,7 +42,7 @@ public class HigherServiceTest {
 
     @Test
     public void getFightLogByIdAndRound() {
-        assertNotNull(higherService.getFightLogByIdAndRound(null));
+        assertNotNull(higherService.getFightLogByIdAndRound(null, 0));
     }
 
     @Test

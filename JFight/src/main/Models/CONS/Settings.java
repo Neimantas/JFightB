@@ -11,7 +11,7 @@ public final class Settings {
     //Checks needed parameters in Challenge servlet
     public final static String[] CHALLENGE_PARAMETERS = new String[]{"challengedPlayers"};
     //Checks initial fight parameters when players get matched
-    public final static String[] INITIAL_FIGHT_PARAMETERS = new String[]{"round", "fightId", "userId", "initial"};
+    public final static String[] INITIAL_FIGHT_PARAMETERS = new String[]{"round", "fightId", "userId", "firstRound"};
     //Checks parameters for each fight round
     public final static String[] FIGHT_PARAMETERS = new String[]{"userName", "oppName", "att1", "att2", "def1", "def2", "userHp"};
 }

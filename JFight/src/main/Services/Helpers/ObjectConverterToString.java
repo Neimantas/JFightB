@@ -8,7 +8,7 @@ import java.util.Map;
 
 public final class ObjectConverterToString {
 
-    public static List<Map<String, String>> convertList(List listOfObjects) {
+    public static <T> List<Map<String, String>> convertList(List<T> listOfObjects) {
         List<Map<String, String>> list = new ArrayList<>();
         listOfObjects.forEach(ob -> list.add(convertObject(ob)));
         return list;

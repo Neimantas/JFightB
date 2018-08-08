@@ -1,6 +1,6 @@
 package main.Services.Impl;
 
-import main.Models.BL.IssuedChallenges;
+import main.Models.BL.IssuedChallengesModel;
 import main.Models.DAL.ChallengeDAL;
 import main.Models.DAL.FightLogDAL;
 import main.Models.DAL.ReadyToFightDAL;
@@ -143,7 +143,7 @@ public class ChallengeService implements IChallengeService {
 
         });
 
-        return new IssuedChallengesDTO(true, "", new IssuedChallenges(userId, "", userChallenges, oppChallenges));
+        return new IssuedChallengesDTO(true, "", new IssuedChallengesModel(userId, "", userChallenges, oppChallenges));
     }
 
     @Override

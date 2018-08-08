@@ -64,8 +64,7 @@ endBtn.onclick = function() {
     var fightId = getParam("fightId");
     var userId = getParam("userId");
     var round = parseInt(getParam("round")) + 1;
-    url += "&fightId=" + fightId + "&userId=" + userId + "&round=" + round + "&userHp="
-            + userHp + "&oppHp=" + oppHp + "&userName=" + userName + "&oppName=" + oppName;
+    url += "&fightId=" + fightId + "&round=" + round;
     endBtn.innerText = "Waiting for other player";
     location.href = "/fight?" + url;
 };

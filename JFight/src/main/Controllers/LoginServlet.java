@@ -6,7 +6,7 @@ import main.Models.BL.RegistrationEventModel;
 import main.Models.BL.UserModel;
 import main.Models.DTO.LoginDTO;
 import main.Models.DTO.RegisterDTO;
-import main.Services.Helpers.IsNullOrEmpty;
+import main.Services.Helpers.NotNullOrEmpty;
 import main.Services.ILoginService;
 import main.Services.IRegisterService;
 import main.Services.Impl.LoginService;
@@ -23,20 +23,15 @@ import java.io.IOException;
 @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            EventMethodSelector(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        EventMethodSelector(request, response);
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws
-            ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.getRequestDispatcher("/login.jsp").forward(request, response);
     }
 
-    private void EventMethodSelector(HttpServletRequest request, HttpServletResponse response) throws IOException, IllegalAccessException {
+    private void EventMethodSelector(HttpServletRequest request, HttpServletResponse response) throws IOException {
         RegistrationEventModel registrationParams = getRegistrationParams(request);
 
         if (areAllRequestParamsCorrect(registrationParams, true)) {
@@ -44,7 +39,7 @@ public class LoginServlet extends HttpServlet {
         } else if (areAllRequestParamsCorrect(registrationParams, false)) {
             RegistrationRedirect(response, registrationParams.regName, registrationParams.regPass, registrationParams.regEmail);
         }else {
-            //TODO send some parameter and display in js that logis or registration failed
+            //TODO send some parameter and display in js that login or registration failed
             response.sendRedirect("/login.jsp");
         }
     }
@@ -109,13 +104,13 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    private boolean areAllRequestParamsCorrect(RegistrationEventModel model, boolean isLogin) throws IllegalAccessException {
+    private boolean areAllRequestParamsCorrect(RegistrationEventModel model, boolean isLogin) {
         if (isLogin) {
             LoginModel loginModel = getLoginModel(model);
-            return !IsNullOrEmpty.isRegParamsNull(loginModel);
+            return NotNullOrEmpty.paramsNotNullOrEmpty(loginModel);
         } else {
             RegisterModel registerModel = getRegisterModel(model);
-            return !IsNullOrEmpty.isRegParamsNull(registerModel);
+            return NotNullOrEmpty.paramsNotNullOrEmpty(registerModel);
         }
     }
 }

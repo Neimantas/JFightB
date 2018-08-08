@@ -1,13 +1,14 @@
 package main.Services.Impl;
 
 import main.Models.BL.TurnStatsModel;
+import main.Services.IFightService;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 public class FightServiceTest {
 
-    FightService fightService = new FightService();
+    IFightService fightService = new FightService();
 
     @Test
     public void getTurnOutcome() {
@@ -16,6 +17,6 @@ public class FightServiceTest {
 
     @Test
     public void getStatsForRound() {
-        assertNotNull(fightService.getStatsForRoundZero(new TurnStatsModel()));
+        assertNotNull(fightService.getTurnOutcomeForFirstRound(new TurnStatsModel()));
     }
 }
