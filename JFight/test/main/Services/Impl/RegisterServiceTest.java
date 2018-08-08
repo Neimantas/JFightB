@@ -2,6 +2,8 @@ package main.Services.Impl;
 
 import org.junit.Test;
 
+import java.io.IOException;
+
 import static org.junit.Assert.*;
 
 public class RegisterServiceTest {
@@ -14,7 +16,7 @@ public class RegisterServiceTest {
     }
 
     @Test
-    public void register() {
+    public void register() throws IOException {
         assertNotNull(registerService.register(null,null,null));
     }
 

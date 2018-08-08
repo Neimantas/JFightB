@@ -44,6 +44,8 @@ public interface IHigherService {
 
     DBqueryDTO insertNewFight(ChallengeDAL dal);
 
+    DBqueryDTO insertNewUserExtended(UserExtendedDAL userExtendedDAL);
+
     DBqueryDTO insertTurnStats(FightLogDAL fightLog);
 
     DBqueryDTO insertUserToReadyToFightTable(ReadyToFightDAL readyUserDal);

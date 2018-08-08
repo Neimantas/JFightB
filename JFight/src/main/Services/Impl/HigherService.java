@@ -309,4 +309,10 @@ public class HigherService implements IHigherService {
         model.whereValue = new String[][]{new String[]{fightId}};
         return crud.delete(model, FightDAL.class);
     }
+
+    //TODO FIX THIS
+    @Override
+    public DBqueryDTO insertNewUserExtended(UserExtendedDAL userExtendedDAL) {
+        return null;
+    }
 }
