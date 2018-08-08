@@ -168,30 +168,43 @@ public class FightService implements IFightService {
         if (outcome.fightStatus != FightStatus.FIGHTING) {
 
             if (checkIfWinResultAlreadyAdded(outcome.fightId)) {
-                hs.deleteAllFightLogsByFightId(outcome.fightId);
-                // Delete Fight by FightId and anything else that might be needed.
-                return;
+
+                deleteFightLogsAndFight(outcome.fightId);
+
+            } else {
+
+                FightResultDAL fightResult = new FightResultDAL();
+                fightResult.fightId = outcome.fightId;
+
+                if (outcome.fightStatus == FightStatus.WINNER) {
+                    fightResult.winnerId = outcome.userId;
+                    fightResult.loserId = outcome.oppId;
+                } else if (outcome.fightStatus == FightStatus.LOSER) {
+                    fightResult.winnerId = outcome.oppId;
+                    fightResult.loserId = outcome.userId;
+                } else if (outcome.fightStatus == FightStatus.DRAW){
+                    fightResult.draw = 1;
+                }
+
+                hs.insertFightResults(fightResult);
             }
+        }
+    }
 
-            FightResultDAL fightResult = new FightResultDAL();
-            fightResult.fightId = outcome.fightId;
+    private boolean deleteFightLogsAndFight(String fightId) {
+        DBqueryDTO dto = hs.deleteAllFightLogsByFightId(fightId);
 
-            if (outcome.fightStatus == FightStatus.WINNER) {
-                fightResult.winnerId = outcome.userId;
-                fightResult.loserId = outcome.oppId;
-            } else if (outcome.fightStatus == FightStatus.LOSER) {
-                fightResult.winnerId = outcome.oppId;
-                fightResult.loserId = outcome.userId;
-            } else if (outcome.fightStatus == FightStatus.DRAW){
-                fightResult.draw = 1;
-            }
-
-            hs.insertFightResults(fightResult);
+        if (!dto.success) {
+            return false;
         }
 
+        dto = hs.deleteFightByFightId(fightId);
+
+        return dto.success;
     }
 
     private boolean checkIfWinResultAlreadyAdded(String fightId) {
+        // TODO should return more than just boolean in case of DB error
         return hs.getFightResultByFightId(fightId).success;
     }
 
