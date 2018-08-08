@@ -94,8 +94,7 @@ public class RegisterService implements IRegisterService {
     public UserModel addUserToCache(String email) {
         UserDTO userDTO = hs.getUserByEmail(email);
         if (!userDTO.success) {
-            System.out.println("========================");
-            System.out.println(userDTO.message);
+            //TODO Return not null
             return null;
         }
         String uuid = UUID.randomUUID().toString();

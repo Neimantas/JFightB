@@ -2,6 +2,7 @@ package main.Services.Impl;
 
 import javafx.util.Pair;
 import main.Models.BL.DBQueryModel;
+import main.Models.DAL.UserExtendedDAL;
 import main.Models.DTO.DBqueryDTO;
 import main.Services.Helpers.QueryBuilder;
 import main.Services.ICrud;
@@ -22,9 +23,16 @@ public class Crud implements ICrud {
     public DBqueryDTO create(Object object) {
         try {
             connection = dataBase.getConnection();
-            statement = connection.createStatement();
-            statement.executeUpdate(createInsertQuery(object));
-            statement.close();
+//            statement = connection.createStatement();
+//            statement.executeUpdate(createInsertQuery(object));
+//            statement.close();
+            PreparedStatement preparedStatement =
+                    connection.prepareStatement(createInsertQuery(object));
+            if (object.getClass().getSimpleName().equals("UserExtendedDAL")) {
+                UserExtendedDAL userExtendedDAL = (UserExtendedDAL) object;
+                preparedStatement.setBytes(1, userExtendedDAL.profileImg);
+            }
+            preparedStatement.executeUpdate();
             return new DBqueryDTO(true, "", null);
         } catch (Exception e) {
             e.printStackTrace();
@@ -163,6 +171,9 @@ public class Crud implements ICrud {
 
             if (fields[i].getName().equals("userId") && object.getClass().getSimpleName().equals("UserDAL")) {
                 continue;
+            } else if (fields[i].getName().equals("profileImg")) {
+//                sb.append("CAST(").append(quoteIdentifier(byteArrayToString((byte[]) fields[i].get(object)))).append("AS VARBINARY(MAX))");
+                sb.append("?");
             } else {
                 sb.append(quoteIdentifier(fields[i].get(object).toString()));
             }
@@ -173,6 +184,18 @@ public class Crud implements ICrud {
                 sb.append(")");
             }
 
+        }
+        return sb.toString();
+    }
+
+    private String byteArrayToString(byte[] arr) {
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < arr.length; i++) {
+            sb.append(arr[i]);
+            if (i != arr.length - 1) {
+                sb.append(',');
+            }
         }
         return sb.toString();
     }
