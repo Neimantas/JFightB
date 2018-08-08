@@ -10,7 +10,7 @@ import java.sql.Statement;
 
 public class DataBase implements IDataBase {
 
-    String connectionUrl_LOCAL = "jdbc:sqlserver://localhost;" +
+    String connectionUrl_LOCAL_Laimono = "jdbc:sqlserver://localhost;" +
             "databaseName=FightDBB;user=sa;password=P@55w0rd";
 
     // Create a variable for the connection string.

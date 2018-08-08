@@ -25,7 +25,6 @@ public class UserInfoService {
             model.lose = dto.user.lose;
             model.draw = dto.user.draw;
             model.totalFights = dto.user.totalFights;
-            System.out.println("IS DUOMBAZES");
             return model;
         }
         return null;
