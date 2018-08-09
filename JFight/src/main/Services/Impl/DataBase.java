@@ -8,7 +8,7 @@ import java.sql.DriverManager;
 
 public class DataBase implements IDataBase {
 
-    String connectionUrl_LOCAL = "jdbc:sqlserver://localhost;" +
+    String connectionUrl_LOCAL_Laimono = "jdbc:sqlserver://localhost;" +
             "databaseName=FightDBB;user=sa;password=P@55w0rd";
 
     String connectionUrl_LOCAL2 = "jdbc:sqlserver://localhost:52753;" +
