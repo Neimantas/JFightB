@@ -76,7 +76,7 @@ public class ChallengeService implements IChallengeService {
                 return new FightDTO(false, fightDTO2.message, null);
             }
 
-            dto = insertZeroRoundStatsBeforeFight(fightDTO2);
+            dto = insertFirstRoundStatsBeforeFight(fightDTO2);
             if (!dto.success) {
                 System.out.println("INSERT ZERO ROUND STATS");
                 return new FightDTO(false, dto.message, null);
@@ -193,10 +193,10 @@ public class ChallengeService implements IChallengeService {
         return createFightForMatchedPlayers(userId);
     }
 
-    private DBqueryDTO insertZeroRoundStatsBeforeFight(FightDTO fightDTO) {
+    private DBqueryDTO insertFirstRoundStatsBeforeFight(FightDTO fightDTO) {
         // TODO we need to get stats from user Character table (not implemented)
         int hp = 10;
-        int round = 0; //stats before fight
+        int round = 1; //stats before fight
 
         FightLogDAL fightLog = new FightLogDAL();
         fightLog.userId = fightDTO.dal.userId1;

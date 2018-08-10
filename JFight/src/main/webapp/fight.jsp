@@ -9,7 +9,7 @@
 <body>
 
 <nav class="navbar navbar-light bg-light navbar-expand-md bg-faded justify-content-center">
-    <a class="navbar-brand d-flex w-50 mr-auto" href="/user">${userName}</a>
+    <a class="navbar-brand d-flex w-50 mr-auto" href="/user">${turnOutcome.get("userName")}</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -39,12 +39,12 @@
 <%--<img src="Images/cirith_toronath__gondolin__by_dracarysdrekkar7-dc44ctg.jpg">--%>
 <div class="container">
     <div class="row">
-        <div class="col-3"><h2 id="userName">${userName}</h2></div>
+        <div class="col-3"><h2 id="userName">${turnOutcome.get("userName")}</h2></div>
         <div class="col-6">
-            <h3 align="center" id="round">Round: ${round}</h3>
+            <h3 align="center" id="round">Round: <span id="roundNr">${turnOutcome.get("round")}</span></h3>
             <h2 align="center">Turn ends in: <span id="roundTime">30s</span></h2>
         </div>
-        <div class="col-3"><h2 class="float-right" id="oppName">${oppName}</h2></div>
+        <div class="col-3"><h2 class="float-right" id="oppName">${turnOutcome.get("oppName")}</h2></div>
     </div>
     <div class="row">
         <div class="col-4">
@@ -114,20 +114,20 @@
     </div>
     <div class="row">
         <div class="col-3">
-            <h4>HP: <span id="userHp">${userHp}</span></h4>
+            <h4>HP: <span id="userHp">${turnOutcome.get("userHp")}</span></h4>
 
         </div>
         <div class="col-6" align="center">
             <button type="button" class="btn btn-lg btn-danger" id="endTurn">End Turn</button>
         </div>
         <div class="col-3">
-            <h4 class="float-right">HP: <span id="oppHp">${oppHp}</span></h4>
+            <h4 class="float-right">HP: <span id="oppHp">${turnOutcome.get("oppHp")}</span></h4>
         </div>
     </div>
     <div class="row">
         <div class="col" align="center">
             <br>
-            <p>${log}</p>
+            <p>LOG WILL BE HERE: ${turnOutcome.get("log")}</p>
         </div>
     </div>
 </div>
@@ -155,7 +155,7 @@
             </div>
             <div class="modal-footer text-center">
                 <%--<button type="button" class="btn btn-secondary" data-dismiss="modal">Exit Fight</button>--%>
-                <button type="button" class="btn btn-secondary" onclick="location.href = '/news?userId=' + ${userId}">
+                <button type="button" class="btn btn-secondary" onclick="location.href = '/news'">
                     Exit Fight
                 </button>
             </div>
@@ -163,8 +163,8 @@
     </div>
 </div>
 
-<input id="fightStatus" name="fightStatus" type="hidden" value="${fightStatus}">
-<input id="userId" name="userId" type="hidden" value="${userId}">
+<input id="fightStatus" name="fightStatus" type="hidden" value="${turnOutcome.get("fightStatus")}">
+<input id="userId" name="userId" type="hidden" value="${turnOutcome.get("userId")}">
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

@@ -16,7 +16,7 @@ public class FightService implements IFightService {
     private IHigherService hs = new HigherService();
 
     public TurnOutcomeModel getTurnOutcome(TurnStatsModel userModel) {
-
+        setHealthPoints(userModel);
         DBqueryDTO dto = insertTurnFightLog(createFightLogFromTurnStatsModel(userModel));
         // TODO fix the null part once we can
         if (!dto.success) {
@@ -43,11 +43,15 @@ public class FightService implements IFightService {
 
         fightCleanup(turnOutcome);
 
+        userModel.hp = turnOutcome.userHp;
+
+        hs.updateFightLogHPbyUserIdAndRound(createFightLogFromTurnStatsModel(userModel));
+
         return turnOutcome;
     }
 
     public TurnOutcomeModel getTurnOutcomeForFirstRound(TurnStatsModel userModel) {
-        FightLogDTO dto = hs.getFightLogByIdAndRound(userModel.fightId, 0);
+        FightLogDTO dto = hs.getFightLogByIdAndRound(userModel.fightId, 1);
 
         if (dto.success) {
             TurnOutcomeModel outcome = new TurnOutcomeModel();
@@ -72,13 +76,11 @@ public class FightService implements IFightService {
     }
 
     private TurnOutcomeModel calculateOutcome(TurnStatsModel user, TurnStatsModel opponent) {
-        TurnOutcomeModel turnOutcome = new TurnOutcomeModel();
-
         // TODO create FIGHT LOG
-        calculateDamage(user, opponent);
+        TurnOutcomeModel turnOutcome = calculateDamage(user, opponent);
 
-        // TODO check if this is actually necessary !!!!!!
-        turnOutcome.round = user.round + 1;
+        // TODO Where/when should i Add 1 to Round -> here or with JS
+//        turnOutcome.round = user.round + 1;
 
         determineFightStatus(turnOutcome);
 
@@ -90,7 +92,7 @@ public class FightService implements IFightService {
         return turnOutcome;
     }
 
-    private void calculateDamage(TurnStatsModel user, TurnStatsModel opponent) {
+    private TurnOutcomeModel calculateDamage(TurnStatsModel user, TurnStatsModel opponent) {
         TurnOutcomeModel turnOutcome = new TurnOutcomeModel();
         // TODO in the future damage variable will change depending on items/skills
         int damage = 1;
@@ -110,6 +112,7 @@ public class FightService implements IFightService {
         if (opponent.def1 != user.att2 && opponent.def2 != user.att2) attacksReceivedOpp++;
 
         turnOutcome.oppHp = opponent.hp - (attacksReceivedOpp * damage);
+        return turnOutcome;
     }
 
     private FightLogDTO checkForOpponent(String fightId, int round) {
@@ -219,6 +222,21 @@ public class FightService implements IFightService {
 
     private DBqueryDTO insertTurnFightLog(FightLogDAL model) {
         return hs.insertTurnStats(model);
+    }
+
+    private void setHealthPoints(TurnStatsModel turnStats) {
+        // We need to check for previous round FightLog
+        FightLogDTO dto = hs.getFightLogByIdAndRound(turnStats.fightId, turnStats.round - 1);
+
+        // TODO this needs more thought
+        if (dto.success) {
+            for (FightLogDAL dal : dto.list){
+                if (turnStats.userId == dal.userId) {
+                    turnStats.hp = dal.hp;
+                    break;
+                }
+            }
+        }
     }
 
 }

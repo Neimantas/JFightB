@@ -2,6 +2,7 @@ package main.Services.Impl;
 
 import javafx.util.Pair;
 import main.Models.BL.DBQueryModel;
+import main.Models.BL.UpdateModel;
 import main.Models.DAL.UserExtendedDAL;
 import main.Models.DTO.DBqueryDTO;
 import main.Services.Helpers.QueryBuilder;
@@ -96,13 +97,12 @@ public class Crud implements ICrud {
 
 
     @Override
-    public DBqueryDTO update(Object dal, String primaryKey) {
+    public DBqueryDTO update(Object dal, String[] primaryKey) {
         try {
             connection = dataBase.getConnection();
-            connection.setAutoCommit(false);
             PreparedStatement stmt = createUpdatePreparedStatement(dal,
                     getClassNameWithoutDAL(dal.getClass()), primaryKey);
-            stmt.executeUpdate();
+            System.out.println("Updated rows -> " + stmt.executeUpdate());
             stmt.close();
             return new DBqueryDTO(true, null, null);
         } catch (Exception e) {
@@ -188,36 +188,26 @@ public class Crud implements ICrud {
         return sb.toString();
     }
 
-    private String byteArrayToString(byte[] arr) {
-
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < arr.length; i++) {
-            sb.append(arr[i]);
-            if (i != arr.length - 1) {
-                sb.append(',');
-            }
-        }
-        return sb.toString();
-    }
-
     private PreparedStatement createUpdatePreparedStatement(Object object,
-                                                            String tableName, String primaryKey) {
+                                                            String tableName, String[] primaryKey) {
         PreparedStatement stmt;
         try {
             Class<?> zclass = object.getClass();
-            String Sql = createUpdateQuery(zclass, tableName, primaryKey);
-            stmt = connection.prepareStatement(Sql);
+            UpdateModel updateModel = createUpdateQuery(zclass, tableName, primaryKey);
+            stmt = connection.prepareStatement(updateModel.query);
             Field[] fields = zclass.getDeclaredFields();
-            int pkSequence = fields.length;
+            int fieldPosition = 1;
             for (int i = 0; i < fields.length; i++) {
                 Field field = fields[i];
                 field.setAccessible(true);
                 Object value = field.get(object);
                 String name = field.getName();
-                if (name.equals(primaryKey)) {
-                    stmt.setObject(pkSequence, value);
+                if (checkForPrimaryKey(name, primaryKey)) {
+                    int pkPosition = updateModel.pkLocation.get(updateModel.primaryKeys.indexOf(name));
+                    stmt.setObject(pkPosition, value);
                 } else {
-                    stmt.setObject(i, value);
+                    stmt.setObject(fieldPosition, value);
+                    fieldPosition++;
                 }
             }
         } catch (Exception e) {
@@ -226,14 +216,31 @@ public class Crud implements ICrud {
         return stmt;
     }
 
-    private String createUpdateQuery(Class<?> zclass, String tableName, String primaryKey) {
+    private UpdateModel createUpdateQuery(Class<?> zclass, String tableName, String[] primaryKey) {
         StringBuilder sets = new StringBuilder();
+        UpdateModel updateModel = new UpdateModel();
+        updateModel.pkLocation = new ArrayList<>();
+        updateModel.primaryKeys = new ArrayList<>();
+
         String where = null;
-        for (Field field : zclass.getDeclaredFields()) {
-            String name = field.getName();
-            String pair = quoteIdentifier(name) + " = ?";
-            if (name.equals(primaryKey)) {
-                where = " WHERE " + pair;
+        Field[] fields = zclass.getDeclaredFields();
+        int pkPosition = fields.length - primaryKey.length + 1;
+        for (int i = 0; i < fields.length; i++) {
+            String name = fields[i].getName();
+//            String pair = quoteIdentifier(name) + " = ?";
+            String pair = name + " = ?";
+            if (checkForPrimaryKey(name, primaryKey)) {
+
+                if (updateModel.primaryKeys.isEmpty()) {
+                    where = " WHERE " + pair;
+                } else {
+                    where += " AND " + pair;
+                }
+
+                updateModel.pkLocation.add(pkPosition);
+                updateModel.primaryKeys.add(name);
+                pkPosition++;
+
             } else {
                 if (sets.length() > 1) {
                     sets.append(", ");
@@ -241,10 +248,19 @@ public class Crud implements ICrud {
                 sets.append(pair);
             }
         }
+
         if (where == null) {
             throw new IllegalArgumentException("Primary key not found in '" + zclass.getName() + "'");
         }
-        return "UPDATE " + tableName + " SET " + sets.toString() + where;
+        updateModel.query = "UPDATE " + tableName + " SET " + sets.toString() + where;
+        return updateModel;
+    }
+
+    private boolean checkForPrimaryKey(String fieldName, String[] primaryKeyArr){
+        for (String pk : primaryKeyArr) {
+            if (pk.equals(fieldName)) return true;
+        }
+        return false;
     }
 
     private String quoteIdentifier(String value) {

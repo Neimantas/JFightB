@@ -2,11 +2,10 @@ package main.Services.Impl;
 
 import main.Models.BL.DBQueryModel;
 import main.Models.DAL.ChallengeDAL;
-import main.Models.DTO.DBqueryDTO;
 import main.Services.ICrud;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
 
 public class CrudTest {
     ICrud crud = new Crud();
@@ -28,8 +27,7 @@ public class CrudTest {
 
     @Test
     public void update() {
-        assertNotNull(crud.update(new ChallengeDAL(),"test"));
-
+        assertNotNull(crud.update(new ChallengeDAL(),new String[]{"test"}));
     }
 
     @Test

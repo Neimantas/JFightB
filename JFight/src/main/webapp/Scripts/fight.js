@@ -2,9 +2,7 @@ var attBoxes = document.getElementsByName("attackBox"),
     defBoxes = document.getElementsByName("defBox"),
     userName = document.getElementById("userName").innerText,
     userId = document.getElementById("userId").value,
-    userHp = document.getElementById("userHp").innerText,
-    oppName = document.getElementById("oppName").innerText,
-    oppHp = document.getElementById("oppHp").innerText,
+    round = parseInt(document.getElementById("roundNr").innerText),
     endBtn = document.getElementById("endTurn"),
     fightStatus = document.getElementById("fightStatus").value;
 
@@ -24,7 +22,7 @@ window.onload = function () {
         console.log(fightStatus);
         endBtn.innerText = "Exit Fight";
         endBtn.onclick = function () {
-            location.href = "/news?userId=" + userId;
+            location.href = "/news";
         }
     }
 };
@@ -62,8 +60,7 @@ endBtn.onclick = function() {
     }
 
     var fightId = getParam("fightId");
-    var userId = getParam("userId");
-    var round = parseInt(getParam("round")) + 1;
+    round += 1;
     url += "&fightId=" + fightId + "&round=" + round;
     endBtn.innerText = "Waiting for other player";
     location.href = "/fight?" + url;

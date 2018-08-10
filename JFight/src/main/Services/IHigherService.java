@@ -51,4 +51,6 @@ public interface IHigherService {
     DBqueryDTO insertUserToReadyToFightTable(ReadyToFightDAL readyUserDal);
 
     DBqueryDTO registerUser(UserDAL user);
+
+    DBqueryDTO updateFightLogHPbyUserIdAndRound(FightLogDAL fightLog);
 }

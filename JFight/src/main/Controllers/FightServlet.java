@@ -79,14 +79,15 @@ public class FightServlet extends HttpServlet {
         fightParametersModel.fightId = request.getParameter("fightId");
         fightParametersModel.userName = user.name;
         fightParametersModel.userId = user.id;
+        // TODO problem here ... Buna kad nepagauna 'round' parameter ir paraso 999
         fightParametersModel.round = request.getParameter("round") != null
-                                        ? Integer.parseInt(request.getParameter("round")) : 0;
+                                        ? Integer.parseInt(request.getParameter("round")) : 999;
         fightParametersModel.att1 = request.getParameter("att1");
         fightParametersModel.att2 = request.getParameter("att2");
         fightParametersModel.def1 = request.getParameter("def1");
         fightParametersModel.def2 = request.getParameter("def2");
-        fightParametersModel.firstRound = request.getParameter("userName") != null
-                                        && Boolean.parseBoolean(request.getParameter("userName"));
+        fightParametersModel.firstRound = request.getParameter("firstRound") != null
+                                        && Boolean.parseBoolean(request.getParameter("firstRound"));
 
         return fightParametersModel;
     }

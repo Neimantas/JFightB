@@ -310,9 +310,13 @@ public class HigherService implements IHigherService {
         return crud.delete(model, FightDAL.class);
     }
 
-    //TODO FIX THIS
     @Override
     public DBqueryDTO insertNewUserExtended(UserExtendedDAL userExtendedDAL) {
-        return null;
+        return crud.create(userExtendedDAL);
+    }
+
+    @Override
+    public DBqueryDTO updateFightLogHPbyUserIdAndRound(FightLogDAL fightLog) {
+        return crud.update(fightLog, new String[]{"userId", "round"});
     }
 }
