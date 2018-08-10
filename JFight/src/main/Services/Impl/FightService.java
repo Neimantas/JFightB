@@ -86,6 +86,7 @@ public class FightService implements IFightService {
 
         turnOutcome.userName = user.userName;
         turnOutcome.userId = user.userId;
+        turnOutcome.round = user.round;
         turnOutcome.oppName = opponent.userName;
         turnOutcome.oppId = opponent.userId;
 
