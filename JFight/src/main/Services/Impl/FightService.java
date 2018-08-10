@@ -38,6 +38,8 @@ public class FightService implements IFightService {
                 break;
             }
         }
+        // Here we should get Opponent previous round HP not currently submitted.
+        setHealthPoints(opponent);
 
         TurnOutcomeModel turnOutcome = calculateOutcome(userModel, opponent);
 
