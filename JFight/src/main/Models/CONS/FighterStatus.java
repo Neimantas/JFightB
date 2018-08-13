@@ -1,6 +1,7 @@
 package main.Models.CONS;
 
 public final class FighterStatus {
+	//Review add underscore + probably change to enum
     public static String SUCCESSREADYTOFIGHT = "You are ready to fight!";
     public static String FAILURETOINSERTREADYTOFIGHT = "Failure to insert into readyToFight table";
     public static String SUCCESSFULLYADDTOCHALANGE = "Successfully added challenge";

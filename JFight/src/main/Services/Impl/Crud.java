@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Crud implements ICrud {
-
+    //Review. Very bad. Create db instance only in local scope!
     private IDataBase dataBase = new DataBase();
     private Connection connection;
     private Statement statement;
@@ -23,12 +23,15 @@ public class Crud implements ICrud {
     @Override
     public DBqueryDTO create(Object object) {
         try {
+        	//Review. New DB new con.
+        	//Review. review comments.
             connection = dataBase.getConnection();
 //            statement = connection.createStatement();
 //            statement.executeUpdate(createInsertQuery(object));
 //            statement.close();
             PreparedStatement preparedStatement =
                     connection.prepareStatement(createInsertQuery(object));
+            //Review. Please comment magic places.
             if (object.getClass().getSimpleName().equals("UserExtendedDAL")) {
                 UserExtendedDAL userExtendedDAL = (UserExtendedDAL) object;
                 preparedStatement.setBytes(1, userExtendedDAL.profileImg);
@@ -36,6 +39,7 @@ public class Crud implements ICrud {
             preparedStatement.executeUpdate();
             return new DBqueryDTO(true, "", null);
         } catch (Exception e) {
+        	//Review. logg error
             e.printStackTrace();
             return new DBqueryDTO(false, e.getMessage(), null);
         } finally {
@@ -59,6 +63,7 @@ public class Crud implements ICrud {
                     if (pair.getValue().getClass().getSimpleName().equals("Integer")) {
                         cstmt.setInt(pair.getKey(), (int) pair.getValue());
                     } else {
+                    	//Review. All else is String. Is it though?
                         cstmt.setString(pair.getKey(), (String) pair.getValue());
                     }
 

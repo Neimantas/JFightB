@@ -31,7 +31,7 @@ public class UserServlet extends HttpServlet {
 
         ILoginService loginService = new LoginService();
         Cookie token = loginService.findTokenCookie(request.getCookies());
-
+//Review. Remake login check with 1 if
         if (loginService.validate(token)) {
 
             ICache cache = Cache.getInstance();
@@ -40,7 +40,7 @@ public class UserServlet extends HttpServlet {
             UserExtendedModel userExtendedModel = userInfoService.getUserExtendedById(user.id);
 
             if (userExtendedModel != null) {
-
+//Review. Why dead code?
                 request.setAttribute("userExtended", ObjectConverterToString.convertObject(userExtendedModel));
 //                request.setAttribute("userName", userExtendedModel.userName);
 //                request.setAttribute("totalFights",userExtendedModel.totalFights);
@@ -64,6 +64,8 @@ public class UserServlet extends HttpServlet {
 //                response.getOutputStream().close();
                 request.getRequestDispatcher("/user.jsp").forward(request, response);
             } else {
+            	//Review. We do love login. If no image is found, probably 'default' image should be shown.
+            	//Review. Remove login redir.
                 response.sendRedirect("/login");
                 // TODO an error has occurred SHOW ERROR message to Front
             }

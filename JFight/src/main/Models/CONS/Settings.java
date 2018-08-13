@@ -9,6 +9,7 @@ public final class Settings {
     // Our cookie name which will be used to parse Cookie[]
     public final static String COOKIE_NAME = "token";
     //Checks needed parameters in Challenge servlet
+    //Review. I think this is not used?
     public final static String[] CHALLENGE_PARAMETERS = new String[]{"challengedPlayers"};
     //Checks initial fight parameters when players get matched
     public final static String[] INITIAL_FIGHT_PARAMETERS = new String[]{"round", "fightId", "userId", "firstRound"};

@@ -3,8 +3,8 @@ package main.Services.Helpers;
 import main.Models.BL.DBQueryModel;
 
 public class QueryBuilder {
-
-    private StringBuilder sb = new StringBuilder();
+    //Review. Think concurency. Now 1 method can reset builder and other add.
+    private StringBuilder sb = new StringBuilder(); //Review. In most cases we use stringbuilder for totally new string. Chech this.
     private String tableName;
 
     public QueryBuilder(String theTableName) {
@@ -12,10 +12,13 @@ public class QueryBuilder {
     }
 
     public QueryBuilder buildQuery(DBQueryModel queryModel, String readOrDelete) {
+    	
         if (tableName == null || tableName.isEmpty()) {
+        	//Review. How about no strings as errors?
             throw new IllegalArgumentException("Missing table name!");
         }
 
+        //Review. I think we have method for is null or default value?
         if (readOrDelete == null || readOrDelete.isEmpty()) {
             throw new IllegalArgumentException("Cannot build a query without specifying Read or Delete operation.");
         }
@@ -36,7 +39,7 @@ public class QueryBuilder {
         if (queryModel.where != null && queryModel.whereValue != null) {
             whereClause(queryModel);
         }
-
+        //Review. This is spaaaaaaaaaarrrtttttaaaaaaaaa. 
         return this;
     }
 
@@ -57,7 +60,7 @@ public class QueryBuilder {
                     sb.append(") ");
                 }
             }
-
+//Review. Please comment why?
             if (i != where.length -1) sb.append(queryModel.logicalOperator).append(" ");
         }
 

@@ -13,6 +13,7 @@ import javax.servlet.ServletContextListener;
 
 public class ListenerServlet implements ServletContextListener {
     @Override
+    //Review. This is not production.
     public void contextInitialized(ServletContextEvent sce) {
         ICrud crud = new Crud();
 //        "DELETE FROM ReadyToFight"

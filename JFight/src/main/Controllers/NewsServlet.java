@@ -23,7 +23,7 @@ public class NewsServlet extends HttpServlet {
         // Check if user is logged in
         LoginService loginService = new LoginService();
         Cookie token = loginService.findTokenCookie(request.getCookies());
-
+//Review. Remake login with 1 if
         if (token != null && loginService.validate(token)) {
             ICache cache = Cache.getInstance();
             UserModel user = (UserModel) cache.get(token.getValue());

@@ -2,6 +2,7 @@ package main.Models.DAL;
 
 public class FightDAL {
     public String fightId;
+    //Review. Try to distinct between users. Attacker - Defender
     public long userId1;
     public long userId2;
 

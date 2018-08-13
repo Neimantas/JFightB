@@ -8,6 +8,7 @@ public class FightResultDTO {
     public FightResultDAL dal;
 
     public FightResultDTO(boolean success, String message, FightResultDAL dal) {
+    	//Review. THIS IS SPARTAAAAA
         this.success = success;
         this.message = message;
         this.dal = dal;

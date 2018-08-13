@@ -7,7 +7,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 public class DataBase implements IDataBase {
-
+//Review. What is dis? We put configuration connection items in xml files.
     String connectionUrl_LOCAL_Laimono = "jdbc:sqlserver://localhost;" +
             "databaseName=FightDBB;user=sa;password=P@55w0rd";
 
@@ -24,6 +24,7 @@ public class DataBase implements IDataBase {
             Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
             return DriverManager.getConnection(connectionUrl_LOCAL2);
         } catch (Exception e) {
+        	//Review. Probably use logger.
             System.out.println(e.getMessage());
             return null;
         }
@@ -36,6 +37,7 @@ public class DataBase implements IDataBase {
                 connection.close();
             }
         } catch (Exception e) {
+        	//Review. Probably use logger.
             System.out.println(e.getMessage());
         }
     }

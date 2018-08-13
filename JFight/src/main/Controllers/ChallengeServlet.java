@@ -29,13 +29,17 @@ public class ChallengeServlet extends HttpServlet {
 
         LoginService loginService = new LoginService();
         Cookie token = loginService.findTokenCookie(request.getCookies());
+        //Review. Login check is wrong. Make it like this:
+        //if (token != null && loginService.validate(token) response.Redirect('/login.jsp');
 
         if (token != null && loginService.validate(token)) {
             IChallengeService cs = new ChallengeService();
+            //Review. Singletons can be fields, they won't change.
             ICache cache = Cache.getInstance();
             UserModel user = (UserModel) cache.get(token.getValue());
             request.setAttribute("userName", user.name);
 
+            //Review. Why we have check that goes nowhere?
             if (!cs.addPlayerToReadyToFight(user.id, user.name)) {
                 // TODO should give a message to Front that an error has occurred.
             }
@@ -51,16 +55,18 @@ public class ChallengeServlet extends HttpServlet {
                 if (cs.submitChallenges(user.id, challengedPlayers)) {
 
                     if (cs.checkIfUserGotMatched(user.id)) {
-
+//Review. 5 lvl of IF. max 3 lvl allowed. Refactor
                         FightDTO fightDTO = cs.createFightForMatchedPlayers(user.id);
-
+//
                         if (fightDTO.success) {
 //                            request.getRequestDispatcher("/fight?fightId=" + fightDTO.dal.fightId +
 ////                                    "&userId=" + user.id + "&round=0" + "&firstRound=true").forward(request, response);
                             response.sendRedirect("/fight?fightId=" + fightDTO.dal.fightId +
                                     "&userId=" + user.id + "&round=0" + "&firstRound=true");
+                            //Review. Return what? Is this really ok? Red flag
                             return;
                         } else {
+                        	// Review. This is not production ready. Delete
                             System.out.println("ERROR -----> " + fightDTO.message);
                         }
 
@@ -81,6 +87,7 @@ public class ChallengeServlet extends HttpServlet {
 
             if (readyDTO.list.size() > 0) {
                 request.setAttribute("readyToFightList", ObjectConverterToString.convertList(readyDTO.list));
+                //Review. This is not production ready. Delete
                 readyDTO.list.forEach(el -> System.out.println("Users in ReadyToFight -> " + el.userName));
                 request.getRequestDispatcher("/challenge.jsp").forward(request, response);
             } else {
@@ -89,7 +96,7 @@ public class ChallengeServlet extends HttpServlet {
             }
 
         }
-
+//Review. Who knows when this will work?
         response.sendRedirect("/login");
     }
 }

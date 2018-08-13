@@ -31,13 +31,16 @@ public class FightServlet extends HttpServlet {
     private void requestHandler(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         LoginService loginService = new LoginService();
         Cookie token = loginService.findTokenCookie(request.getCookies());
+        //Review. First if for login check. See ChallengeServle login check.
 
+        //Review. Naming -> loginService.validate(token) => loginService.isValid(token)
         if (loginService.validate(token)) {
             ICache cache = Cache.getInstance();
             UserModel user = (UserModel) cache.get(token.getValue());
             FightParametersModel fightParameters = getFightParametersModel(request, user);
             TurnOutcomeModel turnOutcome = resolveRoundOutcome(fightParameters);
 
+            //Review. What is this???? 
             if (turnOutcome != null) {
                 request.setAttribute("turnOutcome", ObjectConverterToString.convertObject(turnOutcome));
                 request.getRequestDispatcher("fight.jsp").forward(request, response);
@@ -52,7 +55,8 @@ public class FightServlet extends HttpServlet {
 
     private TurnOutcomeModel resolveRoundOutcome(FightParametersModel fightParameters) {
         IFightService fs;
-
+        
+        //Review. Very bad. Same stuff is happening with first round and other round. Why duplicate?
         if (fightParameters.firstRound) {
             FirstRoundModel firstRound = getFirstRoundModel(fightParameters);
 
@@ -81,7 +85,7 @@ public class FightServlet extends HttpServlet {
         fightParametersModel.userId = user.id;
         // TODO problem here ... Buna kad nepagauna 'round' parameter ir paraso 999
         fightParametersModel.round = request.getParameter("round") != null
-                                        ? Integer.parseInt(request.getParameter("round")) : 999;
+                                        ? Integer.parseInt(request.getParameter("round")) : 999; //Review. Default is 0.
         fightParametersModel.att1 = request.getParameter("att1");
         fightParametersModel.att2 = request.getParameter("att2");
         fightParametersModel.def1 = request.getParameter("def1");
@@ -92,6 +96,7 @@ public class FightServlet extends HttpServlet {
         return fightParametersModel;
     }
 
+    //Review. Refactor out 2 diff rounds into 1.
     private FirstRoundModel getFirstRoundModel(FightParametersModel fightParameters) {
         FirstRoundModel firstRound = new FirstRoundModel();
         firstRound.userId = fightParameters.userId;
@@ -115,7 +120,7 @@ public class FightServlet extends HttpServlet {
 
     private TurnStatsModel createTurnStatsModelFromRoundModel(FirstRoundModel firstRound, OtherRoundModel otherRound) {
         TurnStatsModel turnStats = new TurnStatsModel();
-
+        //Review. Make 1 model in total. 
         if (firstRound != null) {
 
             turnStats.fightId = firstRound.fightId;

@@ -13,7 +13,10 @@ public final class Logger {
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw)) {
             out.println(new SimpleDateFormat("yyyy-MM-dd hh:mm").format(new Date()) + " Error -> " + message);
-        } catch (IOException e ) {
+        } 
+        //Review. If we catch specific exception, we do so especially for that exeption.
+        //Review. In all other cases use Exception. (IllegalArgumentException - in documentation)
+        catch (IOException e ) {
             e.printStackTrace();
         }
     }
