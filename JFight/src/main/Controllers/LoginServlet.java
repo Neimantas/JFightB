@@ -6,7 +6,7 @@ import main.Models.BL.RegistrationEventModel;
 import main.Models.BL.UserModel;
 import main.Models.DTO.LoginDTO;
 import main.Models.DTO.RegisterDTO;
-import main.Services.Helpers.NotNullOrEmpty;
+import main.Services.Helpers.Checker;
 import main.Services.ILoginService;
 import main.Services.IRegisterService;
 import main.Services.Impl.LoginService;
@@ -107,10 +107,10 @@ public class LoginServlet extends HttpServlet {
     private boolean areAllRequestParamsCorrect(RegistrationEventModel model, boolean isLogin) {
         if (isLogin) {
             LoginModel loginModel = getLoginModel(model);
-            return NotNullOrEmpty.paramsNotNullOrEmpty(loginModel);
+            return !Checker.isNullOrEmpty(loginModel);
         } else {
             RegisterModel registerModel = getRegisterModel(model);
-            return NotNullOrEmpty.paramsNotNullOrEmpty(registerModel);
+            return !Checker.isNullOrEmpty(registerModel);
         }
     }
 }
