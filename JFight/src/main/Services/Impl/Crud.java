@@ -72,10 +72,8 @@ public class Crud implements ICrud {
                 rs = cstmt.getResultSet();
             } else {
                 statement = connection.createStatement();
-                rs = statement
-                        .executeQuery(new QueryBuilder(getClassNameWithoutDAL(dalType))
-                                .buildQuery(dbQueryModel, "read")
-                                .getQuery());
+                rs = statement.executeQuery(QueryBuilder
+                        .buildQuery(getClassNameWithoutDAL(dalType), dbQueryModel, "read"));
             }
 
             List<T> rows = new ArrayList<>();
@@ -124,9 +122,8 @@ public class Crud implements ICrud {
             connection = dataBase.getConnection();
             connection.setAutoCommit(false);
             statement = connection.createStatement();
-            statement.executeUpdate(new QueryBuilder(getClassNameWithoutDAL(dal))
-                    .buildQuery(deleteModel, "delete")
-                    .getQuery());
+            statement.executeUpdate(QueryBuilder
+                            .buildQuery(getClassNameWithoutDAL(dal), deleteModel, "delete"));
             connection.commit();
             statement.close();
             return new DBqueryDTO(true, null, null);
