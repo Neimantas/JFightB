@@ -1,12 +1,11 @@
 package main.Services.Helpers;
 
 import java.lang.reflect.Field;
-//Review. Rename -> EmptyChecker
+
 public final class Checker {
 
     private Checker(){}
-//Review. Please comment in detail why you had idea to use this?
-    //Review. Name change -> isNullOrEmpty
+
     public static <T> boolean isNullOrEmpty(T model) {
 
         Field[] fields = model.getClass().getDeclaredFields();
@@ -24,7 +23,8 @@ public final class Checker {
                     return true;
                 }
             } catch (Exception e) {
-                System.out.println(e.getStackTrace());
+                Logger.error(e.getMessage());
+                e.getStackTrace();
             }
         }
         return false;
