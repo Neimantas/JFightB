@@ -2,9 +2,12 @@ package main.Services.Impl;
 
 import javafx.util.Pair;
 import main.Models.BL.DBQueryModel;
+import main.Models.BL.ProcedureModel;
 import main.Models.BL.UpdateModel;
+import main.Models.BL.UpdatePreparedStmtModel;
 import main.Models.DAL.UserExtendedDAL;
 import main.Models.DTO.DBqueryDTO;
+import main.Services.Helpers.Logger;
 import main.Services.Helpers.QueryBuilder;
 import main.Services.ICrud;
 import main.Services.IDataBase;
@@ -15,33 +18,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Crud implements ICrud {
-    //Review. Very bad. Create db instance only in local scope!
-    private IDataBase dataBase = new DataBase();
-    private Connection connection;
-    private Statement statement;
 
     @Override
     public DBqueryDTO create(Object object) {
+        IDataBase dataBase = new DataBase();
+        Connection connection = dataBase.getConnection();
         try {
-        	//Review. New DB new con.
-        	//Review. review comments.
-            connection = dataBase.getConnection();
-//            statement = connection.createStatement();
-//            statement.executeUpdate(createInsertQuery(object));
-//            statement.close();
             PreparedStatement preparedStatement =
                     connection.prepareStatement(createInsertQuery(object));
-            //Review. Please comment magic places.
+
+            // Exception for inserting Images (byteArray) into DB from 'UserExtendedDAL'
             if (object.getClass().getSimpleName().equals("UserExtendedDAL")) {
                 UserExtendedDAL userExtendedDAL = (UserExtendedDAL) object;
                 preparedStatement.setBytes(1, userExtendedDAL.profileImg);
             }
-            preparedStatement.executeUpdate();
-            return new DBqueryDTO(true, "", null);
+
+            int rowsCreated = preparedStatement.executeUpdate();
+            preparedStatement.close();
+            return new DBqueryDTO<>(true, "Rows created -> " + rowsCreated, null);
         } catch (Exception e) {
-        	//Review. logg error
+            Logger.error(e.getMessage());
             e.printStackTrace();
-            return new DBqueryDTO(false, e.getMessage(), null);
+            return new DBqueryDTO<>(false, e.getMessage(), null);
         } finally {
             dataBase.closeConnection(connection);
         }
@@ -49,70 +47,39 @@ public class Crud implements ICrud {
 
     @Override
     public <T> DBqueryDTO<T> read(DBQueryModel dbQueryModel, Class<T> dalType) {
+        IDataBase dataBase = new DataBase();
+        Connection connection = dataBase.getConnection();
         try {
-
-            connection = dataBase.getConnection();
-            ResultSet rs;
-            CallableStatement cstmt = null;
-
-            if (dbQueryModel.procedure != null) {
-                cstmt = connection.prepareCall(dbQueryModel.procedure.name);
-                List<Pair<String, Object>> params = dbQueryModel.procedure.params;
-                for (Pair<String, Object> pair : params) {
-
-                    if (pair.getValue().getClass().getSimpleName().equals("Integer")) {
-                        cstmt.setInt(pair.getKey(), (int) pair.getValue());
-                    } else {
-                    	//Review. All else is String. Is it though?
-                        cstmt.setString(pair.getKey(), (String) pair.getValue());
-                    }
-
-                }
-                cstmt.execute();
-                rs = cstmt.getResultSet();
-            } else {
-                statement = connection.createStatement();
-                rs = statement
-                        .executeQuery(new QueryBuilder(getClassNameWithoutDAL(dalType))
-                                .buildQuery(dbQueryModel, "read")
-                                .getQuery());
-            }
-
-            List<T> rows = new ArrayList<>();
-            while (rs.next()) {
-                T dal = dalType.newInstance();
-                loadResultSetIntoObject(rs, dal);
-                rows.add(dal);
-            }
-
-            if (statement != null) {
-                statement.close();
-            } else if (cstmt != null) {
-                cstmt.close();
-            }
-
-            return new DBqueryDTO<>(true, "", rows);
+            List<T> rows = getDALList(connection, dbQueryModel, dalType);
+            return new DBqueryDTO<>(true, "Rows selected from DB -> " + rows.size(), rows);
         } catch (Exception e) {
+            Logger.error(e.getMessage());
             e.printStackTrace();
-            return new DBqueryDTO(false, e.getMessage(), null);
+            return new DBqueryDTO<>(false, e.getMessage(), null);
         } finally {
             dataBase.closeConnection(connection);
         }
     }
 
-
     @Override
     public DBqueryDTO update(Object dal, String[] primaryKey) {
+        IDataBase dataBase = new DataBase();
+        Connection connection = dataBase.getConnection();
         try {
-            connection = dataBase.getConnection();
-            PreparedStatement stmt = createUpdatePreparedStatement(dal,
-                    getClassNameWithoutDAL(dal.getClass()), primaryKey);
-            System.out.println("Updated rows -> " + stmt.executeUpdate());
-            stmt.close();
-            return new DBqueryDTO(true, null, null);
+            UpdatePreparedStmtModel preparedStmtModel = new UpdatePreparedStmtModel();
+            preparedStmtModel.connection = connection;
+            preparedStmtModel.objectWithUpdatedValues = dal;
+            preparedStmtModel.primaryKeys = primaryKey;
+            preparedStmtModel.tableName = getClassNameWithoutDAL(dal.getClass());
+
+            PreparedStatement preparedStatement = createPreparedStatementForUpdate(preparedStmtModel);
+            int rowsUpdated = preparedStatement.executeUpdate();
+            preparedStatement.close();
+            return new DBqueryDTO<>(true, "Rows updated -> " + rowsUpdated, null);
         } catch (Exception e) {
+            Logger.error(e.getMessage());
             e.printStackTrace();
-            return new DBqueryDTO(false, e.getMessage(), null);
+            return new DBqueryDTO<>(false, e.getMessage(), null);
         } finally {
             dataBase.closeConnection(connection);
         }
@@ -120,22 +87,77 @@ public class Crud implements ICrud {
 
     @Override
     public DBqueryDTO delete(DBQueryModel deleteModel, Class dal) {
+        IDataBase dataBase = new DataBase();
+        Connection connection = dataBase.getConnection();
         try {
-            connection = dataBase.getConnection();
-            connection.setAutoCommit(false);
-            statement = connection.createStatement();
-            statement.executeUpdate(new QueryBuilder(getClassNameWithoutDAL(dal))
-                    .buildQuery(deleteModel, "delete")
-                    .getQuery());
-            connection.commit();
+            Statement statement = connection.createStatement();
+            int rowsDeleted = statement.executeUpdate(new QueryBuilder(getClassNameWithoutDAL(dal))
+                                        .buildQuery(deleteModel, "delete")
+                                        .getQuery());
             statement.close();
-            return new DBqueryDTO(true, null, null);
+            return new DBqueryDTO<>(true, "Rows deleted -> " + rowsDeleted, null);
         } catch (Exception e) {
+            Logger.error(e.getMessage());
             e.printStackTrace();
-            return new DBqueryDTO(false, null, null);
+            return new DBqueryDTO<>(false, e.getMessage(), null);
         } finally {
             dataBase.closeConnection(connection);
         }
+    }
+
+    private <T> List<T> getDALList(Connection connection, DBQueryModel queryModel, Class<T> dalType) throws Exception {
+        ResultSet rs;
+        CallableStatement callableStatement;
+        Statement statement;
+        List<T> rows;
+
+        if (queryModel.procedure != null) {
+            callableStatement = getCallableStatementForGivenProcedure(connection, queryModel.procedure);
+            callableStatement.execute();
+            rs = callableStatement.getResultSet();
+            rows = getDALListFromResultSet(rs, dalType);
+            callableStatement.close();
+        } else {
+            statement = connection.createStatement();
+            rs = statement
+                    .executeQuery(new QueryBuilder(getClassNameWithoutDAL(dalType))
+                            .buildQuery(queryModel, "read")
+                            .getQuery());
+            rows = getDALListFromResultSet(rs, dalType);
+            statement.close();
+        }
+
+        return rows;
+    }
+
+    private <T> List<T> getDALListFromResultSet(ResultSet rs, Class<T> dalType) throws Exception {
+        List<T> rows = new ArrayList<>();
+        while (rs.next()) {
+            T dal = dalType.newInstance();
+            loadResultSetIntoObject(rs, dal);
+            rows.add(dal);
+        }
+        rs.close();
+        return rows;
+    }
+
+    private CallableStatement getCallableStatementForGivenProcedure(Connection connection, ProcedureModel procedure) throws Exception {
+        CallableStatement callableStatement = connection.prepareCall(procedure.name);
+        List<Pair<String, Object>> params = procedure.params;
+        for (Pair<String, Object> pair : params) {
+            switch (pair.getValue().getClass().getSimpleName()) {
+                case "Integer":
+                    callableStatement.setInt(pair.getKey(), (int) pair.getValue());
+                    break;
+                case "String":
+                    callableStatement.setString(pair.getKey(), (String) pair.getValue());
+                    break;
+                default:
+                    throw new IllegalArgumentException("'getCallableStatementForGivenProcedure' method can only handle " +
+                            "'Integer' and 'String' types for procedure arguments.");
+            }
+        }
+        return callableStatement;
     }
 
 
@@ -177,8 +199,9 @@ public class Crud implements ICrud {
             if (fields[i].getName().equals("userId") && object.getClass().getSimpleName().equals("UserDAL")) {
                 continue;
             } else if (fields[i].getName().equals("profileImg")) {
-//                sb.append("CAST(").append(quoteIdentifier(byteArrayToString((byte[]) fields[i].get(object)))).append("AS VARBINARY(MAX))");
                 sb.append("?");
+            } else if (fields[i].get(object) == null) {
+                sb.append("null");
             } else {
                 sb.append(quoteIdentifier(fields[i].get(object).toString()));
             }
@@ -193,32 +216,30 @@ public class Crud implements ICrud {
         return sb.toString();
     }
 
-    private PreparedStatement createUpdatePreparedStatement(Object object,
-                                                            String tableName, String[] primaryKey) {
-        PreparedStatement stmt;
+    private PreparedStatement createPreparedStatementForUpdate(UpdatePreparedStmtModel preparedStmtModel) {
         try {
-            Class<?> zclass = object.getClass();
-            UpdateModel updateModel = createUpdateQuery(zclass, tableName, primaryKey);
-            stmt = connection.prepareStatement(updateModel.query);
-            Field[] fields = zclass.getDeclaredFields();
+            Class<?> zclass = preparedStmtModel.objectWithUpdatedValues.getClass();
+            UpdateModel updateModel = createUpdateQuery(zclass, preparedStmtModel.tableName, preparedStmtModel.primaryKeys);
+            PreparedStatement stmt = preparedStmtModel.connection.prepareStatement(updateModel.query);
             int fieldPosition = 1;
-            for (int i = 0; i < fields.length; i++) {
-                Field field = fields[i];
+            for (Field field : zclass.getDeclaredFields()) {
                 field.setAccessible(true);
-                Object value = field.get(object);
+                Object value = field.get(preparedStmtModel.objectWithUpdatedValues);
                 String name = field.getName();
-                if (checkForPrimaryKey(name, primaryKey)) {
+
+                if (checkForPrimaryKey(name, preparedStmtModel.primaryKeys)) {
                     int pkPosition = updateModel.pkLocation.get(updateModel.primaryKeys.indexOf(name));
                     stmt.setObject(pkPosition, value);
                 } else {
                     stmt.setObject(fieldPosition, value);
                     fieldPosition++;
                 }
+
             }
+            return stmt;
         } catch (Exception e) {
             throw new RuntimeException("Unable to create PreparedStatement: " + e.getMessage(), e);
         }
-        return stmt;
     }
 
     private UpdateModel createUpdateQuery(Class<?> zclass, String tableName, String[] primaryKey) {
@@ -230,9 +251,8 @@ public class Crud implements ICrud {
         String where = null;
         Field[] fields = zclass.getDeclaredFields();
         int pkPosition = fields.length - primaryKey.length + 1;
-        for (int i = 0; i < fields.length; i++) {
-            String name = fields[i].getName();
-//            String pair = quoteIdentifier(name) + " = ?";
+        for (Field field : fields) {
+            String name = field.getName();
             String pair = name + " = ?";
             if (checkForPrimaryKey(name, primaryKey)) {
 
@@ -247,16 +267,19 @@ public class Crud implements ICrud {
                 pkPosition++;
 
             } else {
+
                 if (sets.length() > 1) {
                     sets.append(", ");
                 }
                 sets.append(pair);
+
             }
         }
 
         if (where == null) {
             throw new IllegalArgumentException("Primary key not found in '" + zclass.getName() + "'");
         }
+
         updateModel.query = "UPDATE " + tableName + " SET " + sets.toString() + where;
         return updateModel;
     }
@@ -302,6 +325,7 @@ public class Crud implements ICrud {
     }
 
     private String getClassNameWithoutDAL(Class c) {
+        // Exception: 'User' is a keyword in SQL because of that we must use []
         if (c.getSimpleName().equals("UserDAL")) {
             return "[User]";
         }
