@@ -2,7 +2,7 @@ package main.Controllers;
 
 import main.Models.BL.*;
 import main.Models.CONS.BodyParts;
-import main.Services.Helpers.NotNullOrEmpty;
+import main.Services.Helpers.Checker;
 import main.Services.Helpers.ObjectConverterToString;
 import main.Services.ICache;
 import main.Services.IFightService;
@@ -34,7 +34,7 @@ public class FightServlet extends HttpServlet {
         //Review. First if for login check. See ChallengeServle login check.
 
         //Review. Naming -> loginService.validate(token) => loginService.isValid(token)
-        if (loginService.validate(token)) {
+        if (loginService.isValid(token)) {
             ICache cache = Cache.getInstance();
             UserModel user = (UserModel) cache.get(token.getValue());
             FightParametersModel fightParameters = getFightParametersModel(request, user);
@@ -60,7 +60,7 @@ public class FightServlet extends HttpServlet {
         if (fightParameters.firstRound) {
             FirstRoundModel firstRound = getFirstRoundModel(fightParameters);
 
-            if (NotNullOrEmpty.paramsNotNullOrEmpty(firstRound)) {
+            if (!Checker.isNullOrEmpty(firstRound)) {
                 fs = new FightService();
                 return fs.getTurnOutcomeForFirstRound(createTurnStatsModelFromRoundModel(firstRound, null));
             }
@@ -68,7 +68,7 @@ public class FightServlet extends HttpServlet {
         } else {
             OtherRoundModel otherRound = getOtherRoundModel(fightParameters);
 
-            if (NotNullOrEmpty.paramsNotNullOrEmpty(otherRound)) {
+            if (!Checker.isNullOrEmpty(otherRound)) {
                 fs = new FightService();
                 return fs.getTurnOutcome(createTurnStatsModelFromRoundModel(null, otherRound));
             }

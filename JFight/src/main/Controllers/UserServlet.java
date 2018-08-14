@@ -28,6 +28,7 @@ public class UserServlet extends HttpServlet {
         UserInfoService userInfoService = new UserInfoService();
         ILoginService loginService = new LoginService();
         Cookie token = loginService.findTokenCookie(request.getCookies());
+        if (loginService.isValid(token)) {
         ICache cache = Cache.getInstance();
         UserModel user = (UserModel) cache.get(token.getValue());
         UserExtendedModel userExtendedModel = userInfoService.getUserExtendedById(user.id);

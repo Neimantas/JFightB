@@ -15,7 +15,7 @@ public class LoginServiceTest {
 
     @Test
     public void validate() {
-        assertNotNull(loginService.validate(null));
+        assertNotNull(loginService.isValid(null));
     }
 
     @Test

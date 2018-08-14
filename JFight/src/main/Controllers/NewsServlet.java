@@ -24,7 +24,7 @@ public class NewsServlet extends HttpServlet {
         LoginService loginService = new LoginService();
         Cookie token = loginService.findTokenCookie(request.getCookies());
 //Review. Remake login with 1 if
-        if (token != null && loginService.validate(token)) {
+        if (token != null && loginService.isValid(token)) {
             ICache cache = Cache.getInstance();
             UserModel user = (UserModel) cache.get(token.getValue());
             System.out.println(user.name);
