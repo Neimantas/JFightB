@@ -2,12 +2,12 @@ package main.Services.Helpers;
 
 import java.lang.reflect.Field;
 //Review. Rename -> EmptyChecker
-public final class NotNullOrEmpty {
+public final class Checker {
 
-    private NotNullOrEmpty(){}
+    private Checker(){}
 //Review. Please comment in detail why you had idea to use this?
     //Review. Name change -> isNullOrEmpty
-    public static <T> boolean paramsNotNullOrEmpty(T model) {
+    public static <T> boolean isNullOrEmpty(T model) {
 
         Field[] fields = model.getClass().getDeclaredFields();
         for (Field field : fields) {
@@ -18,15 +18,15 @@ public final class NotNullOrEmpty {
                 if (field.get(model) != null && fieldType.equals(String.class)) {
                     String a = (String) field.get(model);
                     if (a.isEmpty()) {
-                        return false;
+                        return true;
                     }
                 } else if (field.get(model) == null) {
-                    return false;
+                    return true;
                 }
             } catch (Exception e) {
                 System.out.println(e.getStackTrace());
             }
         }
-        return true;
+        return false;
     }
 }
