@@ -21,6 +21,9 @@ import java.io.IOException;
 
 @WebServlet(name = "ChallengeServlet", urlPatterns = {"/challenge"})
 public class ChallengeServlet extends HttpServlet {
+
+    ICache cache = Cache.getInstance();
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doGet(request, response);
     }
@@ -29,74 +32,67 @@ public class ChallengeServlet extends HttpServlet {
 
         LoginService loginService = new LoginService();
         Cookie token = loginService.findTokenCookie(request.getCookies());
-        //Review. Login check is wrong. Make it like this:
-        //if (token != null && loginService.validate(token) response.Redirect('/login.jsp');
 
-        if (token != null && loginService.isValid(token)) {
-            IChallengeService cs = new ChallengeService();
-            //Review. Singletons can be fields, they won't change.
-            ICache cache = Cache.getInstance();
-            UserModel user = (UserModel) cache.get(token.getValue());
-            request.setAttribute("userName", user.name);
+        if (token == null && !loginService.isValid(token)) {
+            response.sendRedirect("/login");
+        }
 
-            //Review. Why we have check that goes nowhere?
-            if (!cs.addPlayerToReadyToFight(user.id, user.name)) {
-                // TODO should give a message to Front that an error has occurred.
-            }
+        IChallengeService cs = new ChallengeService();
 
-            if (request.getParameter("challengedPlayers") != null) {
+        UserModel user = (UserModel) cache.get(token.getValue());
+        request.setAttribute("userName", user.name);
 
-                String[] challengedPlayers = request.getParameter("challengedPlayers").split("#");
+        //Review. Why we have check that goes nowhere?
+        if (!cs.addPlayerToReadyToFight(user.id, user.name)) {
+            // TODO should give a message to Front that an error has occurred.
+        }
 
-                // TODO show the user that he is waiting for a match
-                // What should we do when a user challenges someone and they challenge him after 15seconds.
-                // Find out any possibilities of semi refresh of page
+        if (request.getParameter("challengedPlayers") != null) {
 
-                if (cs.submitChallenges(user.id, challengedPlayers)) {
+            String[] challengedPlayers = request.getParameter("challengedPlayers").split("#");
 
-                    if (cs.checkIfUserGotMatched(user.id)) {
+            // TODO show the user that he is waiting for a match
+            // What should we do when a user challenges someone and they challenge him after 15seconds.
+            // Find out any possibilities of semi refresh of page
+
+            if (cs.submitChallenges(user.id, challengedPlayers)) {
+
+                if (cs.checkIfUserGotMatched(user.id)) {
 //Review. 5 lvl of IF. max 3 lvl allowed. Refactor
-                        FightDTO fightDTO = cs.createFightForMatchedPlayers(user.id);
+                    FightDTO fightDTO = cs.createFightForMatchedPlayers(user.id);
 //
-                        if (fightDTO.success) {
+                    if (fightDTO.success) {
 //                            request.getRequestDispatcher("/fight?fightId=" + fightDTO.dal.fightId +
 ////                                    "&userId=" + user.id + "&round=0" + "&firstRound=true").forward(request, response);
-                            response.sendRedirect("/fight?fightId=" + fightDTO.dal.fightId +
-                                    "&userId=" + user.id + "&round=0" + "&firstRound=true");
-                            //Review. Return what? Is this really ok? Red flag
-                            return;
-                        } else {
-                        	// Review. This is not production ready. Delete
-                            System.out.println("ERROR -----> " + fightDTO.message);
-                        }
-
+                        response.sendRedirect("/fight?fightId=" + fightDTO.dal.fightId +
+                                "&userId=" + user.id + "&round=0" + "&firstRound=true");
+                        //Review. Return what? Is this really ok? Red flag
+                        return;
                     } else {
-                        IssuedChallengesDTO issuedChallengesDTO = cs.getIssuedChallenges(user.id);
+                        // Review. This is not production ready. Delete
+                        System.out.println("ERROR -----> " + fightDTO.message);
+                    }
 
-                        if (issuedChallengesDTO.success) {
-                            request.setAttribute("userChallenges", ObjectConverterToString.convertList(issuedChallengesDTO.issuedChallenge.userChallenges));
-                            request.setAttribute("oppChallenges", ObjectConverterToString.convertList(issuedChallengesDTO.issuedChallenge.oppChallenges));
-                        }
+                } else {
+                    IssuedChallengesDTO issuedChallengesDTO = cs.getIssuedChallenges(user.id);
+
+                    if (issuedChallengesDTO.success) {
+                        request.setAttribute("userChallenges", ObjectConverterToString.convertList(issuedChallengesDTO.issuedChallenge.userChallenges));
+                        request.setAttribute("oppChallenges", ObjectConverterToString.convertList(issuedChallengesDTO.issuedChallenge.oppChallenges));
                     }
                 }
-
-            }
-
-            // UserModel has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
-            ReadyToFightDTO readyDTO = cs.getReadyToFightUsersExceptPrimaryUser(user.id);
-
-            if (readyDTO.list.size() > 0) {
-                request.setAttribute("readyToFightList", ObjectConverterToString.convertList(readyDTO.list));
-                //Review. This is not production ready. Delete
-                readyDTO.list.forEach(el -> System.out.println("Users in ReadyToFight -> " + el.userName));
-                request.getRequestDispatcher("/challenge.jsp").forward(request, response);
-            } else {
-                System.out.println("NO USERS INSIDE LIST");
-                request.getRequestDispatcher("/challenge.jsp").forward(request, response);
             }
 
         }
-//Review. Who knows when this will work?
-        response.sendRedirect("/login");
+
+        // UserModel has entered the challenge page for the first time or no matches found, return him all players Ready to Fight
+        ReadyToFightDTO readyDTO = cs.getReadyToFightUsersExceptPrimaryUser(user.id);
+
+        if (readyDTO.list.size() > 0) {
+            request.setAttribute("readyToFightList", ObjectConverterToString.convertList(readyDTO.list));
+            request.getRequestDispatcher("/challenge.jsp").forward(request, response);
+        } else {
+            request.getRequestDispatcher("/challenge.jsp").forward(request, response);
+        }
     }
 }
