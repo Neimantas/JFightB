@@ -27,6 +27,7 @@ public final class ObjectConverterToString {
             return map;
         }
         catch (Exception e) {
+            Logger.error(e.getMessage());
             e.printStackTrace();
             return new HashMap<>();
         }
