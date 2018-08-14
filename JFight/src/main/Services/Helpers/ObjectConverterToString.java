@@ -27,8 +27,8 @@ public final class ObjectConverterToString {
             return map;
         }
         catch (Exception e) {
-        	//Review. We go error, so we throw cooler error? lol. How about we log it?
-            throw new RuntimeException(e.getMessage());
+            e.printStackTrace();
+            return new HashMap<>();
         }
     }
 }
