@@ -18,29 +18,18 @@ public class LoginService implements ILoginService {
 
     @Override
     public LoginDTO find(String email, String password) {
-        IHigherService hs = new HigherService();
-//        UserDAL userDAL = new UserDAL();
-//        userDAL.email = email;
-//        userDAL.password = password;
-//        UserDTO userDTO = hs.getUserByEmailAndPass(userDAL);
-
-        boolean testHash = false;
-        UserDTO userDTO = hs.getUserByEmail(email);
-        String hash = userDTO.user.password;
         try {
-            testHash = HashService.check(password, hash);
+            IHigherService hs = new HigherService();
+            UserDTO userDTO = hs.getUserByEmail(email);
+            String hash = userDTO.user.password;
+            boolean testHash = HashService.check(password, hash);
+            if (!testHash) {
+                return new LoginDTO(true, "Incorrect password", null);
+            }
+            return new LoginDTO(true, "", addUserToCache(userDTO.user));
         } catch (Exception e) {
             e.printStackTrace();
-        }
-
-        if (testHash && userDTO.success) {
-            System.out.println("TESTHASH " + testHash);
-            System.out.println(userDTO.success);
-            return new LoginDTO(true, "", addUserToCache(userDTO.user));
-        } else {
-            System.out.println("TESTHASH" + testHash);
-            System.out.println(userDTO.success);
-            return new LoginDTO(false, userDTO.message, null);
+            return new LoginDTO(false, "Connection error", null);
         }
     }
 
@@ -52,7 +41,7 @@ public class LoginService implements ILoginService {
     }
 
     @Override
-    public boolean validate(Cookie cookie) {
+    public boolean isValid(Cookie cookie) {
 
         if (cookie == null || cache.get(cookie.getValue()) == null) {
             return false;

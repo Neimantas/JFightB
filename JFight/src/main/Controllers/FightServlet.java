@@ -34,7 +34,7 @@ public class FightServlet extends HttpServlet {
         //Review. First if for login check. See ChallengeServle login check.
 
         //Review. Naming -> loginService.validate(token) => loginService.isValid(token)
-        if (loginService.validate(token)) {
+        if (loginService.isValid(token)) {
             ICache cache = Cache.getInstance();
             UserModel user = (UserModel) cache.get(token.getValue());
             FightParametersModel fightParameters = getFightParametersModel(request, user);

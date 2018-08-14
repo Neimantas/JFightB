@@ -32,7 +32,7 @@ public class ChallengeServlet extends HttpServlet {
         //Review. Login check is wrong. Make it like this:
         //if (token != null && loginService.validate(token) response.Redirect('/login.jsp');
 
-        if (token != null && loginService.validate(token)) {
+        if (token != null && loginService.isValid(token)) {
             IChallengeService cs = new ChallengeService();
             //Review. Singletons can be fields, they won't change.
             ICache cache = Cache.getInstance();

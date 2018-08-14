@@ -7,7 +7,7 @@ import javax.servlet.http.Cookie;
 public interface ILoginService {
     LoginDTO find(String email, String password);
 
-    boolean validate(Cookie cookie);
+    boolean isValid(Cookie cookie);
 
     Cookie findTokenCookie(Cookie[] cookies);
 }
