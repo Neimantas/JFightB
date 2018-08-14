@@ -7,10 +7,9 @@ public class RegisterDTO {
     public String message;
     public UserRegisterModel userRegisterModel;
 
-    public RegisterDTO(boolean success, String message, UserRegisterModel userRegisterModel) {
-    	//Review. THISSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
-        this.success = success;
-        this.message = message;
-        this.userRegisterModel = userRegisterModel;
+    public RegisterDTO(boolean Success, String Message, UserRegisterModel UserRegisterModel) {
+        success = Success;
+        message = Message;
+        userRegisterModel = UserRegisterModel;
     }
 }
