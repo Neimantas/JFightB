@@ -91,9 +91,8 @@ public class Crud implements ICrud {
         Connection connection = dataBase.getConnection();
         try {
             Statement statement = connection.createStatement();
-            int rowsDeleted = statement.executeUpdate(new QueryBuilder(getClassNameWithoutDAL(dal))
-                                        .buildQuery(deleteModel, "delete")
-                                        .getQuery());
+            int rowsDeleted = statement.executeUpdate(QueryBuilder
+                                        .buildQuery(getClassNameWithoutDAL(dal), deleteModel, "delete"));
             statement.close();
             return new DBqueryDTO<>(true, "Rows deleted -> " + rowsDeleted, null);
         } catch (Exception e) {
@@ -295,10 +294,8 @@ public class Crud implements ICrud {
         } else {
             // In this case the call to 'Read' was made as a regular query (without a procedure)
             statement = connection.createStatement();
-            rs = statement
-                    .executeQuery(new QueryBuilder(getClassNameWithoutDAL(dalType))
-                            .buildQuery(queryModel, "read")
-                            .getQuery());
+            rs = statement.executeQuery(QueryBuilder
+                            .buildQuery(getClassNameWithoutDAL(dalType), queryModel, "read"));
             rows = getDALListFromResultSet(rs, dalType);
             statement.close();
         }
