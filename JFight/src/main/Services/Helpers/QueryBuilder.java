@@ -1,53 +1,47 @@
 package main.Services.Helpers;
 
 import main.Models.BL.DBQueryModel;
+import main.Models.CONS.QueryBuilderErrors;
 
-public class QueryBuilder {
-    //Review. Think concurency. Now 1 method can reset builder and other add.
-    private StringBuilder sb = new StringBuilder(); //Review. In most cases we use stringbuilder for totally new string. Chech this.
-    private String tableName;
+public final class QueryBuilder {
 
-    public QueryBuilder(String theTableName) {
-        tableName = theTableName;
-    }
+    private QueryBuilder(){}
 
-    public QueryBuilder buildQuery(DBQueryModel queryModel, String readOrDelete) {
+    public static String buildQuery(String tableName, DBQueryModel queryModel, String readOrDelete) {
     	
         if (tableName == null || tableName.isEmpty()) {
-        	//Review. How about no strings as errors?
-            throw new IllegalArgumentException("Missing table name!");
+            throw new IllegalArgumentException(QueryBuilderErrors.MISSING_TABLE_NAME);
         }
 
-        //Review. I think we have method for is null or default value?
         if (readOrDelete == null || readOrDelete.isEmpty()) {
-            throw new IllegalArgumentException("Cannot build a query without specifying Read or Delete operation.");
+            throw new IllegalArgumentException(QueryBuilderErrors.MISSING_READ_DELETE_PARAM);
         }
 
-        sb.setLength(0);
+        String query;
 
         switch (readOrDelete.toUpperCase()) {
             case "READ":
-                sb.append("SELECT * FROM ").append(tableName).append(" WHERE 1 = 1");
+                query = "SELECT * FROM " + tableName + " WHERE 1 = 1";
                 break;
             case "DELETE":
-                sb.append("DELETE FROM ").append(tableName).append(" WHERE 1 = 1");
+                query = "DELETE FROM " + tableName + " WHERE 1 = 1";
                 break;
             default:
-                throw new IllegalArgumentException("Please specify either Read or Delete as third argument.");
+                throw new IllegalArgumentException(QueryBuilderErrors.WRONG_READ_DELETE_PARAM);
         }
 
         if (queryModel.where != null && queryModel.whereValue != null) {
-            whereClause(queryModel);
+            query = whereClause(queryModel, query);
         }
-        //Review. This is spaaaaaaaaaarrrtttttaaaaaaaaa. 
-        return this;
+
+        return query;
     }
 
-    private void whereClause(DBQueryModel queryModel) {
+    private static String whereClause(DBQueryModel queryModel, String query) {
         String[][] values = queryModel.whereValue;
         String[] where = queryModel.where;
+        StringBuilder sb = new StringBuilder(query);
         sb.append(" AND ");
-
         for (int i = 0; i < where.length; i++) {
             sb.append(where[i]).append(" IN (");
 
@@ -59,14 +53,13 @@ public class QueryBuilder {
                 } else {
                     sb.append(") ");
                 }
+
             }
-//Review. Please comment why?
+            // If this is not the last 'WHERE' clause add the logical operator and a space
+            // For example: "SELECT * ... WHERE 'userId' = ... AND/OR 'round' = ..."
             if (i != where.length -1) sb.append(queryModel.logicalOperator).append(" ");
         }
 
-    }
-
-    public String getQuery(){
         return sb.toString();
     }
 
