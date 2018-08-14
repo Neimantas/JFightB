@@ -29,6 +29,7 @@ public class RegisterService implements IRegisterService {
         if (userDTO.success) {
             return new RegisterDTO(true, null, null);
         } else {
+        	//Review. Model mapper should be used trough instances and probably as service
             ModelMapper mod = new ModelMapper();
             mod.getConfiguration().setFieldMatchingEnabled(true);
             return new RegisterDTO(false, null, null);
@@ -43,6 +44,7 @@ public class RegisterService implements IRegisterService {
         try {
             hash = HashService.getSaltedHash(password);
         } catch (Exception e) {
+        	//Review. Log exception
             e.printStackTrace();
         }
 
@@ -57,13 +59,15 @@ public class RegisterService implements IRegisterService {
         }
 
         UserDTO userDTO = hs.getUserByEmail(email);
-
+        //Review. Too many dto as names
         if (!userDTO.success) {
             return new RegisterDTO(false, userDTO.message, null);
         }
         UserExtendedDAL userExtendedDAL = getUserExtendedDAL(userDTO.user);
         dto = hs.insertNewUserExtended(userExtendedDAL);
-
+        //Review. 1) !dto.success same if twice 2) if basic user reg is successful and
+        //extented not successful both are not successful. Is this ok?
+        //3) If first registers are inserted, no revert exist
         if (!dto.success) {
             return new RegisterDTO(false, dto.message, null);
         }
@@ -79,11 +83,15 @@ public class RegisterService implements IRegisterService {
         userExtendedDAL.lose = 0;
         userExtendedDAL.win = 0;
         userExtendedDAL.totalFights = 0;
+        //Review. Never add unconrolled data as "=" 
+        //Byte[] arr = getImgByteArray();
+        //if(arr.length != 0) userExtendedDAL.profileImg = arr;
         userExtendedDAL.profileImg = getImgByteArray();
         return userExtendedDAL;
     }
 
     private byte[] getImgByteArray() throws IOException {
+    	//Review. This can brake. Control it.
         BufferedImage bufferedImage = ImageIO.read(getClass().getResource("/main/webapp/Images/imageLeft.png"));
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         ImageIO.write(bufferedImage, "png", byteArrayOutputStream);
@@ -94,6 +102,7 @@ public class RegisterService implements IRegisterService {
     public UserModel addUserToCache(String email) {
         UserDTO userDTO = hs.getUserByEmail(email);
         if (!userDTO.success) {
+        	//Review. LOL
             //TODO Return not null
             return null;
         }

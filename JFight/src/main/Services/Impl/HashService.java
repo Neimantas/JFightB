@@ -9,7 +9,7 @@ public class HashService {
     // The higher the number of iterations the more
     // expensive computing the hash is for us and
     // also for an attacker.
-    private static final int iterations = 20*1000;
+    private static final int iterations = 20*1000; //Review. Magic numbers
     private static final int saltLen = 32;
     private static final int desiredKeyLen = 256;
 
@@ -28,7 +28,7 @@ public class HashService {
         String[] saltAndPass = stored.split("\\$");
         if (saltAndPass.length != 2) {
             throw new IllegalStateException(
-                    "The stored password have the form 'salt$hash'");
+                    "The stored password have the form 'salt$hash'"); //Review. Use enums
         }
         String hashOfInput = hash(password, Base64.decodeBase64(saltAndPass[0]));
         return hashOfInput.equals(saltAndPass[1]);
@@ -38,7 +38,7 @@ public class HashService {
     // cf. http://www.unlimitednovelty.com/2012/03/dont-use-bcrypt.html
     private static String hash(String password, byte[] salt) throws Exception {
         if (password == null || password.length() == 0)
-            throw new IllegalArgumentException("Empty passwords are not supported.");
+            throw new IllegalArgumentException("Empty passwords are not supported."); //Review. Use enums
         SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         SecretKey key = f.generateSecret(new PBEKeySpec(
                 password.toCharArray(), salt, iterations, desiredKeyLen)

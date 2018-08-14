@@ -14,6 +14,7 @@ public class UserInfoService {
 
     private IHigherService hs = new HigherService();
 
+    //Review. Use model mapper
     public UserExtendedModel getUserExtendedById(long userId) throws IOException{
         UserExtendedDTO dto = hs.getUserExtendByUserId(userId);
         if(dto.success){

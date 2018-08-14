@@ -12,7 +12,7 @@ import main.Services.IFightService;
 import main.Services.IHigherService;
 
 public class FightService implements IFightService {
-
+	//Review. Get dependency injector.
     private IHigherService hs = new HigherService();
 
     public TurnOutcomeModel getTurnOutcome(TurnStatsModel userModel) {
@@ -20,14 +20,14 @@ public class FightService implements IFightService {
         DBqueryDTO dto = insertTurnFightLog(createFightLogFromTurnStatsModel(userModel));
         // TODO fix the null part once we can
         if (!dto.success) {
-            return null;
+            return null; //Review. Null is worse thing to return
         }
 
         // TODO handle timeout
         FightLogDTO fightLogDTO = checkForOpponent(userModel.fightId, userModel.round);
 
         if (!fightLogDTO.success) {
-            return null;
+            return null; //Review. Null is worse thing to return
         }
 
         TurnStatsModel opponent = new TurnStatsModel();
@@ -52,6 +52,7 @@ public class FightService implements IFightService {
         return turnOutcome;
     }
 
+    //Review. 1 method for ALL rounds.
     public TurnOutcomeModel getTurnOutcomeForFirstRound(TurnStatsModel userModel) {
         FightLogDTO dto = hs.getFightLogByIdAndRound(userModel.fightId, 1);
 
@@ -99,8 +100,9 @@ public class FightService implements IFightService {
     private TurnOutcomeModel calculateDamage(TurnStatsModel user, TurnStatsModel opponent) {
         TurnOutcomeModel turnOutcome = new TurnOutcomeModel();
         // TODO in the future damage variable will change depending on items/skills
-        int damage = 1;
+        int damage = 1; //Review. Magic number.
 
+        //Review join into 1 method as UserOutComeCalculator
         // User outcome
         int attacksReceivedUser = 0;
         // Check if user defends against first Opponent attack
@@ -123,11 +125,13 @@ public class FightService implements IFightService {
         FightLogDTO dto = hs.getFightLogByIdAndRound(fightId, round);
         // TODO we will need a timeout counter if we cannot get result or opponent leaves
         int count = 0;
+        //Review. Message == enum, count < 30 -> magic number, thread sleep is bad (waisted resources)
         while ((!dto.success && dto.message.equals("Only one record found.")) && count < 30) {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+                //Review. Probably log.
             }
             dto = hs.getFightLogByIdAndRound(fightId, round);
             count++;
@@ -135,6 +139,7 @@ public class FightService implements IFightService {
         return dto;
     }
 
+    //Review. if it only returns bool, use local var
     private boolean checkIfWinResultAlreadyAdded(String fightId) {
         // TODO should return more than just boolean in case of DB error
         return hs.getFightResultByFightId(fightId).success;
@@ -144,6 +149,7 @@ public class FightService implements IFightService {
         FightLogDAL fightLog = new FightLogDAL();
         fightLog.userId = model.userId;
         fightLog.fightId = model.fightId;
+        //Review. Can we use enum?
         // TODO check what happens if BodyParts.valueOf('INVALID NAME'); ---> IllegalArgumentException
         fightLog.attack1 = model.att1 != null ? model.att1.toString() : "NONE";
         fightLog.attack2 = model.att2 != null ? model.att2.toString() : "NONE";
@@ -199,12 +205,12 @@ public class FightService implements IFightService {
         if (outcome.fightStatus != FightStatus.FIGHTING) {
 
             if (checkIfWinResultAlreadyAdded(outcome.fightId)) {
-
+            	//Review. See not needed method
                 // TODO needs error handling
                 deleteFightLogsAndFight(outcome.fightId);
 
             } else {
-
+            	//Review. DAL models should be exclusive to CRUD only
                 FightResultDAL fightResult = new FightResultDAL();
                 fightResult.fightId = outcome.fightId;
 
@@ -224,6 +230,7 @@ public class FightService implements IFightService {
         }
     }
 
+    //Review. Crud should do insert
     private DBqueryDTO insertTurnFightLog(FightLogDAL model) {
         return hs.insertTurnStats(model);
     }

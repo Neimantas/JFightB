@@ -19,6 +19,7 @@ public class LoginService implements ILoginService {
     @Override
     public LoginDTO find(String email, String password) {
         IHigherService hs = new HigherService();
+      //Review. Dead code
 //        UserDAL userDAL = new UserDAL();
 //        userDAL.email = email;
 //        userDAL.password = password;

@@ -43,7 +43,7 @@ public class HigherService implements IHigherService {
     @Override
     public DBqueryDTO deleteUserAndOpponentFromReadyToFight(long userId, long opponentId) {
         DBQueryModel dbQueryModel = new DBQueryModel();
-        dbQueryModel.where = new String[]{"UserId"};
+        dbQueryModel.where = new String[]{"UserId"}; //Review. Use enum
         dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId),
                                                             String.valueOf(opponentId)}};
         return crud.delete(dbQueryModel, ReadyToFightDAL.class);
@@ -75,6 +75,7 @@ public class HigherService implements IHigherService {
         if (dbqueryDTO.success && !dbqueryDTO.list.isEmpty()) {
             return new UserDTO(true, "", dbqueryDTO.list.get(0));
         } else if (dbqueryDTO.success) {
+        	//Review. Enums as errors
             return new UserDTO(false, "User with such Email and Password not found.", null);
         }
 
@@ -87,7 +88,7 @@ public class HigherService implements IHigherService {
     @Override
     public FightLogDTO getFightLogByIdAndRound(String fightId, int round) {
         DBQueryModel dbQueryModel = new DBQueryModel();
-        dbQueryModel.where = new String[]{"FightId", "Round"};
+        dbQueryModel.where = new String[]{"FightId", "Round"}; //Review. Use enum
         dbQueryModel.logicalOperator = "AND";
         dbQueryModel.whereValue = new String[][] {new String[]{fightId},
                                             new String[]{String.valueOf(round)}};
@@ -97,7 +98,7 @@ public class HigherService implements IHigherService {
             return new FightLogDTO(true, "", dto.list);
         } else if (dto.success) {
             // TODO change to ENUM
-            return new FightLogDTO(false, "Only one record found.", dto.list);
+            return new FightLogDTO(false, "Only one record found.", dto.list); //Review. Use enum
         }
 
         return new FightLogDTO(false, dto.message, null);
@@ -106,7 +107,7 @@ public class HigherService implements IHigherService {
     @Override
     public FightDTO getFightByUserId(long userId) {
         DBQueryModel dbQueryModel = new DBQueryModel();
-        dbQueryModel.where = new String[]{"UserId1", "UserId2"};
+        dbQueryModel.where = new String[]{"UserId1", "UserId2"}; //Review. Use enum
         dbQueryModel.logicalOperator = "OR";
         dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId)},
                                             new String[]{String.valueOf(userId)}};
@@ -116,7 +117,7 @@ public class HigherService implements IHigherService {
             return new FightDTO(true, "", dto.list.get(0));
         } else if (dto.success) {
             // TODO use ENUM here
-            return new FightDTO(false, "No Fights with such UserId found.", null);
+            return new FightDTO(false, "No Fights with such UserId found.", null); //Review. Use enum
         }
 
         return new FightDTO(false, dto.message, null);
@@ -131,7 +132,8 @@ public class HigherService implements IHigherService {
     public ChallengeDTO checkIfTwoUsersChallengedEachOther(long userId) {
         ProcedureModel procedure = new ProcedureModel();
         procedure.name = Procedures.checkIfTwoUsersChallengedEachOther;
-        procedure.params = Collections.singletonList(new Pair<>("userId", (int) userId));
+        //Review. Control ar crud level long/int problems, because now we have 2 places
+        procedure.params = Collections.singletonList(new Pair<>("userId", (int) userId)); //Review. Use enum
 
         DBQueryModel dbQueryModel = new DBQueryModel();
         dbQueryModel.procedure = procedure;
@@ -141,7 +143,7 @@ public class HigherService implements IHigherService {
         if (dto.success && !dto.list.isEmpty()) {
             return new ChallengeDTO(true, "", dto.list);
         } else if (dto.success) {
-            return new ChallengeDTO(false, "No matches found.", null);
+            return new ChallengeDTO(false, "No matches found.", null); //Review. Use enum
         }
 
         return new ChallengeDTO(false, dto.message, null);
@@ -150,7 +152,7 @@ public class HigherService implements IHigherService {
     @Override
     public ChallengeDTO getAllIssuedChallengesByUserId(long userId) {
         DBQueryModel dbQueryModel = new DBQueryModel();
-        dbQueryModel.where = new String[]{"UserId", "OpponentId"};
+        dbQueryModel.where = new String[]{"UserId", "OpponentId"}; //Review. Use enum
         dbQueryModel.logicalOperator = "OR";
         dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId)},
                                                 new String[]{String.valueOf(userId)}};
@@ -166,7 +168,7 @@ public class HigherService implements IHigherService {
     @Override
     public UserDTO getUserByUserId(long userId) {
         DBQueryModel dbQueryModel = new DBQueryModel();
-        dbQueryModel.where = new String[]{"UserId"};
+        dbQueryModel.where = new String[]{"UserId"}; //Review. Use enum
         dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId)}};
 
         DBqueryDTO<UserDAL> dto = crud.read(dbQueryModel, UserDAL.class);
@@ -174,7 +176,7 @@ public class HigherService implements IHigherService {
         if (dto.success && dto.list.size() > 0) {
             return new UserDTO(true, "", dto.list.get(0));
         } else if (dto.success) {
-            return  new UserDTO(false, "No such user found.", null);
+            return  new UserDTO(false, "No such user found.", null); //Review. Use enum
         }
 
         return new UserDTO(false, dto.message, null);
@@ -183,7 +185,7 @@ public class HigherService implements IHigherService {
     @Override
     public ReadyToFightDTO getUserFromReadyToFightByUserId(long userId) {
         DBQueryModel dbQueryModel = new DBQueryModel();
-        dbQueryModel.where = new String[]{"UserId"};
+        dbQueryModel.where = new String[]{"UserId"}; //Review. Use enum
         dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId)}};
 
         DBqueryDTO<ReadyToFightDAL> dto = crud.read(dbQueryModel, ReadyToFightDAL.class);
@@ -191,7 +193,7 @@ public class HigherService implements IHigherService {
         if (dto.success && !dto.list.isEmpty()) {
             return new ReadyToFightDTO(true, "", dto.list);
         } else if (dto.success) {
-            return new ReadyToFightDTO(false, "Such user not found in ReadyToFight", null);
+            return new ReadyToFightDTO(false, "Such user not found in ReadyToFight", null); //Review. Use enum
         }
 
         return new ReadyToFightDTO(false, dto.message, null);
@@ -200,7 +202,7 @@ public class HigherService implements IHigherService {
     @Override
     public DBqueryDTO deleteMatchedPlayersFromChallenge(long userId, long opponentId) {
         DBQueryModel dbQueryModel = new DBQueryModel();
-        dbQueryModel.where = new String[]{"UserId"};
+        dbQueryModel.where = new String[]{"UserId"}; //Review. Use enum
         dbQueryModel.whereValue = new String[][]{new String[]{String.valueOf(userId),
                                                             String.valueOf(opponentId)}};
         return crud.delete(dbQueryModel, ChallengeDAL.class);
@@ -209,7 +211,7 @@ public class HigherService implements IHigherService {
     @Override
     public UserDTO getUserByEmail(String email) {
         DBQueryModel dbQueryModel = new DBQueryModel();
-        dbQueryModel.where = new String[]{"Email"};
+        dbQueryModel.where = new String[]{"Email"}; //Review. Use enum
         dbQueryModel.whereValue = new String[][]{ new String[]{email}};
 
         DBqueryDTO<UserDAL> dbQueryDTO = crud.read(dbQueryModel, UserDAL.class);
@@ -217,7 +219,7 @@ public class HigherService implements IHigherService {
         if (dbQueryDTO.success && !dbQueryDTO.list.isEmpty()) {
             return new UserDTO(true, "", dbQueryDTO.list.get(0));
         } else if (dbQueryDTO.success) {
-            return new UserDTO(false, "User not found.", null);
+            return new UserDTO(false, "User not found.", null); //Review. Use enum
         }
 
         return new UserDTO(false, dbQueryDTO.message, null);
@@ -232,7 +234,7 @@ public class HigherService implements IHigherService {
     @Override
     public DBqueryDTO deleteFightLogByUserId(long userId) {
         DBQueryModel model = new DBQueryModel();
-        model.where = new String[] {"userId"};
+        model.where = new String[] {"userId"}; //Review. Use enum
         model.whereValue = new String[][] {new String[]{String.valueOf(userId)}};
 
         return crud.delete(model, FightLogDAL.class);
@@ -241,7 +243,7 @@ public class HigherService implements IHigherService {
     @Override
     public UserDTO getUserByUserNameAndEmail(String userName, String email) {
         DBQueryModel dbQueryModel = new DBQueryModel();
-        dbQueryModel.where = new String[]{"UserName", "Email"};
+        dbQueryModel.where = new String[]{"UserName", "Email"}; //Review. Use enum
         dbQueryModel.logicalOperator = "AND";
         dbQueryModel.whereValue = new String[][]{new String[]{userName},
                                                 new String[]{email}};
@@ -251,7 +253,7 @@ public class HigherService implements IHigherService {
         if (dto.success && !dto.list.isEmpty()) {
             return new UserDTO(true, "", dto.list.get(0));
         } else if (dto.success) {
-            return new UserDTO(false, "User not found.", null);
+            return new UserDTO(false, "User not found.", null); //Review. Use enum
         }
 
         return new UserDTO(false, dto.message, null);
@@ -259,7 +261,8 @@ public class HigherService implements IHigherService {
     @Override
     public UserExtendedDTO getUserExtendByUserId(long userId) {
         DBQueryModel model = new DBQueryModel();
-        model.where = new String[] {"UserId"};
+        //Review. The way I see it, there are 4 diff userId objects...
+        model.where = new String[] {"UserId"}; //Review. Use enum
         model.whereValue = new String[][] {new String[]{String.valueOf(userId)}};
 
         DBqueryDTO<UserExtendedDAL> dto = crud.read(model, UserExtendedDAL.class);
@@ -267,7 +270,7 @@ public class HigherService implements IHigherService {
         if (dto.success && !dto.list.isEmpty()) {
             return new UserExtendedDTO(true, "", dto.list.get(0));
         } else if (dto.success) {
-            return new UserExtendedDTO(false, "Such user not found in UserExtended table.", null);
+            return new UserExtendedDTO(false, "Such user not found in UserExtended table.", null); //Review. Use enum
         }
 
         return new UserExtendedDTO(false, dto.message, null);
@@ -276,7 +279,7 @@ public class HigherService implements IHigherService {
     @Override
     public DBqueryDTO deleteAllFightLogsByFightId(String fightId) {
         DBQueryModel model = new DBQueryModel();
-        model.where = new String[] {"FightId"};
+        model.where = new String[] {"FightId"}; //Review. Use enum
         model.whereValue = new String[][] {new String[]{fightId}};
         return crud.delete(model, FightLogDAL.class);
     }
@@ -289,14 +292,14 @@ public class HigherService implements IHigherService {
     @Override
     public FightResultDTO getFightResultByFightId(String fightId) {
         DBQueryModel model = new DBQueryModel();
-        model.where = new String[]{"FightId"};
+        model.where = new String[]{"FightId"}; //Review. Use enum
         model.whereValue = new String[][]{new String[]{fightId}};
         DBqueryDTO<FightResultDAL> dto = crud.read(model, FightResultDAL.class);
 
         if (dto.success && !dto.list.isEmpty()) {
             return new FightResultDTO(true, "", dto.list.get(0));
         } else if (dto.success){
-            return new FightResultDTO(false, "FightResult not found with such FightId", null);
+            return new FightResultDTO(false, "FightResult not found with such FightId", null); //Review. Use enum
         }
 
         return new FightResultDTO(false, dto.message, null);
@@ -305,7 +308,7 @@ public class HigherService implements IHigherService {
     @Override
     public DBqueryDTO deleteFightByFightId(String fightId) {
         DBQueryModel model = new DBQueryModel();
-        model.where = new String[]{"FightId"};
+        model.where = new String[]{"FightId"}; //Review. Use enum
         model.whereValue = new String[][]{new String[]{fightId}};
         return crud.delete(model, FightDAL.class);
     }
@@ -317,6 +320,6 @@ public class HigherService implements IHigherService {
 
     @Override
     public DBqueryDTO updateFightLogHPbyUserIdAndRound(FightLogDAL fightLog) {
-        return crud.update(fightLog, new String[]{"userId", "round"});
+        return crud.update(fightLog, new String[]{"userId", "round"}); //Review. Use enum
     }
 }

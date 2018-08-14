@@ -47,9 +47,10 @@ public class Crud implements ICrud {
 
     @Override
     public <T> DBqueryDTO<T> read(DBQueryModel dbQueryModel, Class<T> dalType) {
-        IDataBase dataBase = new DataBase();
+        //Review. All should go into try
+    	IDataBase dataBase = new DataBase();
         Connection connection = dataBase.getConnection();
-        try {
+        try() {
             List<T> rows = getDALList(connection, dbQueryModel, dalType);
             return new DBqueryDTO<>(true, "Rows selected from DB -> " + rows.size(), rows);
         } catch (Exception e) {
@@ -63,6 +64,7 @@ public class Crud implements ICrud {
 
     @Override
     public DBqueryDTO update(Object dal, String[] primaryKey) {
+    	//Review. All should go into try
         IDataBase dataBase = new DataBase();
         Connection connection = dataBase.getConnection();
         try {
@@ -87,6 +89,7 @@ public class Crud implements ICrud {
 
     @Override
     public DBqueryDTO delete(DBQueryModel deleteModel, Class dal) {
+    	//Review. All should go into try
         IDataBase dataBase = new DataBase();
         Connection connection = dataBase.getConnection();
         try {
@@ -111,6 +114,7 @@ public class Crud implements ICrud {
         return false;
     }
 
+    //Region Helpers
     private Class<?> boxPrimitiveClass(Class<?> type) {
         if (type == int.class) {
             return Integer.class;
@@ -133,7 +137,8 @@ public class Crud implements ICrud {
             throw new IllegalArgumentException("Class '" + type.getName() + "' is not a primitive");
         }
     }
-
+    //End region
+    
     private String createInsertQuery(Object object)
             throws IllegalArgumentException, IllegalAccessException {
         Class<?> zclass = object.getClass();
@@ -263,6 +268,7 @@ public class Crud implements ICrud {
                     callableStatement.setString(pair.getKey(), (String) pair.getValue());
                     break;
                 default:
+                	//Review. Strings as errors :/
                     throw new IllegalArgumentException("'getCallableStatementForGivenProcedure' method can only handle " +
                             "'Integer' and 'String' types for procedure arguments.");
             }
@@ -272,6 +278,7 @@ public class Crud implements ICrud {
 
     private String getClassNameWithoutDAL(Class c) {
         // Exception: 'User' is a keyword in SQL because of that we must use []
+    	//Review. Either fix it globally or find out how to do differently
         if (c.getSimpleName().equals("UserDAL")) {
             return "[User]";
         }
@@ -286,6 +293,7 @@ public class Crud implements ICrud {
 
         // First we check if 'Read' was called with a Procedure for which we need to use CallableStatement
         if (queryModel.procedure != null) {
+        	//Review. Check if stacktrace would show this method as broken if it fails
             callableStatement = getCallableStatementForGivenProcedure(connection, queryModel.procedure);
             callableStatement.execute();
             rs = callableStatement.getResultSet();
@@ -335,6 +343,7 @@ public class Crud implements ICrud {
                 if (type == boolean.class) {
                     value = (int) value == 1;
                 // Exception: SQL doesn't have 'long' Data type, so we need to parse it's 'String' value
+                //Review. Check if all types you need are covered
                 } else if (type == long.class) {
                     value = Long.parseLong(value.toString());
                 } else {
